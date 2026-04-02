@@ -120,3 +120,4 @@ python3 scripts/search_personal_archive.py "愿景"
 - `personal_archive/search.html`：可直接打开的本地搜索页
 
 `personal_archive/` 已加入 `.gitignore`，这些私人材料不会默认被提交到网站仓库或随公开站点一起发布。
+
