@@ -575,6 +575,11 @@ ol {
   margin-bottom: 6px;
 }
 
+.theme-card .text-link {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
 .theme-list {
   display: grid;
   gap: 10px;
@@ -612,12 +617,25 @@ ol {
   gap: 8px;
 }
 
+.card-axis {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
 .article-grid-unified {
   align-items: stretch;
 }
 
 .article-theme-block + .article-theme-block {
   margin-top: 44px;
+}
+
+.article-theme-block {
+  scroll-margin-top: 110px;
 }
 
 .article-theme-heading {
@@ -825,6 +843,46 @@ ol {
   margin-top: 18px;
 }
 
+.article-taxonomy {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.taxonomy-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid rgba(82, 100, 87, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 252, 247, 0.78);
+  color: var(--ink);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+a.taxonomy-chip:hover,
+a.taxonomy-chip:focus-visible {
+  border-color: rgba(82, 100, 87, 0.28);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.taxonomy-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.taxonomy-value {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.4;
+}
+
 .article-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(250px, 0.8fr);
@@ -969,6 +1027,10 @@ ol {
   .article-card-feature-main {
     grid-column: auto;
   }
+
+  .article-layout {
+    gap: 24px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -978,19 +1040,22 @@ ol {
 
   .site-header,
   .site-footer {
-    padding: 18px 18px 20px;
+    padding: 16px 18px 18px;
     border-radius: 24px;
   }
 
   .section,
-  .hero,
+  .hero {
+    padding: 52px 20px;
+  }
+
   .article-header {
-    padding: 56px 20px;
+    padding: 48px 20px 22px;
   }
 
   .hero-home-expanded {
-    padding-top: 74px;
-    padding-bottom: 70px;
+    padding-top: 68px;
+    padding-bottom: 62px;
   }
 
   .page-title {
@@ -1004,11 +1069,13 @@ ol {
   }
 
   .page-subtitle {
-    font-size: 17px;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.8;
   }
 
   .home-subtitle {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .quote-card p,
@@ -1051,19 +1118,112 @@ ol {
   }
 
   .home-intro {
+    margin-top: 22px;
+  }
+
+  .home-actions {
     margin-top: 26px;
   }
 
+  .home-hero-aside {
+    gap: 14px;
+    padding-top: 6px;
+  }
+
   .article-page .section.article-layout {
-    padding-top: 36px;
+    padding-top: 28px;
+  }
+
+  .section-header {
+    margin-bottom: 22px;
+  }
+
+  .article-card-feature-main {
+    padding: 24px 20px;
+  }
+
+  .article-card-feature-main h3 {
+    font-size: 26px;
+    line-height: 1.32;
+  }
+
+  .article-card h3 {
+    font-size: 20px;
+  }
+
+  .article-intro {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .article-theme-block + .article-theme-block {
+    margin-top: 34px;
+  }
+
+  .theme-list {
+    gap: 8px;
+  }
+
+  .theme-list a,
+  .theme-list span {
+    padding: 11px 12px;
+    font-size: 13px;
+    line-height: 1.72;
   }
 
   .article-prose p,
   .article-prose li {
-    font-size: 16px;
+    font-size: 15.5px;
+    line-height: 1.92;
+  }
+
+  .article-prose h2 {
+    margin-top: 30px;
+    font-size: 22px;
+  }
+
+  .breadcrumbs {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+
+  .article-meta,
+  .timeline-year,
+  .meta-pill {
+    min-height: 28px;
+    padding: 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  .label-row {
+    gap: 6px 10px;
+  }
+
+  .card-axis {
+    font-size: 11px;
   }
 
   .article-meta-row {
-    margin-top: 14px;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .article-taxonomy {
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+  }
+
+  .taxonomy-chip {
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .taxonomy-value {
+    font-size: 18px;
+  }
+
+  .article-aside {
+    gap: 14px;
   }
 }
