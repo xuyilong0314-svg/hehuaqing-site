@@ -35,6 +35,7 @@
 
       if (!isMobile) {
         nav.hidden = false;
+        nav.style.display = "";
         header.classList.remove("nav-open");
         button.setAttribute("aria-expanded", "false");
         button.setAttribute("aria-label", "打开菜单");
@@ -43,6 +44,7 @@
       }
 
       nav.hidden = !isOpen;
+      nav.style.display = isOpen ? "grid" : "none";
       header.classList.toggle("nav-open", isOpen);
       button.setAttribute("aria-expanded", isOpen ? "true" : "false");
       button.setAttribute("aria-label", isOpen ? "收起菜单" : "打开菜单");
