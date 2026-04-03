@@ -3,6 +3,9 @@
   --bg-deep: #ece2d5;
   --surface: rgba(255, 251, 245, 0.86);
   --surface-strong: rgba(255, 253, 249, 0.96);
+  --surface-card: rgba(255, 253, 249, 0.88);
+  --surface-muted: rgba(255, 252, 247, 0.62);
+  --surface-axis: rgba(255, 252, 247, 0.98);
   --ink: #221d18;
   --muted: #6d645b;
   --accent: #846b59;
@@ -35,6 +38,8 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   line-height: 1.85;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
   background:
     radial-gradient(circle at top left, rgba(117, 133, 116, 0.12), transparent 36%),
     radial-gradient(circle at top right, rgba(180, 153, 129, 0.2), transparent 28%),
@@ -203,10 +208,10 @@ ol {
 
 .eyebrow {
   display: inline-block;
-  margin-bottom: 14px;
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 0.22em;
+  margin-bottom: 16px;
+  color: rgba(109, 100, 91, 0.76);
+  font-size: 11px;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
 }
 
@@ -218,14 +223,16 @@ ol {
   font-weight: 600;
   line-height: 1.18;
   letter-spacing: 0.04em;
+  text-wrap: balance;
 }
 
 .page-title {
   font-size: clamp(36px, 6vw, 72px);
+  line-height: 1.08;
 }
 
 .home-title {
-  max-width: 8em;
+  max-width: 7.2em;
   font-size: clamp(56px, 7.8vw, 96px);
   letter-spacing: 0.015em;
   line-height: 1.03;
@@ -233,14 +240,27 @@ ol {
 
 .section-title {
   font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.22;
 }
 
 .page-subtitle {
-  margin-top: 22px;
-  max-width: 40rem;
+  position: relative;
+  margin-top: 26px;
+  max-width: 34rem;
+  padding-top: 18px;
   color: var(--accent-deep);
-  font-size: 20px;
-  line-height: 1.95;
+  font-size: 17.5px;
+  line-height: 1.88;
+  text-wrap: pretty;
+}
+
+.page-subtitle::before {
+  content: "";
+  display: block;
+  width: 68px;
+  height: 1px;
+  margin-bottom: 14px;
+  background: linear-gradient(90deg, rgba(82, 100, 87, 0.34), rgba(132, 107, 89, 0.1));
 }
 
 .lead,
@@ -252,8 +272,20 @@ ol {
 .contact-note p,
 .mini-note p {
   color: var(--muted);
-  font-size: 16px;
-  line-height: 1.95;
+  font-size: 15.5px;
+  line-height: 1.92;
+  text-wrap: pretty;
+}
+
+.lead {
+  max-width: 38rem;
+  padding-left: 16px;
+  border-left: 1px solid rgba(82, 100, 87, 0.18);
+  color: rgba(82, 100, 87, 0.88);
+}
+
+.section-intro {
+  max-width: 39rem;
 }
 
 .hero-copy .lead + .lead,
@@ -264,29 +296,31 @@ ol {
 }
 
 .home-subtitle {
-  max-width: 28rem;
+  max-width: 24rem;
   color: var(--accent-deep);
-  font-size: 20px;
-  line-height: 2;
+  font-size: 16.5px;
+  line-height: 1.8;
 }
 
 .home-intro {
-  max-width: 36rem;
-  margin-top: 48px;
+  display: grid;
+  gap: 14px;
+  max-width: 34rem;
+  margin-top: 34px;
 }
 
 .home-actions {
-  margin-top: 44px;
-  gap: 10px;
+  margin-top: 34px;
+  gap: 8px;
 }
 
 .home-actions .button {
-  min-height: 44px;
-  padding: 0 18px;
+  min-height: 42px;
+  padding: 0 16px;
   border-color: rgba(34, 29, 24, 0.12);
   background: rgba(34, 29, 24, 0.05);
   color: var(--ink);
-  font-size: 13px;
+  font-size: 12.5px;
   letter-spacing: 0.04em;
 }
 
@@ -298,13 +332,13 @@ ol {
 .home-hero-aside {
   align-content: start;
   justify-self: end;
-  max-width: 340px;
-  gap: 10px;
-  padding-top: 72px;
+  max-width: 316px;
+  gap: 8px;
+  padding-top: 64px;
 }
 
 .home-quote-card {
-  padding: 16px 0 0 18px;
+  padding: 12px 0 0 16px;
   border: 0;
   border-left: 1px solid rgba(34, 29, 24, 0.14);
   border-radius: 0;
@@ -317,20 +351,20 @@ ol {
 }
 
 .home-quote-card p {
-  font-size: 20px;
-  line-height: 1.8;
+  font-size: 18px;
+  line-height: 1.72;
 }
 
 .home-mini-note {
   margin-left: 0;
-  padding: 12px 0 0;
+  padding: 10px 0 0;
   border-top: 1px solid rgba(34, 29, 24, 0.1);
   border-left: 0;
 }
 
 .home-mini-note p {
-  font-size: 14px;
-  line-height: 1.9;
+  font-size: 13px;
+  line-height: 1.8;
 }
 
 .hero-aside {
@@ -349,20 +383,20 @@ ol {
 
 .card,
 .contact-card-simple {
-  background: rgba(255, 253, 249, 0.94);
-  border: 1px solid rgba(34, 29, 24, 0.1);
+  background: var(--surface-card);
+  border: 1px solid rgba(34, 29, 24, 0.08);
 }
 
 .article-card {
-  background: rgba(255, 253, 249, 0.76);
-  border: 1px solid rgba(34, 29, 24, 0.08);
+  background: rgba(255, 253, 249, 0.74);
+  border: 1px solid rgba(34, 29, 24, 0.07);
 }
 
 .quote-card,
 .card-plain,
 .contact-note {
-  background: rgba(255, 252, 247, 0.66);
-  border: 1px solid rgba(34, 29, 24, 0.08);
+  background: var(--surface-muted);
+  border: 1px solid rgba(34, 29, 24, 0.07);
 }
 
 .card,
@@ -382,6 +416,7 @@ ol {
   font-family: var(--font-display);
   font-size: 24px;
   line-height: 1.7;
+  text-wrap: balance;
 }
 
 .mini-note {
@@ -454,7 +489,7 @@ ol {
 
 .section-header {
   max-width: 760px;
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 .section-header-narrow {
@@ -530,6 +565,7 @@ ol {
 .article-card .article-meta {
   min-height: auto;
   padding: 0;
+  border: 0;
   border-radius: 0;
   background: transparent;
   color: var(--muted);
@@ -545,6 +581,15 @@ ol {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.08) 38%, rgba(255, 252, 247, 0.98) 100%);
   box-shadow: var(--shadow-soft);
+}
+
+.article-theme-title,
+.card h3,
+.article-card h3,
+.timeline-item h3,
+.article-prose h2,
+.article-prose h3 {
+  text-wrap: balance;
 }
 
 .article-card-feature-main::before {
@@ -669,12 +714,13 @@ ol {
 .meta-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 30px;
-  padding: 0 10px;
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid rgba(34, 29, 24, 0.08);
   border-radius: 999px;
-  background: rgba(132, 107, 89, 0.08);
-  color: var(--accent);
-  font-size: 12px;
+  background: rgba(255, 252, 247, 0.5);
+  color: rgba(109, 100, 91, 0.92);
+  font-size: 11.5px;
   letter-spacing: 0.08em;
 }
 
@@ -742,13 +788,13 @@ ol {
 .theme-list a,
 .theme-list span {
   display: block;
-  padding: 12px 14px;
+  padding: 11px 13px;
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: rgba(255, 252, 247, 0.78);
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.8;
+  background: rgba(255, 252, 247, 0.58);
+  color: rgba(109, 100, 91, 0.9);
+  font-size: 13px;
+  line-height: 1.76;
 }
 
 .theme-list a:hover,
@@ -774,8 +820,8 @@ ol {
   display: inline-flex;
   align-items: center;
   min-height: 30px;
-  color: var(--muted);
-  font-size: 12px;
+  color: rgba(109, 100, 91, 0.8);
+  font-size: 11.5px;
   letter-spacing: 0.06em;
 }
 
@@ -816,6 +862,27 @@ ol {
     var(--surface-strong);
 }
 
+.article-theme-block .card-wide,
+.flow-card,
+.column-article-card {
+  position: relative;
+  border-color: rgba(82, 100, 87, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.12) 34%, var(--surface-axis) 100%);
+  box-shadow: 0 18px 38px rgba(66, 46, 31, 0.045);
+}
+
+.article-theme-block .card-wide::before,
+.flow-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(82, 100, 87, 0.48), rgba(132, 107, 89, 0.08));
+}
+
 .column-article-card::before {
   content: "";
   position: absolute;
@@ -827,8 +894,21 @@ ol {
 }
 
 .article-intro {
+  position: relative;
+  padding-left: 12px;
   color: var(--accent-deep);
-  font-size: 15px;
+  font-size: 14.5px;
+  line-height: 1.82;
+}
+
+.article-intro::before {
+  content: "";
+  position: absolute;
+  top: 0.32em;
+  left: 0;
+  bottom: 0.32em;
+  width: 1px;
+  background: rgba(82, 100, 87, 0.2);
 }
 
 .project-core {
@@ -840,8 +920,7 @@ ol {
 
 .flow-card {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0)) top/100% 68px no-repeat,
-    var(--surface-strong);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.12) 34%, var(--surface-axis) 100%);
 }
 
 .split-copy {
@@ -879,6 +958,8 @@ ol {
 .reading-path {
   padding-left: 20px;
   color: var(--muted);
+  font-size: 15px;
+  line-height: 1.9;
 }
 
 .reading-path li + li {
@@ -1045,8 +1126,8 @@ a.taxonomy-chip:focus-visible {
 }
 
 .article-header .page-subtitle {
-  max-width: 34rem;
-  font-size: 18px;
+  max-width: 30rem;
+  font-size: 17px;
 }
 
 .article-header .meta-pill {
@@ -1251,9 +1332,24 @@ a.taxonomy-chip:focus-visible {
     padding: 12px;
   }
 
+  body::before {
+    opacity: 0.45;
+    background-size: 88px 88px;
+  }
+
   .site-header,
   .site-footer {
-    padding: 16px 18px 18px;
+    padding: 14px 16px 16px;
+    border-radius: 24px;
+  }
+
+  .site-header,
+  .site-footer,
+  .page-main {
+    box-shadow: 0 10px 26px rgba(66, 46, 31, 0.045);
+  }
+
+  .page-main {
     border-radius: 24px;
   }
 
@@ -1263,7 +1359,11 @@ a.taxonomy-chip:focus-visible {
     align-items: center;
     justify-content: space-between;
     gap: 8px 12px;
-    padding: 10px 14px;
+    padding: 10px 12px;
+  }
+
+  .js-nav-ready .site-header.nav-mobile-ready.nav-open {
+    gap: 10px 12px;
   }
 
   .js-nav-ready .site-header.nav-mobile-ready .brand {
@@ -1280,8 +1380,8 @@ a.taxonomy-chip:focus-visible {
     align-items: center;
     justify-content: center;
     margin-left: auto;
-    min-height: 34px;
-    padding: 0 12px;
+    min-height: 32px;
+    padding: 0 11px;
     border: 1px solid rgba(34, 29, 24, 0.16);
     border-radius: 999px;
     background: rgba(255, 253, 249, 0.58);
@@ -1305,74 +1405,83 @@ a.taxonomy-chip:focus-visible {
 
   .section,
   .hero {
-    padding: 52px 20px;
+    padding: 46px 18px;
   }
 
   .article-header {
-    padding: 54px 20px 24px;
+    padding: 50px 18px 24px;
   }
 
   .hero-home-expanded {
-    padding-top: 74px;
-    padding-bottom: 70px;
+    padding-top: 66px;
+    padding-bottom: 58px;
   }
 
   .page-title {
-    font-size: clamp(32px, 11vw, 48px);
+    font-size: clamp(34px, 10.8vw, 46px);
   }
 
   .article-page .page-title {
-    font-size: clamp(38px, 11vw, 52px);
+    font-size: clamp(36px, 11vw, 50px);
     line-height: 1.08;
   }
 
   .home-title {
     max-width: none;
-    font-size: clamp(46px, 12vw, 60px);
+    font-size: clamp(40px, 11.8vw, 54px);
     line-height: 1.06;
   }
 
   .page-subtitle {
     margin-top: 16px;
-    font-size: 16px;
-    line-height: 1.9;
+    padding-top: 12px;
+    font-size: 15px;
+    line-height: 1.82;
+  }
+
+  .page-subtitle::before {
+    width: 54px;
+    margin-bottom: 12px;
   }
 
   .home-subtitle {
-    font-size: 15.5px;
+    max-width: 18.5rem;
+    font-size: 14px;
   }
 
   .home-intro {
-    margin-top: 34px;
+    gap: 10px;
+    margin-top: 22px;
   }
 
   .home-actions {
-    margin-top: 30px;
+    margin-top: 20px;
   }
 
   .home-actions .button {
+    min-height: 40px;
     width: 100%;
   }
 
   .home-hero-aside {
     max-width: none;
     gap: 10px;
-    padding-top: 12px;
+    padding-top: 2px;
   }
 
   .home-quote-card {
-    padding-top: 12px;
-    padding-left: 14px;
+    padding-top: 8px;
+    padding-left: 10px;
   }
 
   .home-mini-note {
-    padding-top: 10px;
+    padding-top: 8px;
   }
 
   .quote-card p,
   .large-quote,
   .poem {
-    font-size: 20px;
+    font-size: 18.5px;
   }
 
   .project-core {
@@ -1387,7 +1496,7 @@ a.taxonomy-chip:focus-visible {
     display: grid;
     grid-template-columns: repeat(3, max-content);
     gap: 10px 16px;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .js-nav-ready .site-header.nav-mobile-ready .site-nav {
@@ -1395,7 +1504,7 @@ a.taxonomy-chip:focus-visible {
     grid-template-columns: 1fr;
     gap: 0;
     margin-top: 0;
-    padding-top: 6px;
+    padding-top: 8px;
     border-top: 1px solid var(--border);
     font-size: 14px;
     max-height: calc(100dvh - 96px);
@@ -1409,8 +1518,8 @@ a.taxonomy-chip:focus-visible {
   .js-nav-ready .site-header.nav-mobile-ready .site-nav a {
     display: flex;
     align-items: center;
-    min-height: 36px;
-    padding: 6px 2px;
+    min-height: 34px;
+    padding: 7px 2px;
     color: var(--muted);
     border-bottom: 1px solid rgba(34, 29, 24, 0.07);
   }
@@ -1439,8 +1548,8 @@ a.taxonomy-chip:focus-visible {
   .card-plain,
   .contact-card-simple,
   .contact-note {
-    padding: 22px 20px;
-    border-radius: 20px;
+    padding: 18px 18px;
+    border-radius: 18px;
   }
 
   .home-mini-note {
@@ -1448,16 +1557,36 @@ a.taxonomy-chip:focus-visible {
   }
 
   .home-intro {
-    margin-top: 22px;
+    margin-top: 20px;
   }
 
   .home-actions {
-    margin-top: 26px;
+    margin-top: 18px;
   }
 
   .home-hero-aside {
-    gap: 14px;
-    padding-top: 6px;
+    gap: 10px;
+    padding-top: 0;
+  }
+
+  .home-quote-card p {
+    font-size: 17px;
+    line-height: 1.68;
+  }
+
+  .home-mini-note p {
+    font-size: 12.5px;
+    line-height: 1.74;
+  }
+
+  .home-intro .lead {
+    font-size: 14px;
+    line-height: 1.78;
+  }
+
+  .hero-home-expanded {
+    padding-top: 58px;
+    padding-bottom: 50px;
   }
 
   .article-page .section.article-layout {
@@ -1465,15 +1594,15 @@ a.taxonomy-chip:focus-visible {
   }
 
   .section-header {
-    margin-bottom: 22px;
+    margin-bottom: 20px;
   }
 
   .article-card-feature-main {
-    padding: 28px 22px;
+    padding: 24px 18px;
   }
 
   .article-card-feature-main h3 {
-    font-size: 28px;
+    font-size: 26px;
     line-height: 1.28;
   }
 
@@ -1482,8 +1611,9 @@ a.taxonomy-chip:focus-visible {
   }
 
   .article-intro {
-    font-size: 14px;
-    line-height: 1.8;
+    padding-left: 10px;
+    font-size: 13.5px;
+    line-height: 1.76;
   }
 
   .home-selected-grid {
@@ -1512,9 +1642,25 @@ a.taxonomy-chip:focus-visible {
 
   .theme-list a,
   .theme-list span {
-    padding: 11px 12px;
-    font-size: 13px;
-    line-height: 1.72;
+    padding: 10px 11px;
+    font-size: 12.5px;
+    line-height: 1.68;
+  }
+
+  .lead,
+  .section-intro,
+  .card p,
+  .article-card p,
+  .split-copy p,
+  .card-plain p,
+  .contact-note p,
+  .mini-note p {
+    font-size: 14.5px;
+    line-height: 1.86;
+  }
+
+  .lead {
+    padding-left: 12px;
   }
 
   .article-prose p,
@@ -1553,6 +1699,14 @@ a.taxonomy-chip:focus-visible {
   .article-meta-row {
     gap: 8px;
     margin-top: 12px;
+  }
+
+  .article-theme-block .card-wide::before,
+  .flow-card::before,
+  .column-article-card::before,
+  .article-card-feature-main::before {
+    left: 18px;
+    right: 18px;
   }
 
   .article-taxonomy {

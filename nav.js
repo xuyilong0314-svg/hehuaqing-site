@@ -25,6 +25,9 @@
     const navId = nav.id || `site-nav-${index + 1}`;
     nav.id = navId;
     button.setAttribute("aria-controls", navId);
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-label", "打开菜单");
+    button.setAttribute("aria-haspopup", "true");
 
     header.insertBefore(button, nav);
 
@@ -77,12 +80,23 @@
       closeMenu();
     });
 
-    window.addEventListener("resize", () => {
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      closeMenu();
+    });
+
+    const handleViewportChange = () => {
       if (!mobileQuery.matches) {
         isOpen = false;
       }
       applyState();
-    });
+    };
+
+    if (typeof mobileQuery.addEventListener === "function") {
+      mobileQuery.addEventListener("change", handleViewportChange);
+    } else {
+      mobileQuery.addListener(handleViewportChange);
+    }
 
     applyState();
   });
