@@ -8,10 +8,15 @@
   --surface-axis: rgba(255, 252, 247, 0.98);
   --ink: #221d18;
   --muted: #6d645b;
-  --accent: #846b59;
-  --accent-deep: #526457;
-  --border: rgba(34, 29, 24, 0.11);
-  --border-strong: rgba(34, 29, 24, 0.2);
+  --accent: #5b6a61;
+  --accent-deep: #8a7666;
+  --border: rgba(216, 200, 180, 0.58);
+  --border-strong: rgba(216, 200, 180, 0.9);
+  --button-primary-bg: #4d5d54;
+  --button-primary-hover: #445248;
+  --button-primary-text: #f7f2ea;
+  --button-secondary-border: #b39e89;
+  --button-secondary-text: #5b4d43;
   --shadow: 0 24px 60px rgba(66, 46, 31, 0.08);
   --shadow-soft: 0 18px 42px rgba(66, 46, 31, 0.05);
   --radius-xl: 34px;
@@ -209,7 +214,7 @@ ol {
 .eyebrow {
   display: inline-block;
   margin-bottom: 16px;
-  color: rgba(109, 100, 91, 0.76);
+  color: rgba(138, 118, 102, 0.78);
   font-size: 11px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -260,7 +265,7 @@ ol {
   width: 68px;
   height: 1px;
   margin-bottom: 14px;
-  background: linear-gradient(90deg, rgba(82, 100, 87, 0.34), rgba(132, 107, 89, 0.1));
+  background: linear-gradient(90deg, rgba(91, 106, 97, 0.42), rgba(91, 106, 97, 0));
 }
 
 .lead,
@@ -280,8 +285,8 @@ ol {
 .lead {
   max-width: 38rem;
   padding-left: 16px;
-  border-left: 1px solid rgba(82, 100, 87, 0.18);
-  color: rgba(82, 100, 87, 0.88);
+  border-left: 1px solid rgba(91, 106, 97, 0.2);
+  color: rgba(91, 106, 97, 0.84);
 }
 
 .section-intro {
@@ -317,16 +322,17 @@ ol {
 .home-actions .button {
   min-height: 42px;
   padding: 0 16px;
-  border-color: rgba(34, 29, 24, 0.12);
-  background: rgba(34, 29, 24, 0.05);
-  color: var(--ink);
+  border-color: var(--button-primary-bg);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
   font-size: 12.5px;
   letter-spacing: 0.04em;
 }
 
 .home-actions .button-secondary {
   background: transparent;
-  border-color: rgba(34, 29, 24, 0.1);
+  border-color: var(--button-secondary-border);
+  color: var(--button-secondary-text);
 }
 
 .home-hero-aside {
@@ -340,7 +346,7 @@ ol {
 .home-quote-card {
   padding: 12px 0 0 16px;
   border: 0;
-  border-left: 1px solid rgba(34, 29, 24, 0.14);
+  border-left: 1px solid rgba(91, 106, 97, 0.24);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -358,7 +364,7 @@ ol {
 .home-mini-note {
   margin-left: 0;
   padding: 10px 0 0;
-  border-top: 1px solid rgba(34, 29, 24, 0.1);
+  border-top: 1px solid var(--border);
   border-left: 0;
 }
 
@@ -384,19 +390,19 @@ ol {
 .card,
 .contact-card-simple {
   background: var(--surface-card);
-  border: 1px solid rgba(34, 29, 24, 0.08);
+  border: 1px solid var(--border);
 }
 
 .article-card {
   background: rgba(255, 253, 249, 0.74);
-  border: 1px solid rgba(34, 29, 24, 0.07);
+  border: 1px solid var(--border);
 }
 
 .quote-card,
 .card-plain,
 .contact-note {
   background: var(--surface-muted);
-  border: 1px solid rgba(34, 29, 24, 0.07);
+  border: 1px solid var(--border);
 }
 
 .card,
@@ -427,7 +433,7 @@ ol {
 .mini-note-label {
   display: inline-block;
   margin-bottom: 8px;
-  color: var(--muted);
+  color: rgba(138, 118, 102, 0.86);
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -447,10 +453,10 @@ ol {
   align-items: center;
   min-height: 48px;
   padding: 0 22px;
-  border: 1px solid transparent;
+  border: 1px solid var(--button-primary-bg);
   border-radius: 999px;
-  background: var(--ink);
-  color: #f9f4ee;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
   font-size: 14px;
   letter-spacing: 0.06em;
   transition:
@@ -461,18 +467,22 @@ ol {
 
 .button:hover,
 .button:focus-visible {
+  background: var(--button-primary-hover);
+  border-color: var(--button-primary-hover);
   transform: translateY(-1px);
 }
 
 .button-secondary {
   background: transparent;
-  color: var(--ink);
-  border-color: var(--border-strong);
+  color: var(--button-secondary-text);
+  border-color: var(--button-secondary-border);
 }
 
 .button-secondary:hover,
 .button-secondary:focus-visible {
-  background: rgba(132, 107, 89, 0.08);
+  background: rgba(179, 158, 137, 0.12);
+  border-color: var(--button-secondary-border);
+  color: var(--button-secondary-text);
 }
 
 .text-link {
@@ -481,6 +491,11 @@ ol {
   gap: 8px;
   color: var(--accent);
   font-size: 14px;
+}
+
+.text-link:hover,
+.text-link:focus-visible {
+  color: var(--button-primary-hover);
 }
 
 .text-link::after {
@@ -577,7 +592,7 @@ ol {
   grid-column: span 2;
   padding: 42px 38px;
   border-radius: 30px;
-  border: 1px solid rgba(34, 29, 24, 0.12);
+  border: 1px solid var(--border);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.08) 38%, rgba(255, 252, 247, 0.98) 100%);
   box-shadow: var(--shadow-soft);
@@ -599,7 +614,7 @@ ol {
   left: 28px;
   right: 28px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(82, 100, 87, 0.48), rgba(132, 107, 89, 0.08));
+  background: linear-gradient(90deg, rgba(91, 106, 97, 0.52), rgba(91, 106, 97, 0));
 }
 
 .article-card-feature-main h3 {
@@ -641,7 +656,7 @@ ol {
   min-height: auto;
   padding: 20px 0 0;
   border: 0;
-  border-top: 1px solid rgba(34, 29, 24, 0.12);
+  border-top: 1px solid var(--border);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -716,10 +731,10 @@ ol {
   align-items: center;
   min-height: 28px;
   padding: 0 9px;
-  border: 1px solid rgba(34, 29, 24, 0.08);
+  border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255, 252, 247, 0.5);
-  color: rgba(109, 100, 91, 0.92);
+  background: rgba(216, 200, 180, 0.15);
+  color: rgba(138, 118, 102, 0.92);
   font-size: 11.5px;
   letter-spacing: 0.08em;
 }
@@ -799,13 +814,13 @@ ol {
 
 .theme-list a:hover,
 .theme-list a:focus-visible {
-  color: var(--ink);
-  border-color: var(--border-strong);
+  color: var(--accent);
+  border-color: var(--button-secondary-border);
 }
 
 .theme-status {
   margin-left: 8px;
-  color: var(--accent);
+  color: var(--accent-deep);
   font-size: 12px;
   letter-spacing: 0.08em;
 }
@@ -820,7 +835,7 @@ ol {
   display: inline-flex;
   align-items: center;
   min-height: 30px;
-  color: rgba(109, 100, 91, 0.8);
+  color: rgba(138, 118, 102, 0.78);
   font-size: 11.5px;
   letter-spacing: 0.06em;
 }
@@ -866,7 +881,7 @@ ol {
 .flow-card,
 .column-article-card {
   position: relative;
-  border-color: rgba(82, 100, 87, 0.14);
+  border-color: var(--border);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.12) 34%, var(--surface-axis) 100%);
   box-shadow: 0 18px 38px rgba(66, 46, 31, 0.045);
@@ -880,7 +895,7 @@ ol {
   left: 24px;
   right: 24px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(82, 100, 87, 0.48), rgba(132, 107, 89, 0.08));
+  background: linear-gradient(90deg, rgba(91, 106, 97, 0.52), rgba(91, 106, 97, 0));
 }
 
 .column-article-card::before {
@@ -890,7 +905,7 @@ ol {
   left: 24px;
   right: 24px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(82, 100, 87, 0.5), rgba(132, 107, 89, 0.1));
+  background: linear-gradient(90deg, rgba(91, 106, 97, 0.54), rgba(91, 106, 97, 0));
 }
 
 .article-intro {
@@ -908,7 +923,7 @@ ol {
   left: 0;
   bottom: 0.32em;
   width: 1px;
-  background: rgba(82, 100, 87, 0.2);
+  background: rgba(91, 106, 97, 0.26);
 }
 
 .project-core {
@@ -935,7 +950,7 @@ ol {
 .timeline-item {
   position: relative;
   padding: 22px 24px 22px 28px;
-  border-left: 2px solid rgba(82, 100, 87, 0.25);
+  border-left: 2px solid rgba(91, 106, 97, 0.26);
   background: rgba(255, 252, 247, 0.72);
   border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
 }
@@ -948,7 +963,7 @@ ol {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--accent-deep);
+  background: var(--accent);
 }
 
 .timeline-year {
@@ -1037,7 +1052,7 @@ ol {
 
 .footer-links a:hover,
 .footer-links a:focus-visible {
-  color: var(--ink);
+  color: var(--accent);
 }
 
 .redirect-shell {
@@ -1090,7 +1105,7 @@ ol {
   flex-direction: column;
   gap: 6px;
   padding: 12px 14px;
-  border: 1px solid rgba(82, 100, 87, 0.12);
+  border: 1px solid var(--border);
   border-radius: 16px;
   background: rgba(255, 252, 247, 0.54);
   color: var(--ink);
@@ -1102,7 +1117,7 @@ ol {
 
 a.taxonomy-chip:hover,
 a.taxonomy-chip:focus-visible {
-  border-color: rgba(82, 100, 87, 0.28);
+  border-color: rgba(91, 106, 97, 0.34);
   color: var(--ink);
   transform: translateY(-1px);
 }
@@ -1133,9 +1148,9 @@ a.taxonomy-chip:focus-visible {
 .article-header .meta-pill {
   min-height: 24px;
   padding: 0 8px;
-  border: 1px solid rgba(34, 29, 24, 0.08);
+  border: 1px solid var(--border);
   background: transparent;
-  color: var(--muted);
+  color: var(--accent-deep);
   letter-spacing: 0.06em;
 }
 
@@ -1187,7 +1202,7 @@ a.taxonomy-chip:focus-visible {
 .article-prose blockquote {
   margin: 22px 0 0;
   padding: 18px 20px;
-  border-left: 2px solid rgba(82, 100, 87, 0.4);
+  border-left: 2px solid rgba(91, 106, 97, 0.34);
   background: rgba(255, 252, 247, 0.76);
   color: var(--accent-deep);
   border-radius: 0 18px 18px 0;
@@ -1226,7 +1241,7 @@ a.taxonomy-chip:focus-visible {
 
 .topic-page .tag-cloud span {
   background: transparent;
-  border-color: rgba(34, 29, 24, 0.08);
+  border-color: var(--border);
 }
 
 .article-aside {
@@ -1247,12 +1262,12 @@ a.taxonomy-chip:focus-visible {
 }
 
 .article-list a {
-  color: var(--muted);
+  color: var(--accent-deep);
 }
 
 .article-list a:hover,
 .article-list a:focus-visible {
-  color: var(--ink);
+  color: var(--accent);
 }
 
 .poem {
@@ -1382,10 +1397,10 @@ a.taxonomy-chip:focus-visible {
     margin-left: auto;
     min-height: 32px;
     padding: 0 11px;
-    border: 1px solid rgba(34, 29, 24, 0.16);
+    border: 1px solid var(--button-secondary-border);
     border-radius: 999px;
     background: rgba(255, 253, 249, 0.58);
-    color: var(--ink);
+    color: var(--button-secondary-text);
     font: inherit;
     font-size: 12px;
     letter-spacing: 0.08em;
@@ -1398,8 +1413,8 @@ a.taxonomy-chip:focus-visible {
 
   .js-nav-ready .site-header.nav-mobile-ready .nav-toggle:hover,
   .js-nav-ready .site-header.nav-mobile-ready .nav-toggle:focus-visible {
-    background: rgba(132, 107, 89, 0.08);
-    border-color: rgba(34, 29, 24, 0.24);
+    background: rgba(179, 158, 137, 0.12);
+    border-color: var(--button-secondary-border);
     outline: none;
   }
 
@@ -1521,7 +1536,7 @@ a.taxonomy-chip:focus-visible {
     min-height: 34px;
     padding: 7px 2px;
     color: var(--muted);
-    border-bottom: 1px solid rgba(34, 29, 24, 0.07);
+    border-bottom: 1px solid var(--border);
   }
 
   .js-nav-ready .site-header.nav-mobile-ready .site-nav a:last-child {
