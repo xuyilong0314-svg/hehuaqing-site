@@ -458,17 +458,20 @@ ol {
   background: var(--button-primary-bg);
   color: var(--button-primary-text);
   font-size: 14px;
+  font-weight: 500;
   letter-spacing: 0.06em;
   transition:
     transform 180ms ease,
     background 180ms ease,
-    border-color 180ms ease;
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .button:hover,
 .button:focus-visible {
   background: var(--button-primary-hover);
   border-color: var(--button-primary-hover);
+  box-shadow: 0 10px 22px rgba(68, 82, 72, 0.12);
   transform: translateY(-1px);
 }
 
@@ -489,13 +492,22 @@ ol {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  width: fit-content;
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
   color: var(--accent);
   font-size: 14px;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    gap 180ms ease;
 }
 
 .text-link:hover,
 .text-link:focus-visible {
   color: var(--button-primary-hover);
+  border-color: rgba(91, 106, 97, 0.28);
+  gap: 10px;
 }
 
 .text-link::after {
@@ -749,6 +761,17 @@ ol {
   gap: 10px;
 }
 
+.article-card h3 a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  transition:
+    color 180ms ease,
+    text-decoration-color 180ms ease;
+}
+
 .identity-card,
 .narrative-card,
 .focus-card,
@@ -765,6 +788,7 @@ ol {
 .article-card h3 a:hover,
 .article-card h3 a:focus-visible {
   color: var(--accent);
+  text-decoration-color: rgba(91, 106, 97, 0.34);
 }
 
 .article-card .text-link {
@@ -800,22 +824,39 @@ ol {
   margin-top: 4px;
 }
 
-.theme-list a,
 .theme-list span {
   display: block;
   padding: 11px 13px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(216, 200, 180, 0.52);
   border-radius: 16px;
-  background: rgba(255, 252, 247, 0.58);
-  color: rgba(109, 100, 91, 0.9);
+  background: rgba(255, 252, 247, 0.44);
+  color: rgba(109, 100, 91, 0.78);
   font-size: 13px;
   line-height: 1.76;
+}
+
+.theme-list a {
+  display: block;
+  padding: 11px 13px;
+  border: 1px solid rgba(179, 158, 137, 0.54);
+  border-radius: 16px;
+  background: rgba(255, 252, 247, 0.74);
+  color: var(--button-secondary-text);
+  font-size: 13px;
+  line-height: 1.76;
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
 }
 
 .theme-list a:hover,
 .theme-list a:focus-visible {
   color: var(--accent);
   border-color: var(--button-secondary-border);
+  background: rgba(255, 252, 247, 0.92);
+  transform: translateY(-1px);
 }
 
 .theme-status {
@@ -1105,19 +1146,22 @@ ol {
   flex-direction: column;
   gap: 6px;
   padding: 12px 14px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(216, 200, 180, 0.72);
   border-radius: 16px;
-  background: rgba(255, 252, 247, 0.54);
+  background: rgba(255, 252, 247, 0.62);
   color: var(--ink);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
-    background 180ms ease;
+    background 180ms ease,
+    box-shadow 180ms ease;
 }
 
 a.taxonomy-chip:hover,
 a.taxonomy-chip:focus-visible {
-  border-color: rgba(91, 106, 97, 0.34);
+  border-color: var(--button-secondary-border);
+  background: rgba(255, 252, 247, 0.88);
+  box-shadow: 0 10px 24px rgba(66, 46, 31, 0.06);
   color: var(--ink);
   transform: translateY(-1px);
 }
@@ -1262,12 +1306,35 @@ a.taxonomy-chip:focus-visible {
 }
 
 .article-list a {
-  color: var(--accent-deep);
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid rgba(179, 158, 137, 0.46);
+  border-radius: 14px;
+  background: rgba(255, 252, 247, 0.62);
+  color: var(--button-secondary-text);
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
 }
 
 .article-list a:hover,
 .article-list a:focus-visible {
   color: var(--accent);
+  border-color: var(--button-secondary-border);
+  background: rgba(255, 252, 247, 0.88);
+  transform: translateY(-1px);
+}
+
+.button:focus-visible,
+.text-link:focus-visible,
+.article-card h3 a:focus-visible,
+.theme-list a:focus-visible,
+a.taxonomy-chip:focus-visible,
+.article-list a:focus-visible {
+  outline: 2px solid rgba(91, 106, 97, 0.18);
+  outline-offset: 3px;
 }
 
 .poem {
@@ -1660,6 +1727,10 @@ a.taxonomy-chip:focus-visible {
     padding: 10px 11px;
     font-size: 12.5px;
     line-height: 1.68;
+  }
+
+  .article-list a {
+    padding: 9px 11px;
   }
 
   .lead,
