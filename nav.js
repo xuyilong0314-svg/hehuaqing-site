@@ -3,7 +3,9 @@
   const currentPath = window.location.pathname;
   const isNestedPage = /\/(?:articles|poetry)\//.test(currentPath);
   const poetryHref = `${isNestedPage ? "../" : "./"}poetry.html`;
+  const searchHref = `${isNestedPage ? "../" : "./"}search.html`;
   const isPoetryPage = /\/poetry(?:\.html)?$/.test(currentPath) || /\/poetry\/[^/]+\.html$/.test(currentPath);
+  const isSearchPage = /\/search(?:\.html)?$/.test(currentPath);
 
   document.documentElement.classList.add("js-nav-ready");
 
@@ -38,6 +40,28 @@
 
     if (isPoetryPage) {
       poetryLink.classList.add("is-active");
+    }
+
+    let searchLink = navLinks.find((link) => /(?:^|\/)search\.html$/.test(link.getAttribute("href") || ""));
+
+    if (!searchLink) {
+      searchLink = document.createElement("a");
+      searchLink.href = searchHref;
+      searchLink.textContent = "搜索";
+
+      const projectsLink = Array.from(nav.querySelectorAll("a")).find((link) =>
+        /(?:^|\/)projects\.html$/.test(link.getAttribute("href") || ""),
+      );
+
+      if (projectsLink) {
+        nav.insertBefore(searchLink, projectsLink);
+      } else {
+        nav.appendChild(searchLink);
+      }
+    }
+
+    if (isSearchPage) {
+      searchLink.classList.add("is-active");
     }
 
     header.classList.add("nav-mobile-ready");

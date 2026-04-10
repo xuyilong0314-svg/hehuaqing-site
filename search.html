@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>搜索｜何华清｜愿景思维</title>
+    <meta
+      name="description"
+      content="在文章、诗集与六艺相关页面中搜索：从一个词进入，去寻找与你此刻有关的文章、诗句与页面。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .search-card {
+        display: grid;
+        gap: 14px;
+      }
+
+      .search-input {
+        width: 100%;
+        min-height: 56px;
+        padding: 0 18px;
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        background: rgba(255, 252, 247, 0.88);
+        color: var(--ink);
+        font: inherit;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .search-input::placeholder {
+        color: rgba(138, 118, 102, 0.72);
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--button-secondary-border);
+        box-shadow: 0 0 0 4px rgba(179, 158, 137, 0.14);
+      }
+
+      .search-status {
+        min-height: 1.8em;
+      }
+
+      .search-result-list {
+        display: grid;
+        gap: 18px;
+        max-width: 920px;
+      }
+
+      .search-result-card {
+        gap: 12px;
+      }
+
+      .search-result-snippet {
+        color: var(--muted);
+      }
+
+      .search-result-snippet mark {
+        padding: 0 0.08em;
+        background: rgba(216, 200, 180, 0.42);
+        color: inherit;
+      }
+
+      .search-empty-state {
+        max-width: 920px;
+      }
+
+      @media (max-width: 700px) {
+        .search-card {
+          gap: 12px;
+        }
+
+        .search-input {
+          min-height: 52px;
+          padding: 0 16px;
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="site-shell article-page">
+      <header class="site-header">
+        <a class="brand" href="./index.html" aria-label="何华清｜愿景思维">
+          <span class="brand-name">何华清</span>
+          <span class="brand-subtitle">愿景思维</span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+          <a href="./index.html">首页</a>
+          <a href="./about.html">关于</a>
+          <a href="./liuyi.html">六艺</a>
+          <a href="./vision.html">愿景思维</a>
+          <a href="./articles.html">文章</a>
+          <a href="./projects.html">课程 / 项目</a>
+          <a href="./contact.html">联系</a>
+        </nav>
+      </header>
+
+      <main class="page-main" data-pagefind-ignore="all">
+        <section class="article-header reveal">
+          <div class="breadcrumbs">
+            <a href="./index.html">首页</a>
+            <span>/</span>
+            <span>搜索</span>
+          </div>
+          <div class="eyebrow">搜索</div>
+          <h1 class="page-title">搜索</h1>
+          <p class="page-subtitle">从一个词进入，去寻找与你此刻有关的文章、诗句与页面。</p>
+        </section>
+
+        <section class="section section-condensed reveal">
+          <div class="card card-wide search-card">
+            <label class="mini-note-label" for="site-search-input">关键词</label>
+            <input
+              id="site-search-input"
+              class="search-input"
+              type="search"
+              inputmode="search"
+              autocomplete="off"
+              placeholder="输入关键词，如：愿景、家庭、时间、光"
+              aria-describedby="search-default-note"
+            />
+            <p class="section-intro" id="search-default-note">
+              搜索会覆盖文章、诗集分卷与六艺相关页面。你不必输入完整标题，从一个词开始就可以。
+            </p>
+          </div>
+        </section>
+
+        <section class="section reveal" aria-live="polite">
+          <div class="section-header section-header-narrow">
+            <div class="eyebrow">Search</div>
+            <h2 class="section-title">搜索结果</h2>
+            <p class="section-intro search-status" id="search-status">输入一个词，搜索结果会出现在这里。</p>
+          </div>
+
+          <div class="mini-note search-empty-state" id="search-empty" hidden>
+            <span class="mini-note-label">暂时没有结果</span>
+            <p>暂时没有找到与你输入更接近的内容。</p>
+            <p>可以换一个更短的词，或试试题目中的核心词语。</p>
+          </div>
+
+          <div class="search-result-list" id="search-results"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div>
+          <strong>何华清｜愿景思维</strong>
+          <p>从一个词进入，也许会遇见一篇文章，一组诗，或一条原本正好走向你的线。</p>
+        </div>
+        <div class="footer-links">
+          <a href="./articles.html">文章</a>
+          <a href="./poetry.html">诗集</a>
+          <a href="./liuyi.html">六艺</a>
+          <a href="./index.html">回首页</a>
+        </div>
+      </footer>
+    </div>
+    <script src="./nav.js"></script>
+    <script type="module" src="./search.js?v=20260410-3"></script>
+  </body>
+</html>
