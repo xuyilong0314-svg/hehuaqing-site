@@ -1,5 +1,9 @@
 (() => {
   const mobileQuery = window.matchMedia("(max-width: 700px)");
+  const currentPath = window.location.pathname;
+  const isNestedPage = /\/(?:articles|poetry)\//.test(currentPath);
+  const poetryHref = `${isNestedPage ? "../" : "./"}poetry.html`;
+  const isPoetryPage = /\/poetry(?:\.html)?$/.test(currentPath) || /\/poetry\/[^/]+\.html$/.test(currentPath);
 
   document.documentElement.classList.add("js-nav-ready");
 
@@ -10,6 +14,31 @@
   headers.forEach((header, index) => {
     const nav = header.querySelector(".site-nav");
     if (!nav) return;
+
+    const navLinks = Array.from(nav.querySelectorAll("a"));
+    let poetryLink = navLinks.find((link) => /(?:^|\/)poetry\.html$/.test(link.getAttribute("href") || ""));
+
+    if (!poetryLink) {
+      poetryLink = document.createElement("a");
+      poetryLink.href = poetryHref;
+      poetryLink.textContent = "诗集";
+
+      const articlesLink = navLinks.find((link) => /(?:^|\/)articles\.html$/.test(link.getAttribute("href") || ""));
+      const insertBeforeTarget =
+        articlesLink?.nextElementSibling && articlesLink.nextElementSibling.tagName === "A"
+          ? articlesLink.nextElementSibling
+          : null;
+
+      if (insertBeforeTarget) {
+        nav.insertBefore(poetryLink, insertBeforeTarget);
+      } else {
+        nav.appendChild(poetryLink);
+      }
+    }
+
+    if (isPoetryPage) {
+      poetryLink.classList.add("is-active");
+    }
 
     header.classList.add("nav-mobile-ready");
 
