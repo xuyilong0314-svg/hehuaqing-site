@@ -9,6 +9,54 @@
 
   document.documentElement.classList.add("js-nav-ready");
 
+  const addTonightArticle = () => {
+    if (!/(?:^|\/)articles(?:\.html)?$/.test(currentPath)) return;
+    if (document.querySelector('a[href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html"]')) return;
+
+    document.querySelectorAll(".theme-card").forEach((card) => {
+      if (card.querySelector("h3")?.textContent.trim() !== "社会关系") return;
+      const count = card.querySelector(".theme-list span");
+      if (count) count.textContent = "已上线 4 篇";
+    });
+
+    document.querySelectorAll(".section-intro").forEach((intro) => {
+      intro.textContent = intro.textContent.replace("当前网站已上线 37 篇文章", "当前网站已上线 38 篇文章");
+    });
+
+    const thoughtLink = document.createElement("a");
+    thoughtLink.href = "./articles/jin-ye-wo-men-shen-qing-xiang-yi.html";
+    thoughtLink.textContent = "今晚，我们深情相依：在关系里练习自他相换";
+
+    const kernelList = Array.from(document.querySelectorAll(".grid-three .card")).find((card) =>
+      card.querySelector(".meta-pill")?.textContent.trim() === "核",
+    )?.querySelector(".theme-list");
+    const afterCircleLink = kernelList?.querySelector('a[href="./articles/huan-quan-zi-gai-bu-liao-ming.html"]');
+    if (kernelList && afterCircleLink) {
+      afterCircleLink.insertAdjacentElement("afterend", thoughtLink);
+    }
+
+    const socialGrid = document.querySelector("#liuyi-social .article-grid");
+    const afterCircleCard = socialGrid?.querySelector('a[href="./articles/huan-quan-zi-gai-bu-liao-ming.html"]')?.closest("article");
+    if (!socialGrid || !afterCircleCard) return;
+
+    const card = document.createElement("article");
+    card.className = "article-card column-article-card";
+    card.innerHTML = `
+                <div class="label-row">
+                  <span class="article-meta">一周一会</span>
+                  <span class="card-axis">六艺 · 社会关系</span>
+                  <span class="card-axis">元核形 · 核</span>
+                </div>
+                <h3><a href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html">今晚，我们深情相依：在关系里练习自他相换</a></h3>
+                <p class="article-intro">导语：真正的深情，是在关系里练习理解他人，也把自己从旧情绪里解放出来。</p>
+                <p>自他相换不是一个技巧，而是一种愿意看见彼此、也愿意回到当下的生命姿态。</p>
+                <a class="text-link" href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html">阅读全文</a>
+              `;
+    afterCircleCard.insertAdjacentElement("afterend", card);
+  };
+
+  addTonightArticle();
+
   const headers = Array.from(document.querySelectorAll(".site-header")).filter((header) =>
     header.querySelector(".site-nav"),
   );
