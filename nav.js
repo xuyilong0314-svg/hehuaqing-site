@@ -9,39 +9,50 @@
 
   document.documentElement.classList.add("js-nav-ready");
 
-  const addTonightArticle = () => {
+  const addArticleBackfills = () => {
     if (!/(?:^|\/)articles(?:\.html)?$/.test(currentPath)) return;
-    if (document.querySelector('a[href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html"]')) return;
 
     document.querySelectorAll(".theme-card").forEach((card) => {
       if (card.querySelector("h3")?.textContent.trim() !== "社会关系") return;
       const count = card.querySelector(".theme-list span");
-      if (count) count.textContent = "已上线 4 篇";
+      if (count) count.textContent = "已上线 5 篇";
     });
 
     document.querySelectorAll(".section-intro").forEach((intro) => {
-      intro.textContent = intro.textContent.replace("当前网站已上线 37 篇文章", "当前网站已上线 38 篇文章");
+      intro.textContent = intro.textContent
+        .replace("当前网站已上线 37 篇文章", "当前网站已上线 39 篇文章")
+        .replace("当前网站已上线 38 篇文章", "当前网站已上线 39 篇文章");
     });
-
-    const thoughtLink = document.createElement("a");
-    thoughtLink.href = "./articles/jin-ye-wo-men-shen-qing-xiang-yi.html";
-    thoughtLink.textContent = "今晚，我们深情相依：在关系里练习自他相换";
 
     const kernelList = Array.from(document.querySelectorAll(".grid-three .card")).find((card) =>
       card.querySelector(".meta-pill")?.textContent.trim() === "核",
     )?.querySelector(".theme-list");
     const afterCircleLink = kernelList?.querySelector('a[href="./articles/huan-quan-zi-gai-bu-liao-ming.html"]');
-    if (kernelList && afterCircleLink) {
+
+    if (kernelList && afterCircleLink && !kernelList.querySelector('a[href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html"]')) {
+      const thoughtLink = document.createElement("a");
+      thoughtLink.href = "./articles/jin-ye-wo-men-shen-qing-xiang-yi.html";
+      thoughtLink.textContent = "今晚，我们深情相依：在关系里练习自他相换";
       afterCircleLink.insertAdjacentElement("afterend", thoughtLink);
+    }
+
+    const afterTonightLink =
+      kernelList?.querySelector('a[href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html"]') || afterCircleLink;
+    if (kernelList && afterTonightLink && !kernelList.querySelector('a[href="./articles/wei-le-gao-bie-de-ju-hui.html"]')) {
+      const goodbyeLink = document.createElement("a");
+      goodbyeLink.href = "./articles/wei-le-gao-bie-de-ju-hui.html";
+      goodbyeLink.textContent = "为了告别的聚会：让相遇完整，也让结束完整";
+      afterTonightLink.insertAdjacentElement("afterend", goodbyeLink);
     }
 
     const socialGrid = document.querySelector("#liuyi-social .article-grid");
     const afterCircleCard = socialGrid?.querySelector('a[href="./articles/huan-quan-zi-gai-bu-liao-ming.html"]')?.closest("article");
     if (!socialGrid || !afterCircleCard) return;
 
-    const card = document.createElement("article");
-    card.className = "article-card column-article-card";
-    card.innerHTML = `
+    if (!socialGrid.querySelector('a[href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html"]')) {
+      const card = document.createElement("article");
+      card.className = "article-card column-article-card";
+      card.innerHTML = `
                 <div class="label-row">
                   <span class="article-meta">一周一会</span>
                   <span class="card-axis">六艺 · 社会关系</span>
@@ -52,10 +63,31 @@
                 <p>自他相换不是一个技巧，而是一种愿意看见彼此、也愿意回到当下的生命姿态。</p>
                 <a class="text-link" href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html">阅读全文</a>
               `;
-    afterCircleCard.insertAdjacentElement("afterend", card);
+      afterCircleCard.insertAdjacentElement("afterend", card);
+    }
+
+    const afterTonightCard =
+      socialGrid.querySelector('a[href="./articles/jin-ye-wo-men-shen-qing-xiang-yi.html"]')?.closest("article") ||
+      afterCircleCard;
+    if (afterTonightCard && !socialGrid.querySelector('a[href="./articles/wei-le-gao-bie-de-ju-hui.html"]')) {
+      const card = document.createElement("article");
+      card.className = "article-card column-article-card";
+      card.innerHTML = `
+                <div class="label-row">
+                  <span class="article-meta">诗文整理</span>
+                  <span class="card-axis">六艺 · 社会关系</span>
+                  <span class="card-axis">元核形 · 核</span>
+                </div>
+                <h3><a href="./articles/wei-le-gao-bie-de-ju-hui.html">为了告别的聚会：让相遇完整，也让结束完整</a></h3>
+                <p class="article-intro">导语：我们一直在告别，真正成熟的关系，是勇于让它发生，也坦然让它结束。</p>
+                <p>相遇会结束，但它唤醒的光，可以继续留在生命里。</p>
+                <a class="text-link" href="./articles/wei-le-gao-bie-de-ju-hui.html">阅读全文</a>
+              `;
+      afterTonightCard.insertAdjacentElement("afterend", card);
+    }
   };
 
-  addTonightArticle();
+  addArticleBackfills();
 
   const headers = Array.from(document.querySelectorAll(".site-header")).filter((header) =>
     header.querySelector(".site-nav"),
