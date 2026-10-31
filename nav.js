@@ -4,6 +4,7 @@
   const isNestedPage = /\/(?:articles|poetry)\//.test(currentPath);
   const poetryHref = `${isNestedPage ? "../" : "./"}poetry.html`;
   const searchHref = `${isNestedPage ? "../" : "./"}search.html`;
+  const tcmHref = `${isNestedPage ? "../" : "./"}zhongyi/`;
   const isPoetryPage = /\/poetry(?:\.html)?$/.test(currentPath) || /\/poetry\/[^/]+\.html$/.test(currentPath);
   const isSearchPage = /\/search(?:\.html)?$/.test(currentPath);
 
@@ -144,6 +145,17 @@
       searchLink.classList.add("is-active");
     }
 
+    if (!nav.querySelector('a[data-section="zhongyi"]')) {
+      const tcmLink = document.createElement("a");
+      tcmLink.href = tcmHref;
+      tcmLink.textContent = "中医";
+      tcmLink.dataset.section = "zhongyi";
+      const projectsLink = Array.from(nav.querySelectorAll("a")).find((link) =>
+        /(?:^|\/)projects\.html$/.test(link.getAttribute("href") || ""),
+      );
+      nav.insertBefore(tcmLink, projectsLink || null);
+    }
+
     header.classList.add("nav-mobile-ready");
 
     const button = document.createElement("button");
@@ -234,3 +246,4 @@
     applyState();
   });
 })();
+
