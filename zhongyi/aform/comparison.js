@@ -1,0 +1,38 @@
+import {STAGES,ITEMS,esc,stageName,addDays} from './core.js';
+
+export function score(value){return typeof value==='number'&&Number.isFinite(value)&&value>=1&&value<=5?value:null;}
+export function scoreChanges(current,reference){return ITEMS.map(([key,label])=>{const value=score(current?.data?.ratings?.[key]),before=score(reference?.data?.ratings?.[key]);return {key,label,value,before,delta:value!==null&&before!==null?value-before:null};});}
+const stageOrder=s=>STAGES.indexOf(Number(String(s).slice(1)))+1||99;
+export function caseTimeline(caseId,observations=[],photos=[]){
+ const ownPhotos=photos.filter(p=>p.case_id===caseId);
+ return observations.filter(o=>o.case_id===caseId).map(o=>({...o,photos:ownPhotos.filter(p=>p.stage===o.stage).sort((a,b)=>String(a.taken_on||'').localeCompare(String(b.taken_on||''))||String(a.created_at||a.id).localeCompare(String(b.created_at||b.id)))}))
+ .sort((a,b)=>String(a.actual_date||'9999').localeCompare(String(b.actual_date||'9999'))||stageOrder(a.stage)-stageOrder(b.stage)||String(a.id).localeCompare(String(b.id)));
+}
+export function comparisonAt(timeline,selectedId){
+ const selected=timeline.find(o=>o.id===selectedId)||timeline.filter(o=>o.status==='submitted').at(-1)||timeline.at(-1)||null;
+ const index=timeline.indexOf(selected),earlier=timeline.slice(0,index).filter(o=>o.status==='submitted');
+ const baseline=earlier[0]||selected,previous=earlier.at(-1)||null;
+ return {selected,baseline,previous,vsFirst:scoreChanges(selected,baseline===selected?null:baseline),vsPrevious:scoreChanges(selected,previous)};
+}
+const date=v=>v?esc(v.replaceAll('-','.')):'未记录';
+const link=(c,o)=>'#/case/'+encodeURIComponent(c.id)+'/compare'+(o?'?visit='+encodeURIComponent(o.id):'');
+const deltaText=d=>d===null?'—':d===0?'持平':(d>0?'+':'')+d;
+const deltaHTML=d=>'<span class="score-delta '+(d===null?'missing':d>0?'higher':d<0?'lower':'same')+'">'+deltaText(d)+'</span>';
+function picture(p,url,alt){const src=p&&url(p);return src?'<img src="'+esc(src)+'" alt="'+esc(alt)+'" data-zoom="'+esc(src)+'" loading="lazy">':'<div class="comparison-no-photo">'+(p?'照片暂未载入':'本次未上传照片')+'</div>';}
+function visitPhotos(visit,url,label){return '<figure class="visit-photos"><figcaption><strong>'+label+'</strong><span>'+date(visit?.actual_date)+(visit?' · '+esc(stageName(visit.stage)):'')+'</span></figcaption>'+(!visit?'<div class="comparison-no-photo">尚无上次记录</div>':visit.photos.length?'<div class="visit-photo-stack">'+visit.photos.map((p,i)=>'<div>'+picture(p,url,label+'照片 '+(i+1))+'<small>拍摄 '+date(p.taken_on)+' · '+esc(p.file_no||'照片 '+(i+1))+'</small></div>').join('')+'</div>':picture(null,url,label))+'</figure>';}
+
+export function comparisonDetail(c,timeline,url,trendHTML,selectedId){
+ const {selected,baseline,previous,vsFirst,vsPrevious}=comparisonAt(timeline,selectedId);
+ const submitted=timeline.filter(o=>o.status==='submitted'),done=new Set(submitted.map(o=>o.stage));
+ const head='<section class="comparison-heading"><div><div class="eyebrow">21-DAY OBSERVATION JOURNEY</div><h2>21天观察对照</h2><p>每次保存后自动整理照片与评分，点选任意一次，回看当时的变化。</p></div><span class="badge outline">'+done.size+' / 5 个阶段已提交</span></section>';
+ const stages='<nav class="comparison-stages" aria-label="21天观察阶段">'+STAGES.map(n=>{const o=timeline.find(v=>v.stage==='d'+n);return o?'<a href="'+link(c,o)+'" class="'+(o.id===selected?.id?'selected ':'')+(o.status==='submitted'?'done':'draft')+'"><strong>第'+n+'天</strong><small>'+date(o.actual_date?.slice(5))+'</small><em>'+(o.status==='submitted'?'已提交':'草稿')+'</em></a>':'<a href="#/case/'+esc(c.id)+'?stage=d'+n+'"><strong>第'+n+'天</strong><small>'+date(addDays(c.created_on,n-1).slice(5))+'</small><em>待记录</em></a>';}).join('')+'</nav>';
+ if(!selected)return head+stages+'<div class="panel empty"><h3>从首次观察开始</h3><p>保存评分或照片后，这里就会生成对照。不必等到第21天。</p><a class="btn" href="#/case/'+esc(c.id)+'?stage=d1">填写首次观察</a></div>';
+ const rows=vsFirst.map((r,i)=>'<tr><th scope="row">'+r.label+'</th><td>'+(score(baseline?.data?.ratings?.[r.key])??'—')+'</td><td>'+(score(previous?.data?.ratings?.[r.key])??'—')+'</td><td><b>'+(r.value??'—')+'</b></td><td>'+deltaHTML(r.delta)+'</td><td>'+deltaHTML(vsPrevious[i].delta)+'</td></tr>').join('');
+ return head+stages+'<section class="panel comparison-panel"><div class="comparison-toolbar"><div><h3>查看这次跟进</h3><p class="small muted">'+(selected.status==='draft'?'本次为草稿，提交后纳入正式趋势。':'已提交 · 照片与五项体感同步归档')+'</p></div><label class="visit-select">记录日期<select aria-label="选择要对照的观察" id="comparison-visit">'+timeline.map(o=>'<option value="'+esc(o.id)+'"'+(o.id===selected.id?' selected':'')+'>'+date(o.actual_date)+' · '+esc(stageName(o.stage))+(o.status==='draft'?'（草稿）':'')+'</option>').join('')+'</select></label></div><div class="visit-comparison">'+visitPhotos(baseline,url,'首次')+visitPhotos(previous,url,'上次')+visitPhotos(selected,url,'本次')+'</div><p class="small muted comparison-note">点击照片可放大；每次照片全部保留。尽量保持光线、角度和拍摄时间一致。</p><div class="score-table-wrap"><table class="score-table"><caption>五项体感评分对照</caption><thead><tr><th>项目</th><th>首次</th><th>上次</th><th>本次</th><th>较首次</th><th>较上次</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="small muted mb">1 差 · 5 很好。未评显示“—”，不计算差值。首次与上次以已提交记录为准。</p>'+(selected.data?.quote?'<blockquote class="observation-quote"><span>本次本人反馈</span><p>'+esc(selected.data.quote)+'</p></blockquote>':'')+'<a class="btn secondary tiny" href="#/case/'+esc(c.id)+'?stage='+esc(selected.stage)+'">查看这次完整记录 ↗</a></section><section class="panel comparison-panel"><div class="section-head"><div><div class="eyebrow">RECORDED OVER TIME</div><h2>五项体感趋势</h2></div><span class="badge outline">'+submitted.length+' 次已提交</span></div>'+trendHTML+'</section><section class="panel comparison-panel"><h2>每一次，都有对照</h2><div class="comparison-history">'+timeline.map((o,i)=>{const at=comparisonAt(timeline,o.id);return '<a href="'+link(c,o)+'" class="history-visit '+(selected.id===o.id?'selected':'')+'"><div class="row between"><strong>'+date(o.actual_date)+' · '+esc(stageName(o.stage))+'</strong><span class="badge outline">'+(o.status==='submitted'?'已提交':'草稿')+'</span></div><div class="history-score-row">'+at.vsPrevious.map(r=>'<span>'+r.label+' <b>'+(r.value??'—')+'</b> '+deltaHTML(r.delta)+'</span>').join('')+'</div><small>'+o.photos.length+' 张照片 · '+(at.previous?'差值与上次已提交记录相比':'首次留存，后续自动形成对照')+' ↗</small></a>';}).join('')+'</div></section><p class="small muted">照片用于观察，评分来自本人记录；这些差值不代表诊断或疗效。</p>';
+}
+
+export function comparisonCards(records,observations,photos,url){return records.map(c=>{
+ const timeline=caseTimeline(c.id,observations,photos),{selected,baseline,vsFirst}=comparisonAt(timeline);
+ const done=new Set(timeline.filter(o=>o.status==='submitted').map(o=>o.stage));
+ return '<a class="comparison-card" href="'+link(c)+'" data-comparison-search="'+esc([c.name,c.code,c.class_name,c.partner_name].join(' ').toLowerCase())+'"><div class="row between"><div><h3>'+esc(c.name)+'</h3><small>'+esc(c.code)+' · '+(c.kind==='self'?'本人记录':'服务对象')+'</small></div><span class="badge '+(done.size===5?'gold':'outline')+'">'+done.size+'/5 阶段</span></div><div class="overview-photo-pair"><figure>'+picture(baseline?.photos[0],url,'首次观察照片')+'<figcaption>首次 · '+date(baseline?.actual_date?.slice(5))+'</figcaption></figure><figure>'+picture(selected?.photos[0],url,'最新观察照片')+'<figcaption>最新 · '+date(selected?.actual_date?.slice(5))+(selected?.status==='draft'?'（草稿）':'')+'</figcaption></figure></div><div class="overview-scores">'+vsFirst.map(r=>'<span>'+r.label+'<b>'+(r.value??'—')+'</b>'+deltaHTML(r.delta)+'</span>').join('')+'</div><footer><span>'+(selected?'当前分数 / 较首次变化':'保存首次观察后生成对照')+'</span><strong>查看完整对照 ↗</strong></footer></a>';
+}).join('');}

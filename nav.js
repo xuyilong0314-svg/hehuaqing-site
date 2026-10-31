@@ -1,4 +1,7 @@
 (() => {
+  const navStyle = document.createElement("style");
+  navStyle.textContent = ".site-nav .nav-featured,.site-nav .nav-main-group,.site-nav .nav-utility-group{display:contents}.site-nav .nav-description{display:none}\n@media(max-width:700px){\nhtml.js-nav-ready .site-header.nav-mobile-ready{position:relative;z-index:40;border-radius:14px;padding:14px 18px;min-height:66px;box-shadow:none;background:#fffdf7;border-color:#d9ddd2}\nhtml.js-nav-ready .site-header.nav-mobile-ready .brand-name{font-family:'Songti SC','STSong',serif;font-size:25px;line-height:1.2;letter-spacing:.08em;color:#173e34}\nhtml.js-nav-ready .site-header.nav-mobile-ready .nav-toggle{min-width:62px;min-height:38px;border:1px solid #c5d0bf;border-radius:7px;font-size:12px;background:#f4f5ed;color:#254c3e;letter-spacing:.08em}\nhtml.js-nav-ready .site-header.nav-mobile-ready .nav-toggle:focus-visible{outline:2px solid #947b4d;outline-offset:3px}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav{position:absolute;top:calc(100% + 8px);left:-1px;right:-1px;width:auto;margin:0;padding:18px;border:1px solid #d9ddd2;border-radius:14px;background:#fffdf7;box-shadow:0 16px 32px #263c2d18;display:grid;grid-template-columns:1fr;gap:18px;max-height:min(590px,72svh);overflow:auto;overscroll-behavior:contain}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav .nav-featured{display:grid;grid-template-columns:1fr 1fr;gap:10px}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav .nav-main-group{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px 9px;padding:3px 0}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav .nav-utility-group{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;border-top:1px solid #e1e4d9;padding-top:12px}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav a{display:flex;align-items:center;justify-content:center;min-height:48px;padding:8px 4px;border:0;border-radius:6px;font-size:14px;line-height:1.6;color:#354c3f;white-space:normal;text-align:center;letter-spacing:0}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav .nav-featured a{display:block;text-align:left;padding:18px 14px;min-height:90px;background:#e8eddf;color:#173e34;font:600 21px/1.3 'Songti SC','STSong',serif;border:1px solid #d5dec9;border-radius:9px}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav .nav-featured a[data-section=\"books\"]{background:#f2edde;border-color:#e3dac4;color:#615134}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav .nav-description{display:block;margin-top:10px;color:#5e6d55;font:11px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;letter-spacing:0}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav .nav-utility-group a{font-size:12px;min-height:40px;color:#61705f}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav a.is-active{background:#eef2e7;color:#173e34;font-weight:600}\nhtml.js-nav-ready .site-header.nav-mobile-ready .site-nav a:hover,html.js-nav-ready .site-header.nav-mobile-ready .site-nav a:focus-visible{background:#edf1e6;color:#173e34;outline:2px solid #a0ac8d;outline-offset:1px}\n}\n";
+  document.head.appendChild(navStyle);
   const mobileQuery = window.matchMedia("(max-width: 700px)");
   const currentPath = window.location.pathname;
   const isNestedPage = /\/(?:articles|poetry)\//.test(currentPath);
@@ -166,6 +169,29 @@
       nav.insertBefore(tcmLink, projectsLink || null);
     }
 
+    const featured = document.createElement("div");
+    featured.className = "nav-featured";
+    const mainGroup = document.createElement("div");
+    mainGroup.className = "nav-main-group";
+    const utility = document.createElement("div");
+    utility.className = "nav-utility-group";
+    const allLinks = Array.from(nav.querySelectorAll("a"));
+    // Keep document order and normal links on desktop; group only the mobile view.
+    allLinks.forEach((link, originalIndex) => {
+      link.style.order = originalIndex;
+      if (["books", "zhongyi"].includes(link.dataset.section)) {
+        const description = document.createElement("span");
+        description.className = "nav-description";
+        description.textContent = link.dataset.section === "books" ? "免费在线阅读 ↗" : "建档 · 21天观察 ↗";
+        link.appendChild(description);
+        featured.appendChild(link);
+      } else if (/\/(?:about|search|contact)\.html$/.test(link.getAttribute("href") || "")) utility.appendChild(link);
+      else mainGroup.appendChild(link);
+    });
+    const tcmFeature = featured.querySelector('[data-section="zhongyi"]');
+    if (tcmFeature) featured.prepend(tcmFeature);
+    nav.replaceChildren(featured, mainGroup, utility);
+
     header.classList.add("nav-mobile-ready");
 
     const button = document.createElement("button");
@@ -192,6 +218,7 @@
       const isMobile = mobileQuery.matches;
 
       if (!isMobile) {
+        nav.replaceChildren(...allLinks);
         nav.hidden = false;
         nav.style.display = "";
         header.classList.remove("nav-open");
@@ -201,6 +228,12 @@
         return;
       }
 
+      allLinks.forEach(link => {
+        if (["books", "zhongyi"].includes(link.dataset.section)) featured.appendChild(link);
+        else if (/\/(?:about|search|contact)\.html$/.test(link.getAttribute("href") || "")) utility.appendChild(link);
+        else mainGroup.appendChild(link);
+      });
+      nav.replaceChildren(featured, mainGroup, utility);
       nav.hidden = !isOpen;
       nav.style.display = isOpen ? "grid" : "none";
       header.classList.toggle("nav-open", isOpen);
@@ -238,6 +271,7 @@
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Escape") return;
       closeMenu();
+      button.focus();
     });
 
     const handleViewportChange = () => {
