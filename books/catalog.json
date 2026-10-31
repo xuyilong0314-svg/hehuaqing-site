@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "title": "我的著作",
+  "books": [
+    {
+      "id": "shenti-shiheng-v25a",
+      "slug": "shenti-shiheng",
+      "title": "身体为什么总在同一个地方失衡",
+      "title_lines": [
+        "身体为什么总在",
+        "同一个地方失衡"
+      ],
+      "author": "何华清",
+      "category": "身体与日常",
+      "subtitle": "用生命之树理解阴阳五行，学习日常养护。",
+      "description": "从立心、明理，到观察与实践。四部十五章，陪你理解生命的往来，也把每一份关照，放回具体的生活。",
+      "edition": "V2.5 A 插图金句版",
+      "contents": "四部 · 十五章 · 五个附录",
+      "cover": "./shenti-shiheng/assets/67edb9e4773b.jpg",
+      "reader": "./shenti-shiheng/",
+      "access": "free",
+      "published": true,
+      "order": 1
+    }
+  ]
+}

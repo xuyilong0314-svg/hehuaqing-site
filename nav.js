@@ -5,6 +5,7 @@
   const poetryHref = `${isNestedPage ? "../" : "./"}poetry.html`;
   const searchHref = `${isNestedPage ? "../" : "./"}search.html`;
   const tcmHref = `${isNestedPage ? "../" : "./"}zhongyi/`;
+  const booksHref = `${isNestedPage ? "../" : "./"}books/`;
   const isPoetryPage = /\/poetry(?:\.html)?$/.test(currentPath) || /\/poetry\/[^/]+\.html$/.test(currentPath);
   const isSearchPage = /\/search(?:\.html)?$/.test(currentPath);
 
@@ -145,10 +146,19 @@
       searchLink.classList.add("is-active");
     }
 
+    if (!nav.querySelector('a[data-section="books"]')) {
+      const booksLink = document.createElement("a");
+      booksLink.href = booksHref;
+      booksLink.textContent = "我的著作";
+      booksLink.dataset.section = "books";
+      const projectsLink = Array.from(nav.querySelectorAll("a")).find((link) => /(?:^|\/)projects\.html$/.test(link.getAttribute("href") || ""));
+      nav.insertBefore(booksLink, projectsLink || null);
+    }
+
     if (!nav.querySelector('a[data-section="zhongyi"]')) {
       const tcmLink = document.createElement("a");
       tcmLink.href = tcmHref;
-      tcmLink.textContent = "中医";
+      tcmLink.textContent = "古中医";
       tcmLink.dataset.section = "zhongyi";
       const projectsLink = Array.from(nav.querySelectorAll("a")).find((link) =>
         /(?:^|\/)projects\.html$/.test(link.getAttribute("href") || ""),
