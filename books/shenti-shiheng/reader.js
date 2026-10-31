@@ -96,3 +96,6 @@
   let searchTimer;
   searchInput.addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(searchBook,220);});
 })();
+
+
+(() => { const script=document.createElement("script");script.type="module";script.src=new URL("../../site-analytics.js?v=20261031-20",document.currentScript.src).href;document.head.append(script); })();
