@@ -8,3 +8,11 @@
 .audit-title{margin-top:5px;overflow-wrap:anywhere}.audit-line .minor{margin-top:4px;line-height:1.8}
 .trash-record-head h2,.project-heading h1{text-wrap:balance}
 @media(max-width:700px){.project-list-actions{gap:18px}.trash-record{padding:24px 0}.trash-record-head{gap:12px;align-items:flex-start}.trash-record-head h2{font-size:23px}.trash-record-actions .btn{min-height:46px}.trash-reason{font-size:15px}.trash-footnote{font-size:13px}.trash-record .record-meta{line-height:1.8}.trash-record-head .org-pill{flex-shrink:0}.project-heading{display:flex;flex-wrap:nowrap;gap:12px}.project-heading>div:first-child{min-width:0}.project-heading h1{overflow-wrap:anywhere}.record-options summary{padding:0 11px}.trash-confirm-title{font-size:21px}}
+
+/* A shared path back to the website, in every workspace state. */
+.connected-bar{position:sticky;top:0;z-index:40;height:48px;padding:0 28px;align-items:center}
+.site-home-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;white-space:nowrap;font-size:14px;font-weight:500;color:var(--green)}
+.site-home-link:hover{text-decoration:underline;text-underline-offset:5px}
+.connected-shell .app-layout{min-height:calc(100vh - 48px)}
+.connected-shell .sidebar{top:48px;height:calc(100vh - 48px)}
+@media(max-width:700px){.connected-bar{padding:0 18px}.site-home-link{font-size:14px}}
