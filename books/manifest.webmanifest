@@ -1,0 +1,1 @@
+{"id":"/books/","name":"何华清的书架","short_name":"何华清书架","description":"公开阅读与密码阅读，支持完整离线保存","lang":"zh-CN","start_url":"/books/offline.html","scope":"/books/","display":"standalone","background_color":"#f6f3eb","theme_color":"#254d3c","icons":[{"src":"/books/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}

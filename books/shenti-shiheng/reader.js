@@ -99,3 +99,6 @@
 
 
 (() => { const script=document.createElement("script");script.type="module";script.src=new URL("../../site-analytics.js?v=20261031-20",document.currentScript.src).href;document.head.append(script); })();
+
+/* HHQ_OFFLINE_READING */
+(() => { const script = document.createElement("script"); script.src = new URL("../offline.js", document.currentScript.src).href; script.defer = true; document.head.append(script); })();

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "title": "我的著作",
   "books": [
     {
@@ -40,6 +40,25 @@
       "access": "free",
       "published": true,
       "order": 2
+    },
+    {
+      "id": "geming-zuzhi-v11-review",
+      "slug": "geming-de-zuzhi-luoji",
+      "title": "革命的组织逻辑",
+      "title_lines": [
+        "革命的组织逻辑"
+      ],
+      "author": "何华清",
+      "category": "组织与社会",
+      "subtitle": "毛泽东与中国共产党研究。",
+      "description": "从组织的形成与动员，到信息、判断与思想传承。五编三十四章，凭阅读密码进入。",
+      "edition": "完整阅读版 · 出版前审阅中",
+      "contents": "五编 · 三十四章",
+      "cover": "./geming-de-zuzhi-luoji/cover.jpg",
+      "reader": "./geming-de-zuzhi-luoji/",
+      "access": "password",
+      "published": true,
+      "order": 3
     }
   ]
 }
