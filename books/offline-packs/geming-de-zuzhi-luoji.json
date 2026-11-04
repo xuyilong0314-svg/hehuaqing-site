@@ -1,1 +1,44 @@
-{"slug":"geming-de-zuzhi-luoji","revision":"f3235bdfb9ff5b85","title":"革命的组织逻辑","files":[{"url":"/books/geming-de-zuzhi-luoji/book.encrypted.json","bytes":738171,"sha256":"b1956cbdd3de484ba379c84cf4e4e136e4b8f09832e9a5435bc07b032c0777f3"},{"url":"/books/geming-de-zuzhi-luoji/cover.jpg","bytes":123655,"sha256":"37aaa8fa1a2fefe26c60d4200e1e9a50d85e695ec6030d0287a68ee0526848fb"},{"url":"/books/geming-de-zuzhi-luoji/crypto.js","bytes":1302,"sha256":"d4ec65d00754be3be3387686c1c4b295687ff689487be890d07a4d6162b0c5ff"},{"url":"/books/geming-de-zuzhi-luoji/index.html","bytes":3566,"sha256":"70ccac20a2c9c351559b9fdb3c3dfa8b0fc12629f771d0785a685fbea7a1dca9"},{"url":"/books/geming-de-zuzhi-luoji/reader.css","bytes":4899,"sha256":"34f4a7fbf697cb68ca0b759c3395acf6bd4e74cac5a66bc6921ff153fa111a7a"},{"url":"/books/geming-de-zuzhi-luoji/reader.js","bytes":5304,"sha256":"05b7573537fbbffc85be3735b339ff165b660c9bd75f3253be39332da1af408b"}]}
+{
+  "schema": 1,
+  "slug": "geming-de-zuzhi-luoji",
+  "title": "革命的组织逻辑",
+  "revision": "cdc76d441d2dffcd",
+  "bytes": 878389,
+  "files": [
+    {
+      "url": "/books/geming-de-zuzhi-luoji/book.encrypted.json",
+      "bytes": 738171,
+      "sha256": "b1956cbdd3de484ba379c84cf4e4e136e4b8f09832e9a5435bc07b032c0777f3"
+    },
+    {
+      "url": "/books/geming-de-zuzhi-luoji/cover.jpg",
+      "bytes": 123655,
+      "sha256": "37aaa8fa1a2fefe26c60d4200e1e9a50d85e695ec6030d0287a68ee0526848fb"
+    },
+    {
+      "url": "/books/geming-de-zuzhi-luoji/crypto.js",
+      "bytes": 1302,
+      "sha256": "d4ec65d00754be3be3387686c1c4b295687ff689487be890d07a4d6162b0c5ff"
+    },
+    {
+      "url": "/books/geming-de-zuzhi-luoji/index.html",
+      "bytes": 3614,
+      "sha256": "9b5d702083a6dfc31bce03047550e7fb3ec1690b22979f0878d60469c8e76e47"
+    },
+    {
+      "url": "/books/geming-de-zuzhi-luoji/reader.css",
+      "bytes": 4899,
+      "sha256": "34f4a7fbf697cb68ca0b759c3395acf6bd4e74cac5a66bc6921ff153fa111a7a"
+    },
+    {
+      "url": "/books/geming-de-zuzhi-luoji/reader.js",
+      "bytes": 5304,
+      "sha256": "05b7573537fbbffc85be3735b339ff165b660c9bd75f3253be39332da1af408b"
+    },
+    {
+      "url": "/books/geming-de-zuzhi-luoji/site-bridge.js",
+      "bytes": 1444,
+      "sha256": "c4519447e96974f10f7a964d41acc5aa17e060e441d67d25b69ee1b5b8b629d5"
+    }
+  ]
+}

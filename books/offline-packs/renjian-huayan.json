@@ -1,1 +1,294 @@
-{"slug":"renjian-huayan","revision":"35c61c4f89b7a0c7","title":"在人间读华严","files":[{"url":"/books/renjian-huayan/assets/cover.png","bytes":2254765,"sha256":"d795999ff4ab6c1c0c7c34a2d6c24db9be26fb4be222d1b0afbe303a076cf5c2"},{"url":"/books/renjian-huayan/ch01.html","bytes":30971,"sha256":"3eb5d7d4ad26fa318c018b694598d239ad8b33dcddaa0ad72b35fd937d5f4c0a"},{"url":"/books/renjian-huayan/ch02.html","bytes":30871,"sha256":"5b8c4c6a551f4ed02dd4f61ad2dbfb58b2503034375dba1e9258bb47047ecbe7"},{"url":"/books/renjian-huayan/ch03.html","bytes":28363,"sha256":"c6420ab8436a8033dbca36473b39460d0595d2810c9ec3fb0bb8975718ffdfbb"},{"url":"/books/renjian-huayan/ch04.html","bytes":31056,"sha256":"8b288ccd06d60625c5ba36f76195f3fe7a33f65e314b48bcf2a515c87cc2b7fa"},{"url":"/books/renjian-huayan/ch05.html","bytes":31110,"sha256":"38fbd92aa7e7ead026bac14a2e1a6831d605abd54b565840b5e8f650342ae49e"},{"url":"/books/renjian-huayan/ch06.html","bytes":30373,"sha256":"1bb9ab03c1d775c3f464451b87a4b2e54bf4b0e0603238f90ac5ad25f14504d2"},{"url":"/books/renjian-huayan/ch07.html","bytes":29385,"sha256":"4f0fd474c9b2a1721c01b81236595ae9c39c4cb484eae7dc145c89ed08c14661"},{"url":"/books/renjian-huayan/ch08.html","bytes":29081,"sha256":"e6849c0c013ab820fd2c35004abe7e06697165dea225e7dbc717d53eaed4a14f"},{"url":"/books/renjian-huayan/ch09.html","bytes":29563,"sha256":"146a0c24c9cdd4c581057e98737e6ef6f211397c621c3f6e050d49e25edb1c9d"},{"url":"/books/renjian-huayan/ch10.html","bytes":38978,"sha256":"f6abb40d7e2ae2b33bdd607bc2b9d876be52abd3c14532e20104f36a71d59c7f"},{"url":"/books/renjian-huayan/ch11.html","bytes":36411,"sha256":"d3b2701440ec51d249575d6decf5d747057d8720f7c6fa10c61e7fae286caca5"},{"url":"/books/renjian-huayan/ch12.html","bytes":35288,"sha256":"5412fe94023eafd964bbcfe79d261aa3eaacebd6679cddb6b51aa4324df487b4"},{"url":"/books/renjian-huayan/ch13.html","bytes":26231,"sha256":"e22b513355e32b7fa9f81b4aac51f8589150710b7ff9759364ad2d57224c17fe"},{"url":"/books/renjian-huayan/ch14.html","bytes":26879,"sha256":"188aff778267f070590180ece48491e252f4f29d2ea4ce067d7511774ab2b17d"},{"url":"/books/renjian-huayan/ch15.html","bytes":30526,"sha256":"740ae2da783632fb515f15638c876d6bf4f1497c2a3f752e940369f01d186c36"},{"url":"/books/renjian-huayan/ch16.html","bytes":27434,"sha256":"6d815d647ee293203baf5403789ce67f1c8b181b5291a25d418f0e02944af6c6"},{"url":"/books/renjian-huayan/ch17.html","bytes":27670,"sha256":"db324471526a3e84ddf3d0f29c588e753e5e1cb6d1c4392f026ff1da7f5828d0"},{"url":"/books/renjian-huayan/ch18.html","bytes":28359,"sha256":"aa9da5a8163af52bfae8444940d4e2273bc950c747b7155bc8d90bf4f6a88744"},{"url":"/books/renjian-huayan/ch19.html","bytes":22061,"sha256":"ef40f6251d365b980db8262ce61bed885c5a4dc4e5ea829164ef11954932a77c"},{"url":"/books/renjian-huayan/ch20.html","bytes":25512,"sha256":"d56a0607aba369a2b6d32209472013c67154eb133c777715e8a7b89d9963ab63"},{"url":"/books/renjian-huayan/ch21.html","bytes":32871,"sha256":"c57b5e0cba3fb153f53e9ea31351905b54811a990b2682b73608f08cde586edb"},{"url":"/books/renjian-huayan/ch22.html","bytes":29853,"sha256":"5e4ab635015d2276c7bbba041a87984dd5b6bfbdb979c2cf37f0ff5f74aa4002"},{"url":"/books/renjian-huayan/ch23.html","bytes":21437,"sha256":"1accdc2cfdfabb710cadc0f5ee483f264413987758303d0677237ff536be9987"},{"url":"/books/renjian-huayan/ch24.html","bytes":21445,"sha256":"9fb3b10fdc1711d3b827f66b78e5e6401932ea43b1916ce5a23bb29e68d45844"},{"url":"/books/renjian-huayan/ch25.html","bytes":51043,"sha256":"861dace1b399c0d61bdcf4de6c1ca68974d032bed61c8c35229da1f506cb43c4"},{"url":"/books/renjian-huayan/ch26.html","bytes":56002,"sha256":"a601e8f071c88fcea6464fa619c067f8990450e90edf4327c249f1e0cae45262"},{"url":"/books/renjian-huayan/ch27.html","bytes":37348,"sha256":"709fce93f9ce38853a7b3f131f31e17057958494d8409787b0efe95a96cbd852"},{"url":"/books/renjian-huayan/ch28.html","bytes":29687,"sha256":"5c58c8e2bfe18cb4ec69bc408a858ac6b177ea81cdf34ec8564bda71488bd187"},{"url":"/books/renjian-huayan/ch29.html","bytes":29992,"sha256":"39e57786c86be4dc4cc2ce985b99eb8e5ce929980b732aa7472882b8b02fee1a"},{"url":"/books/renjian-huayan/ch30.html","bytes":25126,"sha256":"9e486fda76a484670c30c53d0a70a44a4019fbd33bd23bb4b154bb39c0775592"},{"url":"/books/renjian-huayan/ch31.html","bytes":24658,"sha256":"7ddb488c1958b99d40965656fff8e4bfb96888613679e84aacd49542c4d65c77"},{"url":"/books/renjian-huayan/ch32.html","bytes":27134,"sha256":"155b5b29d4cab87b1b5b5a98766e04e7c99870d4963ed387677b938337ae4117"},{"url":"/books/renjian-huayan/ch33.html","bytes":32755,"sha256":"5507255b262ce38daa8044531826c7a5ab1eccc10b3e508984f5e947cd623a25"},{"url":"/books/renjian-huayan/ch34.html","bytes":30143,"sha256":"8bf813de4897b0adb4c4f7caadb6bdf4efd71f0e4f59844adfb52c9eef683b91"},{"url":"/books/renjian-huayan/ch35.html","bytes":30370,"sha256":"2fdb00588e18c6ab4ad14ab41db74e00556fae663e58dcff8121e41d5614c058"},{"url":"/books/renjian-huayan/ch36.html","bytes":31527,"sha256":"b902867a34f98d399e6745da5cbb79ffcb6cc1a1d4d6249191701d387fab3426"},{"url":"/books/renjian-huayan/ch37.html","bytes":49045,"sha256":"cd1493062ec98469d6d8a4b9278548edc9ce81277e2e754ccaec23e198a8ddbf"},{"url":"/books/renjian-huayan/ch38.html","bytes":56840,"sha256":"bd324b0b80aa7448799d961685438fb88f117f11d4f5ba5da6a10c74740d6e0d"},{"url":"/books/renjian-huayan/ch39.html","bytes":38077,"sha256":"9bfc49ff91f98b1c4e7749ec0ad1477d0f98dc2cb93450f35a32734aed19a706"},{"url":"/books/renjian-huayan/ch39_2.html","bytes":43171,"sha256":"7d4b200198459d1315d7141d9824b3789ecadbfab7daa3139e988ce5e2d09272"},{"url":"/books/renjian-huayan/ch39_3.html","bytes":40604,"sha256":"eb29a26c9bd63e289a39b06cad4c77851cb838b0464fca21ec0cca718626deb6"},{"url":"/books/renjian-huayan/ch39_4.html","bytes":41797,"sha256":"048908e4e97b1eda6b2fddbc1c144aa25883ac5e0bfef65db6364c53e6f9a1c9"},{"url":"/books/renjian-huayan/ch40.html","bytes":44306,"sha256":"ff4a5a8120ed321129e2b8451d76ba962b1082fdf460406c6729904a70eafae8"},{"url":"/books/renjian-huayan/contents.html","bytes":21275,"sha256":"56658b6ba98512f095dc04f7a99de03673044899d1ed838606243bcf91f94b23"},{"url":"/books/renjian-huayan/cover.html","bytes":14532,"sha256":"892c3a4b267f8a22c8110dc945ad6a44c9ba8f7479d37d218e438c553bb7cca9"},{"url":"/books/renjian-huayan/edition.html","bytes":15149,"sha256":"b4447e909598f15fd9c3749c3430faaf4d1ea5c79fd20690328f4e6f96fd91be"},{"url":"/books/renjian-huayan/glossary.html","bytes":21150,"sha256":"ce50709ed2ea4012bbb654ae4259010f1c6f1cdcbb48be602ca6d24286876204"},{"url":"/books/renjian-huayan/guide.html","bytes":19720,"sha256":"e4a70aaecf47d642afc6d7aa84637631d7f40042a539419d473050525a9a1581"},{"url":"/books/renjian-huayan/index.html","bytes":15212,"sha256":"e9bfdc9096bbb4f5a85ca803f9af9efa8c07fe9cea9520eaf0e4f00ed2bab04b"},{"url":"/books/renjian-huayan/people.html","bytes":30054,"sha256":"9d30e51ce2d37d17aeeb5b205f65da5645e191f19a95ac9cdcc18910c6cefde3"},{"url":"/books/renjian-huayan/preface.html","bytes":22940,"sha256":"de1b763243aab9f01726597096f9d0c2f4dedb39c0bba53f83d51b4a1ad834d1"},{"url":"/books/renjian-huayan/reader.css","bytes":17714,"sha256":"5f30a03f7aa9b6da47874e6b1684623dca5517f34a6f796734d8c316dc8f5f3c"},{"url":"/books/renjian-huayan/reader.js","bytes":10336,"sha256":"ca380b9379f93c156cca07af009660f4ceedca03811cc8ebd5e19ceea28af020"},{"url":"/books/renjian-huayan/search-index.json","bytes":964603,"sha256":"97d9ab008f84f6c9c3e04a762929148c7d6477b6c0d1c5fbee45ba0859487cb5"},{"url":"/books/renjian-huayan/titlepage.html","bytes":14650,"sha256":"2af2498e39016dce1a3da2c851ed832c251612c6cfd7bc7c7218793fe1725f41"}]}
+{
+  "schema": 1,
+  "slug": "renjian-huayan",
+  "title": "在人间读华严",
+  "revision": "5f0d06d087566dc9",
+  "bytes": 4846145,
+  "files": [
+    {
+      "url": "/books/renjian-huayan/assets/cover.png",
+      "bytes": 2254765,
+      "sha256": "d795999ff4ab6c1c0c7c34a2d6c24db9be26fb4be222d1b0afbe303a076cf5c2"
+    },
+    {
+      "url": "/books/renjian-huayan/ch01.html",
+      "bytes": 30995,
+      "sha256": "f66d19bddc5bab71a6bba15d056c64e99e791904080d6252e90a45c65a7e58af"
+    },
+    {
+      "url": "/books/renjian-huayan/ch02.html",
+      "bytes": 30895,
+      "sha256": "f27b143d48a9d591413edb3586bf1a0df5c91ecdcb3d7170c965b771488db03e"
+    },
+    {
+      "url": "/books/renjian-huayan/ch03.html",
+      "bytes": 28387,
+      "sha256": "371a11e46bce112763e81edea033f3c2aa034cfaac1dfb1cd6bcffc5db308395"
+    },
+    {
+      "url": "/books/renjian-huayan/ch04.html",
+      "bytes": 31080,
+      "sha256": "051ea683b10c695c0424f0d1ffbc8ca5a31ba36069155d570067fff12430302e"
+    },
+    {
+      "url": "/books/renjian-huayan/ch05.html",
+      "bytes": 31134,
+      "sha256": "0d4bb9b59362d3dce70dcbb1d6f00283ed4e17f48acc8fef3de8a2929f4aef11"
+    },
+    {
+      "url": "/books/renjian-huayan/ch06.html",
+      "bytes": 30397,
+      "sha256": "008d545ef822b67541b0c9f3409e3ae812cf714e480215d4f364c2f1883518b7"
+    },
+    {
+      "url": "/books/renjian-huayan/ch07.html",
+      "bytes": 29409,
+      "sha256": "24f59b7dd47b12356b021787b28ee56d9a5515fee0b55d9f78817802e768fe0f"
+    },
+    {
+      "url": "/books/renjian-huayan/ch08.html",
+      "bytes": 29105,
+      "sha256": "9a82de49278a30ce9c9824a3fc71b57a44dac878294fce1d28430c7aaef19f30"
+    },
+    {
+      "url": "/books/renjian-huayan/ch09.html",
+      "bytes": 29587,
+      "sha256": "30a76118f95456f5c2aa426de868c344843cd83ee42b63b769ba16a4ca63f95b"
+    },
+    {
+      "url": "/books/renjian-huayan/ch10.html",
+      "bytes": 39002,
+      "sha256": "4c083fd4f003e2005ce75abc4eda5ccee57ec8f136ac392e7b70fded7eac118b"
+    },
+    {
+      "url": "/books/renjian-huayan/ch11.html",
+      "bytes": 36435,
+      "sha256": "28d5576024fe339c7cb7de00e45506fe5eee21aeb1b70966ee85982cc12b4295"
+    },
+    {
+      "url": "/books/renjian-huayan/ch12.html",
+      "bytes": 35312,
+      "sha256": "5bf7138beade37676605e34a080eb41f43b16a2e3b36e9305be3aea70fe0a06c"
+    },
+    {
+      "url": "/books/renjian-huayan/ch13.html",
+      "bytes": 26255,
+      "sha256": "385e6fe147246131a2c86cf7ed526f37c9fe6895d59df7f93ecabb53e73cbe60"
+    },
+    {
+      "url": "/books/renjian-huayan/ch14.html",
+      "bytes": 26903,
+      "sha256": "82f93a05b083993b49f499d184136d06c7d8206dd6bc599d199198685fd04710"
+    },
+    {
+      "url": "/books/renjian-huayan/ch15.html",
+      "bytes": 30550,
+      "sha256": "1e79c8aa6105745068f3a94def0526205452928a598d3a7da7226025c1000d21"
+    },
+    {
+      "url": "/books/renjian-huayan/ch16.html",
+      "bytes": 27458,
+      "sha256": "a86d802a0892329f98a97abb82e9c691703284ba1195cbb52fc28c4555238db4"
+    },
+    {
+      "url": "/books/renjian-huayan/ch17.html",
+      "bytes": 27694,
+      "sha256": "96c1c1af7f939c93672a5a5fae2dd96c04a83419ab9e38813944f85d553fd527"
+    },
+    {
+      "url": "/books/renjian-huayan/ch18.html",
+      "bytes": 28383,
+      "sha256": "8027ffb9f10a00b2ca907d5727455303a25cf6d18d4cd6ff6eb847bf813872c7"
+    },
+    {
+      "url": "/books/renjian-huayan/ch19.html",
+      "bytes": 22085,
+      "sha256": "71eeda59e421e545aeee85ecfecacafd812817e45e3d96047f2c5005bcf57bce"
+    },
+    {
+      "url": "/books/renjian-huayan/ch20.html",
+      "bytes": 25536,
+      "sha256": "e176c161143008fe063368bc82b6a4b6b7958a4c4df02baec55b2fd2ce90588f"
+    },
+    {
+      "url": "/books/renjian-huayan/ch21.html",
+      "bytes": 32895,
+      "sha256": "02d84a4debd520038bf98c790533765cd3a19d557c16116975edd32daf6a5a0c"
+    },
+    {
+      "url": "/books/renjian-huayan/ch22.html",
+      "bytes": 29877,
+      "sha256": "ece2e0feec068a37795171ca30d09bb9aa944dbbddba12e4c4c2250864c61296"
+    },
+    {
+      "url": "/books/renjian-huayan/ch23.html",
+      "bytes": 21461,
+      "sha256": "6b93ec714b7aefd3202b58b02f9e6a4604686d8e608d18a1a1b8daede38d48f3"
+    },
+    {
+      "url": "/books/renjian-huayan/ch24.html",
+      "bytes": 21469,
+      "sha256": "ea398cee24aea0f5c6cc2783fbe09f857b5a00754001a1c5224925b737521e0b"
+    },
+    {
+      "url": "/books/renjian-huayan/ch25.html",
+      "bytes": 51067,
+      "sha256": "3a09253400138ef4c1f0bcd8c9e05c6dfb6b0731f5c14736ede1d97ccb1794d2"
+    },
+    {
+      "url": "/books/renjian-huayan/ch26.html",
+      "bytes": 56026,
+      "sha256": "0d7d71ce68a781c1038a52c2dbca0cb641f87e73fd8e41134c249d638a7559e2"
+    },
+    {
+      "url": "/books/renjian-huayan/ch27.html",
+      "bytes": 37372,
+      "sha256": "7edef5a24b9be577c1f0dad7931ed9bc58239858cddd3e06ab14d83c7d2ad736"
+    },
+    {
+      "url": "/books/renjian-huayan/ch28.html",
+      "bytes": 29711,
+      "sha256": "1bb41a3007de0f9af1b75b3911c4bfdd6368a24b387ef42a22485227f91702a9"
+    },
+    {
+      "url": "/books/renjian-huayan/ch29.html",
+      "bytes": 30016,
+      "sha256": "e9e9994383555f35e6119a8111aaba8b8cb9910dad1bfb44a007ec40f4b4c368"
+    },
+    {
+      "url": "/books/renjian-huayan/ch30.html",
+      "bytes": 25150,
+      "sha256": "34062bf5278ed04392335e014d9b69bc47ceeca077f1ee756f8e5e29274c5b76"
+    },
+    {
+      "url": "/books/renjian-huayan/ch31.html",
+      "bytes": 24682,
+      "sha256": "e34f7c1bbca7a06ed78975d51a48a0d5a4c5c7e7606e1e2dad987beaba90ce04"
+    },
+    {
+      "url": "/books/renjian-huayan/ch32.html",
+      "bytes": 27158,
+      "sha256": "4c671869ed1f29513ef88993f1538701eba7df1021d4f02aaa0d58b8a863ac68"
+    },
+    {
+      "url": "/books/renjian-huayan/ch33.html",
+      "bytes": 32779,
+      "sha256": "835fbcaf08a8b0299a4c31bda6dbebebb1f58ed9c038c7fda960361bab1a6183"
+    },
+    {
+      "url": "/books/renjian-huayan/ch34.html",
+      "bytes": 30167,
+      "sha256": "1928227159c17fa1208ca9ab1f5bfa94f0e16622ba5974ede0af7f40c99d28ec"
+    },
+    {
+      "url": "/books/renjian-huayan/ch35.html",
+      "bytes": 30394,
+      "sha256": "8338c98463d0aaa5090a28f282f2dd638be1cfbc4e5f4029924479eaa1225ac1"
+    },
+    {
+      "url": "/books/renjian-huayan/ch36.html",
+      "bytes": 31551,
+      "sha256": "76566408d716f8493c1fa13915465a09cc4b65317cd4daeaca776543534fac2a"
+    },
+    {
+      "url": "/books/renjian-huayan/ch37.html",
+      "bytes": 49069,
+      "sha256": "98e3541ff085504c583e61bb3c978b99e3de2d7a11e32bfd3695ef0d92306b5d"
+    },
+    {
+      "url": "/books/renjian-huayan/ch38.html",
+      "bytes": 56864,
+      "sha256": "3d9e6e2d8a21816ca4242bbd1a0c7bc22f2397a790f678c386c7eb1119f7e362"
+    },
+    {
+      "url": "/books/renjian-huayan/ch39.html",
+      "bytes": 38101,
+      "sha256": "9f019ecb07766ce3663875bbacd4af2894869ec798fd764fc0520a0cd8e07a5c"
+    },
+    {
+      "url": "/books/renjian-huayan/ch39_2.html",
+      "bytes": 43195,
+      "sha256": "84f724f039fb8f6546299d1f1c61eb5875bbdce26dc4fe1d59d8ea860d7e3a9a"
+    },
+    {
+      "url": "/books/renjian-huayan/ch39_3.html",
+      "bytes": 40628,
+      "sha256": "0adb68197da1dcdd2b423e696c3c130144008d8d1c56dc35db0e6d51af74546c"
+    },
+    {
+      "url": "/books/renjian-huayan/ch39_4.html",
+      "bytes": 41821,
+      "sha256": "dd1895feec6f97d870219981ba2ebf209e105f2672432fd1ac47247345c871b0"
+    },
+    {
+      "url": "/books/renjian-huayan/ch40.html",
+      "bytes": 44330,
+      "sha256": "c8ae5bcbe8903bdcc245a52d66ec3542aba61d005f16dcb675f77f4452ba1df6"
+    },
+    {
+      "url": "/books/renjian-huayan/contents.html",
+      "bytes": 21299,
+      "sha256": "533058bc065442299b1dd828724b6d58c00964fd307c002b01047e84cbf6cdb4"
+    },
+    {
+      "url": "/books/renjian-huayan/cover.html",
+      "bytes": 14556,
+      "sha256": "c0260f34c09e44f2e7834d40d17fde504728e2110f4e3a2a7508a73d0395d950"
+    },
+    {
+      "url": "/books/renjian-huayan/edition.html",
+      "bytes": 15173,
+      "sha256": "e51e4c1748ca7da8655f475f06538c8dc1cbaea188514806285a8625da4b7f12"
+    },
+    {
+      "url": "/books/renjian-huayan/glossary.html",
+      "bytes": 21174,
+      "sha256": "19c21905973c129d0001132a421a4f7f9b2559ec650ad346dbc8951266c4d56f"
+    },
+    {
+      "url": "/books/renjian-huayan/guide.html",
+      "bytes": 19744,
+      "sha256": "b2c9c99f43a9712029f3b2c7bcbd8240fe9698f0b0710e821973ef27b0327afd"
+    },
+    {
+      "url": "/books/renjian-huayan/index.html",
+      "bytes": 15236,
+      "sha256": "18d201771dc66239504a3c24a0f507e22649decc86bdcaba1afd8ac31dbba3b3"
+    },
+    {
+      "url": "/books/renjian-huayan/people.html",
+      "bytes": 30078,
+      "sha256": "e06a0cd7726792f59e18d05566cdc8934696960fefd4681aaf4e5e093548f728"
+    },
+    {
+      "url": "/books/renjian-huayan/preface.html",
+      "bytes": 22964,
+      "sha256": "e12011eb65ca797230c2d78099a46e469cf001da7d2d2ef0467eae347cf43f5b"
+    },
+    {
+      "url": "/books/renjian-huayan/reader.css",
+      "bytes": 17714,
+      "sha256": "5f30a03f7aa9b6da47874e6b1684623dca5517f34a6f796734d8c316dc8f5f3c"
+    },
+    {
+      "url": "/books/renjian-huayan/reader.js",
+      "bytes": 10336,
+      "sha256": "ca380b9379f93c156cca07af009660f4ceedca03811cc8ebd5e19ceea28af020"
+    },
+    {
+      "url": "/books/renjian-huayan/search-index.json",
+      "bytes": 964603,
+      "sha256": "97d9ab008f84f6c9c3e04a762929148c7d6477b6c0d1c5fbee45ba0859487cb5"
+    },
+    {
+      "url": "/books/renjian-huayan/site-bridge.js",
+      "bytes": 1444,
+      "sha256": "c4519447e96974f10f7a964d41acc5aa17e060e441d67d25b69ee1b5b8b629d5"
+    },
+    {
+      "url": "/books/renjian-huayan/titlepage.html",
+      "bytes": 14674,
+      "sha256": "2660b8adad5feb0a8253a2f49c2d469529ea203afdb11d7f2172557c5fb6d826"
+    }
+  ]
+}

@@ -1,1 +1,189 @@
-{"slug":"shenti-shiheng","revision":"e7df06708a5a242b","title":"身体为什么总在同一个地方失衡","files":[{"url":"/books/shenti-shiheng/afterword.html","bytes":10413,"sha256":"27cb43b0c2a1895db746584b0c0401978d6478d5642fddc0a8a1fb3332e1bbbf"},{"url":"/books/shenti-shiheng/appendix1.html","bytes":22281,"sha256":"91ce4564d1495e8b41ff32c173727f68eadad7444aefee9771e27d2cecb2a9e4"},{"url":"/books/shenti-shiheng/appendix2.html","bytes":14159,"sha256":"987733edde8c3a3ca71a55bfc66d8eb99c6d18ea3f24e611e1b5445443e8e95e"},{"url":"/books/shenti-shiheng/appendix3.html","bytes":17024,"sha256":"e20dfd23aa24b0cbcdf003ab7a0385215501d669cbc5e9f2da1d6bd01a670ac6"},{"url":"/books/shenti-shiheng/appendix4.html","bytes":11981,"sha256":"1c66b3a021b4b4cf052c4efb76c079c00909ff9e7e556e2957c7b63ebef34064"},{"url":"/books/shenti-shiheng/appendix5.html","bytes":16865,"sha256":"e811d48cda7b513dcab7449d7b001b01790f0429e79c84e96177b305c641568a"},{"url":"/books/shenti-shiheng/assets/0757705d1691.jpg","bytes":265152,"sha256":"ba9fd5552d36ab2180a6e92f8a98df0df67a6a86c4839b6920fcd0c5a92afe26"},{"url":"/books/shenti-shiheng/assets/4b35c32a5540.jpg","bytes":86827,"sha256":"4bde729c9b6135f99633a9170bf8ea3568c8aeb6629d4a524662c2f3ba854249"},{"url":"/books/shenti-shiheng/assets/4fdc83dfca95.jpg","bytes":211284,"sha256":"cc21223decdc27267e7b68ab2a3428b0c2357d6522259fd34292ddf5dbeeab31"},{"url":"/books/shenti-shiheng/assets/50266dba6cb4.jpg","bytes":347353,"sha256":"91ccdc6a1bfc6815e7a17b914246637af09702e9abaf5071e024e7eb9270872e"},{"url":"/books/shenti-shiheng/assets/67edb9e4773b.jpg","bytes":153572,"sha256":"6a5ca0c016704f30931064e279602a2b8c505534326f3cdc576ac8f112fbe547"},{"url":"/books/shenti-shiheng/assets/7eae1df8c358.jpg","bytes":88874,"sha256":"0a41757a4aa39fd8c9c06e9c5a34678eb3e790a7c08c9db4dcd0a784b66a97fc"},{"url":"/books/shenti-shiheng/ch01.html","bytes":19232,"sha256":"f979e4b2ebf23bcfa0ae24c2a6e0663de64ad7befc1478cd92ee9d472cb57fec"},{"url":"/books/shenti-shiheng/ch02.html","bytes":17837,"sha256":"9a0ac881cd32246f6585ab8521c8e89fa150a668f3f2361b3800ad97ad082a88"},{"url":"/books/shenti-shiheng/ch03.html","bytes":17835,"sha256":"d23224f61b7b2c489022f42d42b0513a487c31ecaf27d134796e58c15b47ba83"},{"url":"/books/shenti-shiheng/ch04.html","bytes":19089,"sha256":"8c442f7580e8ed58eac588d2c3eaff5e0e0ba43ac6e03765d1777b0002d429ba"},{"url":"/books/shenti-shiheng/ch05.html","bytes":20543,"sha256":"872f4635f4e2fe2a674c361aab9fd6a108505f5f3179f06b55eea8af813f7894"},{"url":"/books/shenti-shiheng/ch06.html","bytes":20453,"sha256":"e854d6f7f9bd7d6ee550e5d654e87764eb432c4747f88f74250acf3b41807457"},{"url":"/books/shenti-shiheng/ch07.html","bytes":18270,"sha256":"cb4a39ebb437630e9764ca43458426a7c7b97c9a5e3fdc2e7d65e8b5d0c8e141"},{"url":"/books/shenti-shiheng/ch08.html","bytes":13674,"sha256":"4ec344e69bdea2b864c9eb970dabb5ff7eb8bfd18e37da8f2842f55ef797bb92"},{"url":"/books/shenti-shiheng/ch09.html","bytes":18540,"sha256":"88fc88b0f547ca5ae1e60aabed7b33ee387edd35ab8dad25d331b07de1aa147e"},{"url":"/books/shenti-shiheng/ch10.html","bytes":21674,"sha256":"a623375cd83e1cd5ca9b50e93fd887ea536455e7563d3a2d9e69a4064e02e733"},{"url":"/books/shenti-shiheng/ch11.html","bytes":35519,"sha256":"95ef45851709a6b3406bb2620ac5ee883de61350b2c8c4af24a3e0619f788bc6"},{"url":"/books/shenti-shiheng/ch12.html","bytes":18559,"sha256":"7ea50df5789684a1abc82073ab603cd45eebbf88440f6798144c4be96310584e"},{"url":"/books/shenti-shiheng/ch13.html","bytes":18846,"sha256":"4690fe5968cba2ef2790b319e8503f4f2e45a580655db84dad7e9a7572b94138"},{"url":"/books/shenti-shiheng/ch14.html","bytes":20051,"sha256":"82aa5e9bb56667cc0d0fd6485d6952111730e78a047da21967e23594de60ee8c"},{"url":"/books/shenti-shiheng/ch15.html","bytes":15337,"sha256":"a83a15c9ed8ede08b06317ffd53743bac404ccf10caeba47b97ddd648f4c84c2"},{"url":"/books/shenti-shiheng/dedication.html","bytes":10744,"sha256":"21f404c65efc992d5444cc31f7c5285d8c1c33e21f2ba31b72297e3cac8a8dbc"},{"url":"/books/shenti-shiheng/index.html","bytes":10002,"sha256":"662c571dc9dac56ec89a5f1ae4c421253db10066fe826c0bcccecd076bbdf36d"},{"url":"/books/shenti-shiheng/navigation.html","bytes":12231,"sha256":"a8bf8f5baf000545c8ecf14f42c6f05562bf7a566c4f1c0990645663f415d4e9"},{"url":"/books/shenti-shiheng/prologue.html","bytes":14275,"sha256":"7781413de0e31c252b675ce3d0787d54a73933e18e0d70c2d08239567491cf34"},{"url":"/books/shenti-shiheng/reader.css","bytes":15354,"sha256":"bd720db077a4e09398f677ab67bc316046090d216cf6a2d399a529b59402a753"},{"url":"/books/shenti-shiheng/reader.js","bytes":9957,"sha256":"d81535f2570655674537628ee38b2cddc5c99dde3e854365bc5cff5105f9e34c"},{"url":"/books/shenti-shiheng/search-index.json","bytes":241338,"sha256":"62c10de6bda962d9ccb7d2af6db1c85b791b353bbca494a5a33cc8d4e7cc7c1c"},{"url":"/books/shenti-shiheng/transparency.html","bytes":12509,"sha256":"a0e5de88f464915f7f3807bb432af5d964eaf9271f1732933a4bc06bfe187bd4"}]}
+{
+  "schema": 1,
+  "slug": "shenti-shiheng",
+  "title": "身体为什么总在同一个地方失衡",
+  "revision": "69f5cfc924208386",
+  "bytes": 1869976,
+  "files": [
+    {
+      "url": "/books/shenti-shiheng/afterword.html",
+      "bytes": 10447,
+      "sha256": "8206d747c33b04bb45e43edf8ee2b1de1ae86d7e42d7c0649375b38eabb8be94"
+    },
+    {
+      "url": "/books/shenti-shiheng/appendix1.html",
+      "bytes": 22315,
+      "sha256": "509ce5cfaf4fc14f0e5bcb9517e6c8e62b75a276e6e711e370546eee9583d366"
+    },
+    {
+      "url": "/books/shenti-shiheng/appendix2.html",
+      "bytes": 14193,
+      "sha256": "2be019e3b0cf042f1a472027782fba718b37fcb3bc1e5a30c25131394a218a6d"
+    },
+    {
+      "url": "/books/shenti-shiheng/appendix3.html",
+      "bytes": 17058,
+      "sha256": "19076f0d595b0974ac64b5c076b3fddfb0e42867277a85603782be112e7674f6"
+    },
+    {
+      "url": "/books/shenti-shiheng/appendix4.html",
+      "bytes": 12015,
+      "sha256": "2f321e99518bf035a3e3a38b0e6afc1d541db1d7e1cb90973ea77604a7ee8bcd"
+    },
+    {
+      "url": "/books/shenti-shiheng/appendix5.html",
+      "bytes": 16899,
+      "sha256": "5ec497fde51af8bc9a637db42009f57d6bbf77657d8fe4d37af7a20f102dd52f"
+    },
+    {
+      "url": "/books/shenti-shiheng/assets/0757705d1691.jpg",
+      "bytes": 265152,
+      "sha256": "ba9fd5552d36ab2180a6e92f8a98df0df67a6a86c4839b6920fcd0c5a92afe26"
+    },
+    {
+      "url": "/books/shenti-shiheng/assets/4b35c32a5540.jpg",
+      "bytes": 86827,
+      "sha256": "4bde729c9b6135f99633a9170bf8ea3568c8aeb6629d4a524662c2f3ba854249"
+    },
+    {
+      "url": "/books/shenti-shiheng/assets/4fdc83dfca95.jpg",
+      "bytes": 211284,
+      "sha256": "cc21223decdc27267e7b68ab2a3428b0c2357d6522259fd34292ddf5dbeeab31"
+    },
+    {
+      "url": "/books/shenti-shiheng/assets/50266dba6cb4.jpg",
+      "bytes": 347353,
+      "sha256": "91ccdc6a1bfc6815e7a17b914246637af09702e9abaf5071e024e7eb9270872e"
+    },
+    {
+      "url": "/books/shenti-shiheng/assets/67edb9e4773b.jpg",
+      "bytes": 153572,
+      "sha256": "6a5ca0c016704f30931064e279602a2b8c505534326f3cdc576ac8f112fbe547"
+    },
+    {
+      "url": "/books/shenti-shiheng/assets/7eae1df8c358.jpg",
+      "bytes": 88874,
+      "sha256": "0a41757a4aa39fd8c9c06e9c5a34678eb3e790a7c08c9db4dcd0a784b66a97fc"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch01.html",
+      "bytes": 19266,
+      "sha256": "7954a8b3da12cafadb5fea9d489007dc9d5be1b41f8d84d88adb072136fecca1"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch02.html",
+      "bytes": 17871,
+      "sha256": "b85632fbce93b13405fe11bd31772333f3c576bada1ad34bc4a0d3d939bda21e"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch03.html",
+      "bytes": 17869,
+      "sha256": "67d3c65294c25e262be54bc66e76aa4ac1836cdebe3d50d5947f11601b67c514"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch04.html",
+      "bytes": 19123,
+      "sha256": "7fa4155a1e3b9e9a08b98ca4e87e98a04bd827da352a46259676207d0c986b94"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch05.html",
+      "bytes": 20577,
+      "sha256": "b474a6eff481144a69b9396c91e70f91462fa5112759164627c5ebc2d2c20dca"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch06.html",
+      "bytes": 20487,
+      "sha256": "6bfad4bc5594db9b6b6f7459c3094bc50c53fa312ced9feeba081978dd1d557e"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch07.html",
+      "bytes": 18304,
+      "sha256": "c1b279eb8013a838344ce706880400d57ffc804b013d43a8efa463ae1bc070c8"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch08.html",
+      "bytes": 13708,
+      "sha256": "d84c02dee7022cee2e625cc4fa600a9ad4249c8aaf1e563083b78863fcb04c09"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch09.html",
+      "bytes": 18574,
+      "sha256": "0552048ec723381888e49054b7d554614b61057a1049bd68bdccdbb49555606a"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch10.html",
+      "bytes": 21708,
+      "sha256": "cb4a0a57b2c1c115ccdeb7a937b4e7a9e09dc77dcb5de05803400674df710112"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch11.html",
+      "bytes": 35553,
+      "sha256": "cb91c692f939a2e87e06e8ed26bebe1d26066ae1fb344127eecd2aea60c8f694"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch12.html",
+      "bytes": 18593,
+      "sha256": "e24d0ba3b7adce4ad8e18c6960468b7de034385eda56893754901c0b06e294e7"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch13.html",
+      "bytes": 18880,
+      "sha256": "58b6f8fb4d3ca4339bb51f6560ebba60faa25d805c9286b3c82ee4fd629a26b9"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch14.html",
+      "bytes": 20085,
+      "sha256": "66f53c798cbae9cffd28188d42ddbd140818122e64be21ca7eb1b42ab9fd9201"
+    },
+    {
+      "url": "/books/shenti-shiheng/ch15.html",
+      "bytes": 15371,
+      "sha256": "80c36b57cea405c378d177fa972a4b0610e93e45125ac1689b26d1ee5252076e"
+    },
+    {
+      "url": "/books/shenti-shiheng/dedication.html",
+      "bytes": 10778,
+      "sha256": "6e76c3fde894226fa3064d79fb274cb214e2a1d97c6bc0fb4247caaab1b4fa8d"
+    },
+    {
+      "url": "/books/shenti-shiheng/index.html",
+      "bytes": 10030,
+      "sha256": "e35d3889a1ea4f8768545a46332fb646cba33b23389f6be9d30917584c5ff1d7"
+    },
+    {
+      "url": "/books/shenti-shiheng/navigation.html",
+      "bytes": 12265,
+      "sha256": "6dbb05706399525dc91c27f07ac7d1ff76321eb3521c910bcada44a9da112fbf"
+    },
+    {
+      "url": "/books/shenti-shiheng/prologue.html",
+      "bytes": 14309,
+      "sha256": "6f8a56f37e55e678d090cb08ef21b7e6bc2b5be081a1379d683e9e86fbc00d70"
+    },
+    {
+      "url": "/books/shenti-shiheng/reader.css",
+      "bytes": 15354,
+      "sha256": "bd720db077a4e09398f677ab67bc316046090d216cf6a2d399a529b59402a753"
+    },
+    {
+      "url": "/books/shenti-shiheng/reader.js",
+      "bytes": 9957,
+      "sha256": "d81535f2570655674537628ee38b2cddc5c99dde3e854365bc5cff5105f9e34c"
+    },
+    {
+      "url": "/books/shenti-shiheng/search-index.json",
+      "bytes": 241338,
+      "sha256": "62c10de6bda962d9ccb7d2af6db1c85b791b353bbca494a5a33cc8d4e7cc7c1c"
+    },
+    {
+      "url": "/books/shenti-shiheng/site-bridge.js",
+      "bytes": 1444,
+      "sha256": "c4519447e96974f10f7a964d41acc5aa17e060e441d67d25b69ee1b5b8b629d5"
+    },
+    {
+      "url": "/books/shenti-shiheng/transparency.html",
+      "bytes": 12543,
+      "sha256": "dee75dec0b3b54fdc75b31321b077a957fc0e716b3865676baf32840dbe44070"
+    }
+  ]
+}

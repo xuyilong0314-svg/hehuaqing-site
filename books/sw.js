@@ -1,7 +1,7 @@
 /* Public pages and authenticated ciphertext only. No password or plaintext from the locked reader is cached. */
 'use strict';
-const SHELL='hhq-books-shell-20261104-1', STATE='hhq-books-state-v1';
-const SHELL_URLS=['/books/','/books/index.html','/books/books.css','/books/catalog.json','/books/offline.html','/books/offline.js','/books/offline.css','/books/manifest.webmanifest','/books/icon.svg'];
+const SHELL='hhq-books-shell-20261104-symphony-1', STATE='hhq-books-state-v1';
+const SHELL_URLS=['/books/','/books/index.html','/books/books.css','/books/catalog.json','/books/offline.html','/books/offline.js','/books/offline.css','/books/manifest.webmanifest','/books/icon.svg','/books/site-bridge.js','/assets/symphony-serif.woff2'];
 const jobs=new Set();
 const validSlug=s=>typeof s==='string'&&/^[a-z0-9-]{1,64}$/.test(s);
 const stateUrl=slug=>new URL('/books/__saved__/'+slug,location.origin).href;
@@ -11,7 +11,7 @@ async function saved(slug){const r=await(await caches.open(STATE)).match(stateUr
 self.addEventListener('install',event=>event.waitUntil((async()=>{const c=await caches.open(SHELL);await c.addAll(SHELL_URLS);await self.skipWaiting();})()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{await self.clients.claim();for(const k of await caches.keys())if(k.startsWith('hhq-books-shell-')&&k!==SHELL)await caches.delete(k);})()));
 async function findCached(request){const key=canonical(request);for(const s of await states()){const r=await(await caches.open(s.cache)).match(key);if(r)return r;}return(await caches.open(SHELL)).match(key);}
-self.addEventListener('fetch',event=>{const u=new URL(event.request.url);if(event.request.method!=='GET'||u.origin!==location.origin||!u.pathname.startsWith('/books/'))return;event.respondWith((async()=>{try{const response=await fetch(event.request);if(response.ok)return response;const cached=await findCached(event.request);return cached||response;}catch{const cached=await findCached(event.request);if(cached)return cached;if(event.request.mode==='navigate')return new Response('<!doctype html><meta charset="utf-8"><title>尚未离线保存</title><p>这一页还没有保存到本机。</p><p><a href="/books/offline.html">打开离线书架</a></p>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8'}});return Response.error();}})());});
+self.addEventListener('fetch',event=>{const u=new URL(event.request.url);if(event.request.method!=='GET'||u.origin!==location.origin||(!u.pathname.startsWith('/books/')&&u.pathname!=='/assets/symphony-serif.woff2'))return;event.respondWith((async()=>{try{const response=await fetch(event.request);if(response.ok)return response;const cached=await findCached(event.request);return cached||response;}catch{const cached=await findCached(event.request);if(cached)return cached;if(event.request.mode==='navigate')return new Response('<!doctype html><meta charset="utf-8"><title>尚未离线保存</title><p>这一页还没有保存到本机。</p><p><a href="/books/offline.html">打开离线书架</a></p>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8'}});return Response.error();}})());});
 const sha=async buffer=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)),x=>x.toString(16).padStart(2,'0')).join('');
 async function saveBook(slug,port){
  if(!validSlug(slug))throw Error('书籍标识无效');if(jobs.has(slug))throw Error('这本书正在保存，请稍候');jobs.add(slug);
