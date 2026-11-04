@@ -98,7 +98,7 @@ function filterMembers(){
 function filteredCollection(){const val=id=>document.getElementById(id)?.value||'';return archiveFilter(cases,obs,{query:val('collect-search'),className:val('class-filter'),ownerId:val('student-filter'),start:val('date-start'),end:val('date-end'),consent:val('consent-filter'),stage:val('stage-filter')});}
 function browserHint(){return '<aside class="browser-hint" aria-label="浏览器使用建议"><div><strong>建议在手机浏览器中打开</strong><span>登录与照片上传更顺畅。</span></div><button type="button" class="text-btn" data-action="copy-browser-link">复制网址</button></aside>';}
 async function copyBrowserLink(button){
- const url='https://xuyilong0314-svg.github.io/hehuaqing-site/zhongyi/aform/#/auth';
+ const url=new URL('./#/auth',import.meta.url).href;
  try{if(!navigator.clipboard?.writeText)throw Error('clipboard unavailable');await navigator.clipboard.writeText(url);button.textContent='已复制';notify('网址已复制，请粘贴到手机浏览器打开。');setTimeout(()=>{if(button.isConnected)button.textContent='复制网址';},2500);}
  catch{dialog('<h2>在手机浏览器中打开</h2><p class="small muted">长按下方网址复制，再粘贴到手机浏览器地址栏。</p><label class="label" for="browser-entry-url">登录网址</label><input class="input" id="browser-entry-url" readonly value="'+url+'"><div class="dialog-actions"><button class="btn secondary" data-action="close-dialog">关闭</button></div>');}
 }

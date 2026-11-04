@@ -9,7 +9,7 @@ if(!window.__hhqAnalyticsStarted){
   const storeGet=k=>{try{return localStorage.getItem(k);}catch{return null;}};
   const storeSet=(k,v)=>{try{localStorage.setItem(k,v);}catch{}};
   const allowed=()=>!stopped&&storeGet(PREFERENCE_KEY)!=='off'&&storeGet(OWNER_DEVICE_KEY)!=='yes'&&navigator.doNotTrack!=='1'&&!navigator.globalPrivacyControl;
-  const production=location.hostname==='xuyilong0314-svg.github.io'&&base.pathname==='/hehuaqing-site/';
+  const production=(location.hostname==='xuyilong0314-svg.github.io'&&base.pathname==='/hehuaqing-site/')||(['www.hehuaqing.com','hehuaqing.com'].includes(location.hostname)&&base.pathname==='/');
   const day=()=>new Date(Date.now()+8*3600000).toISOString().slice(0,10);
   const uuid=()=>crypto.randomUUID();
   const updateDepth=()=>{const h=document.documentElement.scrollHeight;depth=Math.max(depth,Math.min(100,Math.round((scrollY+innerHeight)/Math.max(h,1)*100)));};
