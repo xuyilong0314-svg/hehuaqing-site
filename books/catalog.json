@@ -21,6 +21,26 @@
       "access": "free",
       "published": true,
       "order": 1
+    },
+    {
+      "id": "renjian-huayan-v20",
+      "slug": "renjian-huayan",
+      "title": "在人间读华严",
+      "title_lines": [
+        "在人间读华严"
+      ],
+      "author": "何华清",
+      "category": "读经与生活",
+      "subtitle": "华严经三十九品与普贤行愿的生活阐释。",
+      "description": "沿《华严经》三十九品与普贤行愿，读经典，也读生活。由家庭、工作与关系中的困惑出发，理解智慧、慈悲与愿行。",
+      "edition": "精修版 V2.0 · 完整电子书",
+      "contents": "四十章 · 阅读导引 · 名相回读 · 善财参学索引",
+      "cover": "./renjian-huayan/assets/cover.png",
+      "reader": "./renjian-huayan/",
+      "download": "./renjian-huayan/files/renjian-huayan.epub",
+      "access": "free",
+      "published": true,
+      "order": 2
     }
   ]
 }
