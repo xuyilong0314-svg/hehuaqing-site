@@ -133,3 +133,31 @@
 .auth-panel .row.between{gap:12px;align-items:center}
 .auth-panel .text-btn{white-space:nowrap;font-size:15px;min-height:48px;flex-shrink:0}
 @media(max-width:640px){#case-form .check input{width:22px;height:22px;flex:0 0 22px;margin-top:3px}.main-site-bar a,.main-site-menu summary{touch-action:manipulation}}
+
+
+/* Email confirmation ends on a readable, welcoming result. */
+.verification-brand{display:flex;align-items:center;gap:18px;font:28px/1.4 'Songti SC','Noto Serif SC',serif;color:var(--ink)}
+.verification-brand span{font:14px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;color:var(--muted);border-left:1px solid #cbd4c8;padding-left:18px}
+.verification-shell{max-width:510px;margin:42px auto 56px}
+.verification-panel{text-align:center;padding:38px 32px;background:var(--white)}
+.verification-mark{position:relative;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto 28px;background:#eee8db;color:#745c2f;font-size:34px;font-weight:500}
+.verification-mark.is-success{background:var(--ink);color:#fffefa}
+.verification-mark.is-success::after{content:"";position:absolute;inset:-8px;border:1px solid #b9c9b9;border-radius:50%;pointer-events:none}
+.verification-mark svg{width:45px;height:45px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.verification-panel h1{font-size:38px;margin:0 0 18px;line-height:1.4;letter-spacing:.08em}
+.verification-panel h1:focus{outline:none}
+.verification-panel .verification-welcome{font:20px/1.8 'Songti SC','Noto Serif SC',serif;color:var(--ink);margin:0 0 14px}
+.verification-panel .verification-description{font-size:16px;line-height:1.9;margin:0 0 28px;color:#506258}
+.verification-panel .btn{font-size:18px;min-height:54px;margin-top:12px;border-radius:8px}
+.verification-panel .verification-footnote{font-size:13px;line-height:1.8;margin:20px 0 0;color:var(--muted)}
+.verification-success{position:relative;border-color:#cbd5c8;box-shadow:0 12px 32px #173c3308}
+.verification-success::before{content:"";display:block;width:48px;height:2px;background:#b69a66;margin:0 auto 32px}
+@media(prefers-reduced-motion:no-preference){
+ .verification-success{animation:verification-arrival .65s ease-out both}
+ .verification-success .verification-mark::after{animation:verification-halo 1.15s ease-out both}
+ .verification-success .verification-mark path{stroke-dasharray:36;stroke-dashoffset:0;animation:verification-check .7s ease-out both}
+}
+@keyframes verification-arrival{from{opacity:.6;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes verification-check{from{stroke-dashoffset:36}to{stroke-dashoffset:0}}
+@keyframes verification-halo{from{transform:scale(.85);opacity:.2}60%{transform:scale(1.15);opacity:.7}to{transform:scale(1);opacity:1}}
+@media(max-width:640px){.verification-shell{margin:28px auto 42px}.verification-panel{padding:30px 22px}.verification-panel h1{font-size:36px}.verification-brand{font-size:25px}}

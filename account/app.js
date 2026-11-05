@@ -1,3 +1,4 @@
+import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261105-verification-1';
 import {getClient,refreshAccount,signOut,friendly,hasSession} from './client.js?v=20261105-reading-1';
 import {escapeHtml as esc} from '../analytics/metrics.js?v=20261031-20';
 const root=document.querySelector('#account-app');let mode='login',busy=false,context=null,history=[];
@@ -23,8 +24,8 @@ root.addEventListener('submit',async e=>{
    const r=await db.rpc('set_site_reader_settings',{p_display_name:String(fields.get('display_name')).trim(),p_save_history:fields.get('save_history')==='on'});if(r.error)throw r.error;await load();message('设置已保存。');
   }else if(mode==='signup'){
    if(fields.get('password')!==fields.get('confirm')){message('两次密码不一致，请重新输入。',true);return;}
-   const r=await db.auth.signUp({email:String(fields.get('email')).trim(),password:String(fields.get('password')),options:{data:{display_name:String(fields.get('display_name')).trim()},emailRedirectTo:new URL('../zhongyi/aform/',location.href).href}});if(r.error)throw r.error;f.reset();
-   if(r.data.session)await load();else{mode='login';login('请查收邮箱中的验证邮件。验证完成后，即可使用同一账号进入全站。');}
+   const r=await db.auth.signUp({email:String(fields.get('email')).trim(),password:String(fields.get('password')),options:{data:{display_name:String(fields.get('display_name')).trim()},emailRedirectTo:authReturnUrl(new URL('../zhongyi/aform/',location.href))}});if(r.error)throw r.error;f.reset();
+   if(r.data.session)location.assign(new URL('../zhongyi/aform/#/registration-result',location.href).href);else{mode='login';login('请查收邮箱中的验证邮件。验证完成后，会显示“注册成功”，再返回登录。');}
   }else{
    const r=await db.auth.signInWithPassword({email:String(fields.get('email')).trim(),password:String(fields.get('password'))});if(r.error)throw r.error;f.reset();await load();
   }
