@@ -1,3 +1,4 @@
+import {authIssue} from './auth-support.js?v=20261105-auth-repair-1';
 import {ANALYTICS_URL,ANALYTICS_KEY,OWNER_DEVICE_KEY} from '../analytics/config.js?v=20261031-20';
 import {publicApiFetch} from '../zhongyi/aform/auth.js';
 export const storageKey='sb-'+new URL(ANALYTICS_URL).hostname.split('.')[0]+'-auth-token';
@@ -7,8 +8,8 @@ function emit(){for(const fn of listeners)fn(context);window.dispatchEvent(new C
 export function onAccount(fn){listeners.add(fn);fn(context);return()=>listeners.delete(fn);}
 export async function getClient(){
  if(!promise)promise=(async()=>{
-  if(!window.supabase)await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=new URL('../zhongyi/aform/supabase.js',import.meta.url);s.onload=resolve;s.onerror=()=>reject(Error('连接未成功，请稍后再试。'));document.head.append(s);});
-  const client=window.supabase.createClient(ANALYTICS_URL,ANALYTICS_KEY,{global:{fetch:publicApiFetch(ANALYTICS_KEY)},auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+  if(!window.supabase)await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=new URL('../zhongyi/aform/supabase.js',import.meta.url);s.onload=resolve;s.onerror=()=>{const e=Error('账号组件没有加载完成');e.code='client_load_failed';s.remove();reject(e);};document.head.append(s);});
+  let client;try{if(typeof window.supabase?.createClient!=='function')throw Error('账号组件未就绪');client=window.supabase.createClient(ANALYTICS_URL,ANALYTICS_KEY,{global:{fetch:publicApiFetch(ANALYTICS_KEY)},auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});}catch(error){if(!error.code)error.code=/网站连接参数无效/.test(error.message)?'client_config_invalid':'client_init_failed';throw error;}
   client.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){context=null;emit();}else if(['SIGNED_IN','TOKEN_REFRESHED','USER_UPDATED'].includes(event))setTimeout(()=>refreshAccount().catch(()=>{}),0);});return client;
  })().catch(error=>{promise=null;throw error;});return promise;
 }
@@ -22,6 +23,6 @@ export async function refreshAccount(){
 }
 export async function readingAuthorization(){if(!context?.save_history)return null;const {data,error}=await(await getClient()).auth.getSession();return !error&&data.session?data.session.access_token:null;}
 export async function signOut(){const {error}=await(await getClient()).auth.signOut({scope:'local'});if(error)throw error;context=null;emit();}
-export function friendly(error){const m=error?.message||'';if(/Invalid login/i.test(m))return '邮箱或密码不正确，请重新输入。';if(/Email not confirmed/i.test(m))return '请先完成邮箱验证，再登录。';if(/already registered/i.test(m))return '这个邮箱已注册，可以直接登录。';if(/rate limit|too many/i.test(m))return '操作较频繁，请稍后再试。';if(/password/i.test(m))return '请使用至少 6 位密码。';return '暂时未能完成，请检查网络后重试。';}
+export function friendly(error){return authIssue(error).text;}
 addEventListener('storage',e=>{if(e.key===storageKey)refreshAccount().catch(()=>{});});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshAccount().catch(()=>{});});
