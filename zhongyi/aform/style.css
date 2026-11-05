@@ -60,3 +60,76 @@
 /* Primary creation action for owner and teacher workbenches. */
 .hero-date .admin-create-record{background:#fffdf4;color:#173f35;border-color:#fffdf4;min-height:48px;font-size:15px;white-space:nowrap}.bottom-nav a[href="#/new"]{color:var(--ink);font-weight:600}.bottom-nav a[href="#/new"] svg{background:var(--ink);color:#fffdf4;border-radius:5px;padding:3px;box-sizing:content-box}.page-heading:has(>a[href="#/new"]){flex-wrap:wrap;gap:14px}
 @media(max-width:640px){.admin-hero .hero-date{display:flex;flex-wrap:wrap;gap:10px}.admin-hero .hero-date>span,.admin-hero .hero-date>small{display:none}.hero-date .admin-create-record{flex:1;justify-content:center;padding:12px 16px}.hero-date button{flex:0 0 auto}.bottom-nav a{min-height:54px}}
+
+
+/* A continuous route back to the full site, before and after sign-in. */
+:root{--main-site-bar-height:64px;scroll-padding-top:calc(var(--main-site-bar-height) + 16px)}
+.main-site-bar{position:sticky;top:0;z-index:20;background:#fffefa;border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.main-site-bar-inner{height:var(--main-site-bar-height);max-width:1440px;margin:auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.main-site-home{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:600;white-space:nowrap;color:var(--ink);background:var(--pale)}
+.main-site-bar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.main-site-desktop{display:flex;align-items:center;gap:22px}
+.main-site-desktop a{display:flex;align-items:center;min-height:44px;font-size:13px;white-space:nowrap;color:var(--muted);border-bottom:2px solid transparent}
+.main-site-desktop a[aria-current]{color:var(--ink);border-bottom-color:var(--ink)}
+.main-site-bar a:hover{color:var(--deep);background:var(--pale)}
+.main-site-bar a:focus-visible,.main-site-menu summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.main-site-menu{display:none}
+.sidebar{top:calc(var(--main-site-bar-height) + env(safe-area-inset-top));height:calc(100vh - var(--main-site-bar-height) - env(safe-area-inset-top));overflow-y:auto}
+.app-shell{min-height:calc(100vh - var(--main-site-bar-height))}
+@media(max-width:900px){
+  :root{--main-site-bar-height:60px}
+  .main-site-bar-inner{padding:0 20px;gap:12px}
+  .main-site-desktop{display:none}
+  .main-site-menu{display:block}
+  .main-site-menu summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:44px;padding:0 8px;cursor:pointer;font-size:13px;font-weight:500;border-radius:6px}
+  .main-site-menu summary::-webkit-details-marker{display:none}
+  .main-site-menu[open] summary{background:var(--pale)}
+  .main-site-menu nav{position:absolute;top:calc(100% + 8px);right:16px;width:min(340px,calc(100vw - 32px));max-height:calc(100dvh - var(--main-site-bar-height) - 96px);overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:12px;background:var(--white);border:1px solid #cbd4c8;border-radius:12px;box-shadow:0 12px 35px #173c331c}
+  .main-site-menu nav a{min-height:48px;display:flex;align-items:center;padding:8px 14px;border-radius:6px;font-size:14px}
+  .main-site-menu nav a[aria-current]{background:var(--pale);font-weight:600}
+}
+@media(max-width:360px){.main-site-bar-inner{padding:0 14px}.main-site-home{font-size:13px;padding:0 10px}}
+@media print{.main-site-bar{display:none!important}}
+
+
+/* Familiar words, readable fields, and a short first step. */
+.auth-panel h1{font-size:30px;line-height:1.4;margin:0 0 12px}
+.auth-panel>p:first-of-type{font-size:15px;line-height:1.7;margin:0 0 18px}
+.auth-panel .auth-tabs{margin:18px 0 24px}
+.auth-panel .auth-tabs button{font-size:16px;min-height:48px}
+.password-control{position:relative}
+.password-control .input{padding-right:70px}
+.password-toggle{position:absolute;right:3px;top:3px;bottom:3px;min-width:58px;min-height:44px;padding:0 10px;border:0;border-radius:5px;background:var(--pale);color:var(--ink);font-size:14px;cursor:pointer}
+.password-toggle:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.login-help{margin-top:24px;padding-top:12px;border-top:1px solid var(--line)}
+.login-help summary{font-size:14px;line-height:1.7;min-height:44px;padding:10px 0;cursor:pointer}
+.login-help .browser-hint{margin-top:4px}
+.auth-reading-note{margin:14px 0 0;font-size:14px;line-height:1.8;color:var(--muted)}
+.record-more{margin:8px 0 14px}
+.record-more>summary{font-size:16px;min-height:48px;padding:12px 0;cursor:pointer}
+.record-more[open]>.grid2{margin-top:16px}
+.main-site-home{font-size:16px;min-height:48px}
+.main-site-desktop a{font-size:15px}
+@media(max-width:900px){.main-site-menu summary{font-size:16px;min-height:48px}.main-site-menu nav a{font-size:16px;min-height:50px}}
+@media(max-width:640px){
+ .auth-shell{margin:20px auto 28px}
+ .auth-panel .label,#case-form .label,.observation-sheet .label,#profile-form .label{font-size:16px}
+ .auth-panel .btn,#case-form>.btn,.savebar .btn{font-size:16px;min-height:50px}
+ .auth-panel .input,#case-form .input,#case-form select,.record-select-grid input,.record-select-grid select{font-size:16px;min-height:50px}
+ #case-form>.flow-guide p,.flow-guide p{font-size:14px;line-height:1.8}
+ .flow-guide strong{font-size:16px}
+ .record-required{grid-template-columns:1fr}
+ .record-more .grid2{grid-template-columns:1fr}
+ #case-form .check{font-size:16px;line-height:1.8;min-height:48px}
+ #case-form .check em{font-size:14px;line-height:1.8}
+ .page-heading p,.page-heading>.btn,.back{font-size:15px}
+ .back{display:inline-flex;align-items:center;min-height:44px}
+ .bottom-nav a{font-size:13px}
+ .main-site-bar-inner{padding:0 16px;gap:8px}
+ .main-site-home{padding:0 10px;gap:6px}
+ .main-site-menu summary{padding:0 4px;gap:6px}
+}
+
+.auth-panel .row.between{gap:12px;align-items:center}
+.auth-panel .text-btn{white-space:nowrap;font-size:15px;min-height:48px;flex-shrink:0}
+@media(max-width:640px){#case-form .check input{width:22px;height:22px;flex:0 0 22px;margin-top:3px}.main-site-bar a,.main-site-menu summary{touch-action:manipulation}}
