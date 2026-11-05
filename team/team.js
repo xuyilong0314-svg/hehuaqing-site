@@ -121,8 +121,8 @@ document.addEventListener('click',async e=>{
  if(e.target.closest('.skip-link')){e.preventDefault();const main=$('#main');main?.setAttribute('tabindex','-1');main?.focus();main?.scrollIntoView();return;}
  const b=e.target.closest('[data-action]');if(!b)return;const act=b.dataset.action,id=b.dataset.id;
  if(act==='close'){if(!busy)close();return;}
- if(act==='refresh'){if(user)await refresh();else{error='';render();}return;}
- if(act==='logout'){if(busy)return;const r=await client.auth.signOut();if(r.error)toast(friendly(r.error));return;}
+ if(act==='refresh'){if(user)await refresh();else await restoreSession();return;}
+ if(act==='logout'){if(busy)return;const r=await client.auth.signOut({scope:'local'});if(r.error)toast(friendly(r.error));return;}
  if(!active())return;
  if(act==='detail'){detail(id);return;}
  if(act==='delete-record'||act==='restore-record'){
@@ -176,13 +176,17 @@ document.addEventListener('submit',async e=>{
  }finally{busy=false;buttons.forEach(b=>b.disabled=false);}
 });
 window.addEventListener('hashchange',()=>{if(!busy)close();render();window.scrollTo({top:0});});
-window.addEventListener('online',()=>{if(user&&!busy)refresh({silent:true});});
+window.addEventListener('online',()=>{if(!busy){if(user)refresh({silent:true});else if(client)restoreSession();}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&user&&!busy&&!$('dialog'))refresh({silent:true});});
+async function restoreSession(){
+ try{const r=await client.auth.getSession();if(r.error)throw r.error;await authChanged(r.data.session);}
+ catch(e){loading=false;error=friendly(e);render();}
+}
 async function start(){
  try{
   client=createSharedClient();api=new TeamApi(client);
-  const r=await client.auth.getSession();if(r.error)throw r.error;await authChanged(r.data.session);
   client.auth.onAuthStateChange((event,session)=>{if(['SIGNED_IN','SIGNED_OUT','USER_UPDATED'].includes(event)){setTimeout(()=>{if(user?.id!==session?.user?.id||event==='SIGNED_OUT')authChanged(session);},0);}});
+  await restoreSession();
   setInterval(()=>{if(user&&!document.hidden&&!busy&&!$('dialog'))refresh({silent:true});},15000);
  }catch(e){loading=false;error=friendly(e);render();}
 }
