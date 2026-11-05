@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /account/
+Disallow: /analytics/
+Disallow: /team/
+Disallow: /zhongyi/aform/
+Disallow: /books/geming-de-zuzhi-luoji/
+Disallow: /books/offline.html
+Allow: /
+
+Sitemap: https://www.hehuaqing.com/sitemap.xml
