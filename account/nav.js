@@ -1,4 +1,4 @@
-import {onAccount,refreshAccount,hasSession} from './client.js?v=20261105-reading-1';
+import {onAccount,refreshAccount,hasSession} from './client.js?v=20261106-auth-regression-1';
 let account=null,scheduled=false;const base=new URL('../',import.meta.url);
 const accountURL=new URL('account/',base).href,adminURL=new URL('analytics/#/overview',base).href;
 function anchor(label,href,klass){const a=document.createElement('a');a.textContent=label;a.href=href;a.className=klass;return a;}

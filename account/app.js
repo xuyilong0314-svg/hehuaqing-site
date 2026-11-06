@@ -1,9 +1,9 @@
 import {authIssue,isWeChat,checkAuthConnection} from './auth-support.js?v=20261105-auth-repair-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../analytics/config.js?v=20261031-20';
-import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261105-simple-signup-1';
-import {getClient,refreshAccount,signOut,friendly,hasSession} from './client.js?v=20261105-auth-repair-1';
+import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261106-auth-regression-1';
+import {getClient,refreshAccount,signOut,friendly,hasSession,storageKey} from './client.js?v=20261106-auth-regression-1';
 import {escapeHtml as esc} from '../analytics/metrics.js?v=20261031-20';
-const root=document.querySelector('#account-app');let mode='login',busy=false,context=null,history=[];
+const root=document.querySelector('#account-app');let mode='login',busy=false,context=null,history=[],loadRevision=0;
 const date=t=>new Date(t).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
 function message(text,error=false){const box=document.querySelector('#account-message');if(box){box.className='message'+(error?' error':'');box.textContent=text;box.hidden=false;}}
 
@@ -35,7 +35,7 @@ function connectionError(){
  if(!hasSession()){login();message('连接暂未完成，请重试或先逛逛。',true);return;}
  root.innerHTML='<div class="auth-layout"><section class="auth-intro"><p class="eyebrow">我的账号</p><h1>稍后，继续阅读。</h1><p>登录信息仍保留，请检查网络后重试。</p></section><section class="auth-card"><button class="primary submit" data-action="reconnect">重新连接</button><div class="form-extra"><a href="../#home">先逛逛 →</a></div></section></div>';
 }
-async function load(){context=await refreshAccount();if(!context){login();return;}const r=await(await getClient()).rpc('site_my_reading');if(r.error)throw r.error;history=r.data;render();}
+async function load(){const revision=++loadRevision,next=await refreshAccount();if(revision!==loadRevision)return;context=next;if(!context){history=[];login();return;}const r=await(await getClient()).rpc('site_my_reading');if(revision!==loadRevision)return;if(r.error)throw r.error;history=r.data;render();}
 root.addEventListener('click',async e=>{const btn=e.target.closest('button');if(!btn||busy)return;if(btn.dataset.action==='check-connection'){busy=true;btn.disabled=true;try{await diagnoseConnection();}finally{busy=false;btn.disabled=false;}return;}if(btn.dataset.action==='copy-registration-link'){await copyRegistrationLink();return;}if(btn.dataset.action==='reconnect'){busy=true;btn.disabled=true;try{await load();}catch{connectionError();}finally{busy=false;btn.disabled=false;}return;}if(btn.dataset.mode){mode=btn.dataset.mode;login();}if(btn.dataset.action==='logout'){busy=true;btn.disabled=true;try{await signOut();context=null;history=[];mode='login';login('已退出全站账号。');}catch(error){message(friendly(error),true);}finally{busy=false;btn.disabled=false;}}});
 root.addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;const f=e.target,fields=new FormData(f),button=f.querySelector('button[type=submit]');busy=true;button.disabled=true;
@@ -52,6 +52,7 @@ root.addEventListener('submit',async e=>{
   }
  }catch(error){if(f.id==='account-form'&&hasSession())connectionError();else if(f.id==='account-form')showAuthError(error);else message(friendly(error),true);}finally{busy=false;button.disabled=false;if(f.id==='account-form')button.textContent=mode==='signup'?'注册账号':'登录';}
 });
-addEventListener('storage',()=>{if(!busy)load().catch(connectionError);});
+addEventListener('storage',e=>{if((e.key===storageKey||e.key===null)&&!busy)load().catch(connectionError);});
+addEventListener('hhq-account-change',e=>{if(!e.detail.signedIn){loadRevision++;context=null;history=[];mode='login';login('已退出全站账号。');}});
 addEventListener('online',()=>{if(!busy&&hasSession())load().catch(connectionError);});
 load().catch(connectionError);

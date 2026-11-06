@@ -12,7 +12,7 @@ async function within(promise, timeoutMs) {
 
 export async function registrationOutcome(auth, callback = {}, timeoutMs = 10000) {
   if (callback.error) return {state: 'expired'};
-  if (callback.signup && !callback.hasAccessToken) return {state: 'missing'};
+  if ((callback.signup || callback.setup) && !callback.hasAccessToken) return {state: 'missing'};
   try {
     const sessionResult = await within(auth.getSession(), timeoutMs);
     if (sessionResult.error) {
@@ -20,7 +20,7 @@ export async function registrationOutcome(auth, callback = {}, timeoutMs = 10000
     }
     const session = sessionResult.data?.session;
     if (!session?.access_token || !session.user?.id) return {state: 'missing'};
-    const verified = await within(auth.getUser(session.access_token), timeoutMs);
+    const verified = await within(auth.getUser(callback.accessToken || session.access_token), timeoutMs);
     if (verified.error) return {state: verified.error.status === 401 || verified.error.status === 403 ? 'expired' : 'retry'};
     const person = verified.data?.user;
     if (!person || person.id !== session.user.id) return {state: 'missing'};
@@ -29,11 +29,14 @@ export async function registrationOutcome(auth, callback = {}, timeoutMs = 10000
   } catch { return {state: 'retry'}; }
 }
 
-export function registrationCopy(state) {
+export function registrationCopy(state, setup = false) {
+  if (setup && ['expired', 'missing', 'unconfirmed'].includes(state)) {
+    return ['密码设置链接无法使用', '请通过“忘记密码”重新发送重设密码邮件，并打开最新邮件中的链接。'];
+  }
   return ({
     pending: ['正在确认账号', '请稍候，正在完成登录。'],
     success: ['注册成功', '已为您登录，可以直接开始阅读和记录。'],
-    expired: ['链接已使用或已过期', '如果已经完成邮箱验证，请直接返回登录；尚未验证，请打开最新一封验证邮件。'],
+    expired: ['链接已使用或已过期', '注册验证请打开最新一封验证邮件；重设密码请通过“忘记密码”重新申请邮件。已经完成验证，可直接返回登录。'],
     missing: ['请登录继续', '请打开注册邮箱中的验证链接。已经验证过邮箱，可直接登录。'],
     unconfirmed: ['请先完成邮箱验证', '请打开注册时收到的验证邮件，点击链接后即可继续。'],
     retry: ['暂时无法确认登录状态', '网络连接暂未完成，请重新确认，也可以返回登录。']
