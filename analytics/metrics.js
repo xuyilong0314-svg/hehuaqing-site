@@ -25,5 +25,6 @@ export function deviceCategory(agent,width) {
 export function duration(value) {const n=Math.max(0,Math.round(Number(value)||0));return n<60?n+'秒':Math.floor(n/60)+'分'+(n%60?n%60+'秒':'');}
 export const sourceNames={wechat:'微信内打开',search:'搜索引擎',social:'社交网站',internal:'站内跳转',referral:'其他网站',direct:'直接 / 来源未知'};
 export const deviceNames={mobile:'手机',tablet:'平板',desktop:'电脑'};
-export const categoryNames={home:'首页',article:'文章',poetry:'诗集',book:'电子书',music:'音乐',tcm:'古中医',aform:'A表入口',section:'栏目'};
+export const categoryNames={home:'首页',article:'文章',poetry:'诗集',book:'电子书',music:'音乐',tcm:'古中医',aform:'上医健康服务档案入口',section:'栏目'};
 export function csvCell(value){let s=String(value??'');if(/^[=+@\-\t\r]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"';}
+

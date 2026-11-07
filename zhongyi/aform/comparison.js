@@ -1,4 +1,4 @@
-import {STAGES,ITEMS,esc,stageName,addDays} from './core.js?v=20261107-paper-1';
+import {STAGES,ITEMS,esc,stageName,addDays} from './core.js?v=20261107-shangyi-1';
 
 export function score(value){return typeof value==='number'&&Number.isFinite(value)&&value>=1&&value<=5?value:null;}
 export function scoreChanges(current,reference){return ITEMS.map(([key,label])=>{const value=score(current?.data?.ratings?.[key]),before=score(reference?.data?.ratings?.[key]);return {key,label,value,before,delta:value!==null&&before!==null?value-before:null};});}

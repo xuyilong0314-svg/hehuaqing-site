@@ -1,4 +1,4 @@
-import {ITEMS,PRODUCTS,esc,stageName,today,addDays} from './core.js?v=20261107-paper-1';
+import {ITEMS,PRODUCTS,esc,stageName,today,addDays} from './core.js?v=20261107-shangyi-1';
 
 // Printed constants from the six-page A-form V1.1. Quantities/frequency stay blank.
 export const PRODUCT_TABLE=Object.freeze([
