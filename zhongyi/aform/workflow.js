@@ -2,15 +2,21 @@ import {ITEMS,PRODUCTS,esc,stageName,today,addDays} from './core.js?v=20261107-s
 
 // Printed constants from the six-page A-form V1.1. Quantities/frequency stay blank.
 export const PRODUCT_TABLE=Object.freeze([
- {element:'金',name:'人参双茅饮',time:'07:00-09:00',unit:'袋'},
- {element:'木',name:'人参葛根饮',time:'17:00-19:00',unit:'袋'},
- {element:'火·必用',name:'黄精枸杞饮',time:'11:00-13:00',unit:'袋'},
- {element:'土',name:'陈皮四季饮',time:'07:00-09:00',unit:'袋'},
- {element:'水',name:'康美铁玛',time:'17:00-19:00',unit:'粒'},
+ {element:'金',organs:'肺、大肠',name:'人参双茅饮',time:'07:00-09:00',unit:'袋'},
+ {element:'木',organs:'肝、胆',name:'人参葛根饮',time:'17:00-19:00',unit:'袋'},
+ {element:'火·必用',organs:'心、小肠',name:'黄精枸杞饮',time:'11:00-13:00',unit:'袋'},
+ {element:'土',organs:'脾、胃',name:'陈皮四季饮',time:'07:00-09:00',unit:'袋'},
+ {element:'水',organs:'肾、膀胱',name:'康美铁玛',time:'17:00-19:00',unit:'粒'},
  {element:'调和',name:'灵芝孢子油',time:'晨起、睡前',unit:'粒'}
 ].map(Object.freeze));
 export const PRODUCT_PLAN_TIMES=Object.freeze(Object.fromEntries(PRODUCT_TABLE.map(p=>[p.name,p.time])));
 export const productTemplate=name=>PRODUCT_TABLE.find(p=>p.name===name);
+export function productElementLabel(product){
+ const fixed=productTemplate(product.name);
+ if(!fixed)return product.element||'';
+ if(fixed.element==='调和')return '五脏调和';
+ return fixed.element.replace('·必用','')+' · '+fixed.organs+(fixed.element.includes('必用')?' · 必用':'');
+}
 export function productWithPlanTime(product,scope='plan'){
  const fixed=productTemplate(product.name);
  // Preserve non-empty historical values. New plans use the printed constants.
@@ -21,6 +27,22 @@ export function paperPlanRows(rows=[]){
 }
 export function choiceGroup(label,name,value,options){
  return '<fieldset class="paper-choice"><legend>'+label+'</legend><div class="paper-options">'+options.map((o,i)=>{const [v,l]=Array.isArray(o)?o:[o,o];return '<label><input type="radio" name="'+esc(name)+'" value="'+esc(v)+'"'+(v===value?' checked':'')+'><span>'+esc(l)+'</span></label>';}).join('')+'</div></fieldset>';
+}
+export const AXIS_OPTIONS=['火扶正','土水固本','金木起势','待定'];
+export function axisValues(value){
+ const values=[...new Set((Array.isArray(value)?value:String(value??'').split(/[、,，]/)).map(x=>String(x).trim()).filter(Boolean))];
+ return values.length>1?values.filter(x=>x!=='待定'):values;
+}
+export const readAxis=f=>axisValues(f.getAll('axis')).join('、');
+export function axisChoices(value='待定'){
+ const selected=axisValues(value),options=[...new Set([...AXIS_OPTIONS,...selected])];
+ return '<fieldset class="paper-choice"><legend>本次主轴（可多选）</legend><div class="paper-options">'+options.map(x=>'<label><input type="checkbox" name="axis" value="'+esc(x)+'"'+(selected.includes(x)?' checked':'')+'><span>'+esc(x)+'</span></label>').join('')+'</div></fieldset>';
+}
+export function syncAxisChoices(form,changed){
+ if(!changed.checked)return;
+ for(const input of form.querySelectorAll('input[name="axis"]')){
+  if(input!==changed&&(changed.value==='待定'||input.value==='待定'))input.checked=false;
+ }
 }
 export function shapeControls(t,field){
  const selected=t.elements||[...String(t.form||'')].filter(x=>['金','木','土','水'].includes(x));
@@ -47,15 +69,15 @@ export function readWorkflow(f,stage,previous={}){
  return result;
 }
 export const DETAIL_COLUMNS=['首次服务需求','当下体感','最希望记录或改善','目前具体怎样','过敏情况','在用药或产品','本人建档补充','本次记录人','光泽','力度','力度来源','苔象完整度','三判结果','整体形态','本次主轴','观察依据','方案名称','方案依据','方案处理','计划开始','计划结束','计划产品明细','方案补充','实际执行状态','日常行动执行','执行变化说明','实际产品明细',...FOUR_ACTIONS.flatMap(([,name])=>[name+'已约定',name+'具体约定',name+'频次',name+'执行情况',name+'反馈调整']),'本次处理','处理原因','联系方法','下次重点','生活体感变化','舌象变化','伙伴复盘','后续服务','建档记录同意','拍摄保存同意','本次舌象拍摄','手记照片编号','整体形态单项','光泽较首次','力度较首次','苔象完整度较首次','整体形态较首次'];
-const productText=rows=>(rows||[]).map(p=>[p.element||productTemplate(p.name)?.element,p.name,p.useStatus||(p.unused?'未使用':''),p.time,p.amount,p.unit,p.perDay?'每日'+p.perDay+'次':'',p.note].filter(Boolean).join('；')).join('\n');
-export function detailValues(c,o){const b=c.baseline||{},d=o.data||{},t=d.tongue||{},p=d.plan||{};return [(b.needs||[]).join('、'),(b.feelings||[]).join('、'),b.wish,b.detail,b.allergy,b.meds,b.extra,d.recordedBy,t.gloss,t.strength,t.source,t.coating,t.yinyang,t.form,t.axis,d.observationNote,p.title,p.basis,p.decision,p.startDate,p.endDate,productText(p.products),p.note,d.usage,d.action,d.usageNote,productText(d.products),...FOUR_ACTIONS.flatMap(([key])=>{const a=d.actions?.[key]||{};return [a.agreed?'是':'未约定',a.agreement,a.frequency,a.status,a.feedback];}),d.handling,d.handlingReason,d.nextMethod,d.nextFocus,d.lifeChange,d.tongueChange,d.partnerReview,d.nextService,c.consent_record?'同意':'未同意',c.consent_photo?'同意':'未同意',d.photoStatus,d.photoReference,(t.elements||[]).join('、'),...[0,1,2,3].map(i=>d.compare?.[i]||'未评')].map(v=>v??'');}
+const productText=rows=>(rows||[]).map(p=>[productElementLabel(p),p.name,p.useStatus||(p.unused?'未使用':''),p.time,p.amount,p.unit,p.perDay?'每日'+p.perDay+'次':'',p.note].filter(Boolean).join('；')).join('\n');
+export function detailValues(c,o){const b=c.baseline||{},d=o.data||{},t=d.tongue||{},p=d.plan||{};return [(b.needs||[]).join('、'),(b.feelings||[]).join('、'),b.wish,b.detail,b.allergy,b.meds,b.extra,d.recordedBy,t.gloss,t.strength,t.source,t.coating,t.yinyang,t.form,axisValues(t.axis).join('、'),d.observationNote,p.title,p.basis,p.decision,p.startDate,p.endDate,productText(p.products),p.note,d.usage,d.action,d.usageNote,productText(d.products),...FOUR_ACTIONS.flatMap(([key])=>{const a=d.actions?.[key]||{};return [a.agreed?'是':'未约定',a.agreement,a.frequency,a.status,a.feedback];}),d.handling,d.handlingReason,d.nextMethod,d.nextFocus,d.lifeChange,d.tongueChange,d.partnerReview,d.nextService,c.consent_record?'同意':'未同意',c.consent_photo?'同意':'未同意',d.photoStatus,d.photoReference,(t.elements||[]).join('、'),...[0,1,2,3].map(i=>d.compare?.[i]||'未评')].map(v=>v??'');}
 export function renderStageForm(c,o,stage,ctx,h){
  const flow=STAGE_FLOW[stage]||STAGE_FLOW.d21,d=o?.data||{},t=d.tongue||{},plan=d.plan||{},first=stage==='d1';
  const {field,area,select,checkbox,ratingControls,productsHTML,icon}=h;
  const productEditor=(rows,scope)=>'<div class="product-editor">'+productsHTML(rows,scope)+'<div class="product-add"><label class="label" for="'+(scope==='plan'?'plan-':'')+'product-select">添加'+(scope==='plan'?'方案':'实际使用')+'产品</label><div class="row"><select id="'+(scope==='plan'?'plan-':'')+'product-select" aria-label="选择'+(scope==='plan'?'方案':'实际使用')+'产品">'+PRODUCTS.map(p=>'<option>'+esc(p)+'</option>').join('')+'<option value="other">其他产品</option></select><button type="button" class="btn tiny secondary" data-action="add-product" data-scope="'+scope+'">添加</button></div><button type="button" class="text-btn" data-action="add-product-template" data-scope="'+scope+'">展开原表六项产品清单</button></div></div>';
  const execution=flow.execution?'<section class="form-section"><h3>执行核对 · 回看'+flow.previous+'</h3><div class="record-select-grid">'+choiceGroup('实际使用','usage',d.usage||'未核对',['未核对',['按原记录','按'+flow.previous],'有变化','未使用'])+choiceGroup('日常行动','action',d.action||'未核对',['已落实','部分落实','未落实','未核对'])+'</div>'+area(stage==='d3'?'变化说明':'体感与执行','usageNote',d.usageNote,'按哪套方案执行？有没有漏用、变化或未落实的地方？')+'<details class="record-detail"'+(d.products?.length?' open':'')+'><summary>补充实际产品使用明细</summary><p class="small muted">这里只填写已经发生的使用情况；没有使用可选择“未使用”。</p>'+productEditor(d.products||[],'actual')+'</details></section>':'';
  const photos='<section class="form-section"><h3>本次舌象</h3>'+choiceGroup('拍摄情况','photoStatus',d.photoStatus||(ctx.photoNumbers?.length?'已拍':''),['已拍','未拍'])+field('编号','photoReference',d.photoReference||ctx.photoNumbers?.join(' / ')||'','text','maxlength="240" placeholder="上传后自动编号；外部照片可填写原编号"')+'<p class="small muted">尽量同一时段、自然光、同一角度，不美颜、不滤镜。</p><div class="photo-grid">'+ctx.photosHTML+'</div>'+(c.consent_photo?'<div class="upload">'+icon('camera')+'<div class="row" style="justify-content:center;margin-top:12px"><button type="button" class="btn tiny secondary" data-action="pick-photo">选择舌象照片</button><button type="button" class="btn tiny soft" data-action="take-photo">拍摄舌象</button></div><p>每次最多3张 · JPG / PNG / WebP · 单张≤10MB<br>选择照片后自动保存记录并上传；看到“已保存”才表示完成。</p><div id="upload-status">'+(ctx.uploadHTML||'')+'</div><input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden><input id="camera-input" type="file" accept="image/*" capture="environment" hidden></div>':'<div class="well"><p>本档案尚未同意保存照片，可继续填写文字记录。</p>'+(ctx.isOwner?'<a class="small" href="#/edit/'+esc(c.id)+'">编辑拍照授权 ↗</a>':'')+'</div>')+'</section>';
- const tongue='<section class="record-detail paper-section"><h3>舌象观察与判断</h3><div class="record-select-grid">'+choiceGroup('光泽','gloss',t.gloss||'待定',['好','不好','待定'])+choiceGroup('力度','strength',t.strength||'待定',['好','不好','待定'])+select('力度观察来源','source',t.source||'未观察',['未观察','现场动作观察','本人描述'])+choiceGroup('苔象完整度','coating',t.coating||'待定',['好','不好','待定'])+choiceGroup('三判结果','yinyang',t.yinyang||'待定',['阳舌','阴舌','待定'])+'</div>'+shapeControls(t,field)+choiceGroup('本次主轴','axis',t.axis||'待定',['火扶正','土水固本','金木起势','待定'])+'<div class="paper-guidance"><p>三项明确后再取二；两好为阳、两不好为阴；不清楚选待定。</p><p>力度看伸出、保持、收回；苔象看缺、凹、齿痕；整体形态另记。</p></div>'+area('观察补充与判断依据','observationNote',d.observationNote,'把观察到的细节写清楚；不清楚的项目保留待定。')+(!first?'<h3>与首次观察比较</h3><div class="record-select-grid">'+['光泽','力度','苔象完整度','整体形态'].map((x,i)=>choiceGroup(x+'与首次相比','compare_'+i,d.compare?.[i]||'未评',[['主观感觉改善','好转'],'不变',['主观感觉变差','变差'],'未评'])).join('')+'</div><p class="small muted">同条件观察；未观察或看不清选“未评”。</p>':'')+'<p class="small muted">静态图片无法判断动作力度；没有观察动作时请保留“待定”。</p></section>';
+ const tongue='<section class="record-detail paper-section"><h3>舌象观察与判断</h3><div class="record-select-grid">'+choiceGroup('光泽','gloss',t.gloss||'待定',['好','不好','待定'])+choiceGroup('力度','strength',t.strength||'待定',['好','不好','待定'])+select('力度观察来源','source',t.source||'未观察',['未观察','现场动作观察','本人描述'])+choiceGroup('苔象完整度','coating',t.coating||'待定',['好','不好','待定'])+choiceGroup('三判结果','yinyang',t.yinyang||'待定',['阳舌','阴舌','待定'])+'</div>'+shapeControls(t,field)+axisChoices(t.axis)+'<div class="paper-guidance"><p>三项明确后再取二；两好为阳、两不好为阴；不清楚选待定。</p><p>力度看伸出、保持、收回；苔象看缺、凹、齿痕；整体形态另记。</p></div>'+area('观察补充与判断依据','observationNote',d.observationNote,'把观察到的细节写清楚；不清楚的项目保留待定。')+(!first?'<h3>与首次观察比较</h3><div class="record-select-grid">'+['光泽','力度','苔象完整度','整体形态'].map((x,i)=>choiceGroup(x+'与首次相比','compare_'+i,d.compare?.[i]||'未评',[['主观感觉改善','好转'],'不变',['主观感觉变差','变差'],'未评'])).join('')+'</div><p class="small muted">同条件观察；未观察或看不清选“未评”。</p>':'')+'<p class="small muted">静态图片无法判断动作力度；没有观察动作时请保留“待定”。</p></section>';
  const planSection=flow.plan?'<section class="record-detail plan-section paper-section"><h3>'+flow.plan+'</h3><p class="small muted">'+(first?'首次填写准备执行的方案；实际执行情况从第3天再核对。':'先记录本次反馈，再填写接下来这一阶段的方案。')+'</p>'+area('方案依据与本阶段重点','plan_basis',plan.basis,'根据本次诉求、观察与反馈，写明为什么这样安排。')+choiceGroup('方案处理','plan_decision',plan.decision||'待填写',first?['待填写','拟定','暂不安排','专业咨询']:['待填写','沿用','调整','暂停','专业咨询'])+'<div class="record-select-grid">'+field('计划开始日期','plan_startDate',plan.startDate||addDays(c.created_on,flow.from),'date')+field('计划结束日期','plan_endDate',plan.endDate||addDays(c.created_on,flow.to),'date')+'</div><h3>逐项填写产品方案</h3><p class="small muted">产品、五行、服用时间与单位按原表固定。每次量、每日次数按本次安排填写；未用项选“未用”。</p>'+productEditor(plan.products||[],'plan')+area('方案补充说明','plan_note',plan.note,'填写需要交代的具体安排、注意事项或暂不安排的原因。')+'<p class="small muted">实际使用按产品标签及个人情况核对。</p></section>':'';
  const actions='<details class="record-detail four-actions" open><summary>四有行动'+(first?'约定':' · 执行核对与下次约定')+'</summary><p class="small muted">'+(first?'和本人一起商定能做到的具体行动，写清楚怎样做、何时做。':'先如实核对执行，再写下一阶段继续或调整的具体行动。')+'</p>'+FOUR_ACTIONS.map(([key,label])=>{const a=d.actions?.[key]||{};return '<section class="action-agreement"><h3>'+label+'</h3>'+checkbox('action_agree_'+key,'已与本人约定',a.agreed)+area('具体约定','action_agreement_'+key,a.agreement,'写清楚本人准备怎么做，不只勾选。')+field('执行频次 / 时间','action_frequency_'+key,a.frequency||'','text','maxlength="120" placeholder="按本人实际约定填写"')+(flow.execution?select('本阶段执行情况','action_status_'+key,a.status||'未核对',['未核对','已落实','部分落实','未落实'])+area('执行反馈 / 调整','action_feedback_'+key,a.feedback,'做到了什么？有什么困难？下一步怎样调整？'):'')+'</section>';}).join('')+'</details>';
  const review='<section class="form-section"><h3>'+(first?'本人补充与第3天约定':'本人反馈、本次处理与下次约定')+'</h3>'+area(first?'客户补充':'客户原话','quote',d.quote,first?'补充本人当前的感受与期待。':'尽量按本人原话记录感受。')+(!first?choiceGroup('本次处理','handling',d.handling||'待定',['待定','维持','复核','调整','暂停','咨询'])+area('原因与行动','handlingReason',d.handlingReason):'')+'<div class="record-select-grid">'+field(flow.nextTitle,'nextDate',d.nextDate||(flow.next===null?'':addDays(c.created_on,flow.next)),'date')+choiceGroup('联系方法','nextMethod',d.nextMethod||'',['微信','电话','面访'])+'</div>'+area('下次联系重点','nextFocus',d.nextFocus,'写清下次要核对的照片、体感、方案或行动。')+'</section>';
