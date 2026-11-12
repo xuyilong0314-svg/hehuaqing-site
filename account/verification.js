@@ -20,7 +20,7 @@ export function readVerificationLink(location) {
   const token = hash.get('token_hash') || query.get('token_hash') || '';
   const type = hash.get('type') || query.get('type') || '';
   if (!token) return null;
-  if (!['email', 'signup'].includes(type) || !/^[a-f0-9]{40,128}$/i.test(token)) return {invalid: true};
+  if (!['email', 'signup', 'magiclink'].includes(type) || !/^[a-f0-9]{40,128}$/i.test(token)) return {invalid: true};
   return {token_hash: token, type: 'email'};
 }
 export function linkCredentials(value) {
@@ -33,7 +33,7 @@ export function linkCredentials(value) {
   if (url.hostname !== 'mdwbtgjyrdqfwupvadir.supabase.co' || url.pathname !== '/auth/v1/verify') throw invalid();
   const token = url.searchParams.get('token') || url.searchParams.get('token_hash') || '';
   const type = url.searchParams.get('type');
-  if (!['email', 'signup'].includes(type) || !/^[a-f0-9]{40,128}$/i.test(token)) throw invalid();
+  if (!['email', 'signup', 'magiclink'].includes(type) || !/^[a-f0-9]{40,128}$/i.test(token)) throw invalid();
   return {token_hash: token, type: 'email'};
 }
 export async function confirmEmail(auth, credentials) {

@@ -18,6 +18,15 @@ export function normalizeProfile(values) {
   if (/^[1-9]\d*$/.test(class_name)) class_name = '第' + class_name + '期';
   return {display_name, location, has_studied, class_name, profile_version: 1};
 }
+// Registration keeps the name requirement; detailed study information is completed later.
+export function signupFields(prefix='signup') {
+  return `<label class="field profile-field" for="${prefix}-name">真实姓名<input id="${prefix}-name" name="display_name" type="text" required maxlength="40" autocomplete="name" placeholder="请填写真实姓名"></label>`;
+}
+export function signupProfileFromForm(form) {
+  const name=clean(new FormData(form).get('display_name')).replace(/\s+/g,' ');
+  const checked=normalizeProfile({display_name:name,location:'',has_studied:false,class_name:''});
+  return {display_name:checked.display_name};
+}
 export function profileFromForm(form) {
   const data = new FormData(form);
   return normalizeProfile(Object.fromEntries(['display_name','location','has_studied','class_name'].map(key => [key, data.get(key)])));

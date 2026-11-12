@@ -1,4 +1,4 @@
-import {readPersonalProfile} from './profile.js?v=20261112-profile-1';
+import {readPersonalProfile} from './profile.js?v=20261112-deferred-1';
 import {authIssue} from './auth-support.js?v=20261105-auth-repair-1';
 import {ANALYTICS_URL,ANALYTICS_KEY,OWNER_DEVICE_KEY} from '../analytics/config.js?v=20261031-20';
 import {publicApiFetch} from '../zhongyi/aform/auth.js';
