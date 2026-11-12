@@ -1,3 +1,4 @@
+import {accountRequest,accountChanged} from './requests.js?v=20261112-flow-1';
 // Website and health archives use the same authenticated user's personal profile.
 // Auth user metadata is the shared source; existing name/class tables are projections
 // for the member list, never a source of permissions.
@@ -78,17 +79,21 @@ export async function readPersonalProfile(db, {legacy, expectedUserId} = {}) {
   const profile = await synchronize(db, user, legacy);
   return {profile, user};
 }
-export async function savePersonalProfile(db, values) {
+export async function savePersonalProfile(db, values, {expectedUserId,signal,fetcher} = {}) {
   const profile = normalizeProfile(values);
   let saved = false;
   try {
-    const {user} = result(await db.auth.updateUser({data: profile}));
+    const user = await accountRequest(db,expectedUserId,'/auth/v1/user',{method:'PUT',body:{data:profile},signal,fetcher});
     if (!user) throw new Error('login_required');
+    if (user.id !== expectedUserId) throw accountChanged();
     saved = true;
+    const current = result(await db.auth.getSession()).session;
+    if (current?.user?.id !== expectedUserId) throw accountChanged();
     const legacy = result(await db.from('profiles').select('id,display_name,class_name').eq('id', user.id).maybeSingle());
     await synchronize(db, user, legacy);
     return {profile, user};
   } catch (error) {
+    if (error.code === 'account_changed' || error.name === 'AbortError') throw error;
     if (saved) throw new ProfileError('个人资料已保存，姓名与期数的同步暂未完成。请再次点击“保存资料”重试。', true);
     throw error;
   }

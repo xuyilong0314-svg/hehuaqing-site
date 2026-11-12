@@ -1,4 +1,4 @@
-import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-stability-1';
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-flow-1';
 import {resetAccountConnection} from './connection.js?v=20261112-stability-1';
 // Only public error categories and anonymous connection checks. No credentials are retained.
 export const isWeChat = (ua = '') => /MicroMessenger/i.test(ua);
@@ -9,6 +9,8 @@ export function authIssue(error) {
   const message = String(error?.message || '');
   const status = Number(error?.status) || 0;
   const issue = (reference, text, connection = false) => ({reference, text, connection});
+  if (code === 'account_changed') return issue('AUTH-ACCOUNT-CHANGED', '账号已切换，请在当前账号重新填写并保存。');
+  if (name === 'TimeoutError' || code === 'request_timeout' || /账号请求超时/.test(message)) return issue('AUTH-TIMEOUT', '账号服务响应较慢，填写的内容已保留。结果尚未确认，请稍后用原邮箱登录或重试，不用换邮箱注册。', true);
   if (code === 'client_load_failed') return issue('AUTH-CLIENT-LOAD', '账号组件没有加载完成。填写的内容还在，请重新连接后再试。', true);
   if (code === 'client_config_invalid' || /网站连接参数无效/.test(message)) return issue('AUTH-CLIENT-CONFIG', '账号连接配置未更新，请刷新页面后再试。', true);
   if (code === 'client_init_failed') return issue('AUTH-CLIENT-INIT', '账号组件暂时未能启动。请重新连接；仍不成功时可在手机浏览器中打开。', true);
