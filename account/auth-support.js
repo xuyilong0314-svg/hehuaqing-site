@@ -1,4 +1,5 @@
-import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-connection-1';
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-stability-1';
+import {resetAccountConnection} from './connection.js?v=20261112-stability-1';
 // Only public error categories and anonymous connection checks. No credentials are retained.
 export const isWeChat = (ua = '') => /MicroMessenger/i.test(ua);
 
@@ -28,6 +29,8 @@ export function authIssue(error) {
 }
 
 export async function checkAuthConnection(config, fetcher = fetch, timeoutMs = 20000) {
+  // An explicit connection check must not reuse a previously selected route.
+  resetAccountConnection(config.key,fetcher);
   const controller = new AbortController();
   const started = Date.now();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
