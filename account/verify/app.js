@@ -30,20 +30,23 @@ function createClient(persist){
 }
 const db=()=>persistent||(persistent=createClient(true));
 const temp=()=>temporary||(temporary=createClient(false));
-function success(){
+function success(email){
   credentials=null;returnedSession=null;forgetPendingEmail();$('code').value='';
-  $('title').textContent='邮箱已验证';document.title='邮箱已验证 · 何华清';$('intro').textContent='已确认这个邮箱由您使用，验证结果已保存到个人页。';
+  $('title').textContent='邮箱已验证';document.title='邮箱已验证 · 何华清';$('intro').textContent='已确认 '+email+' 由您使用，验证结果已保存到个人页。';
   $('notice').hidden=true;$('link-confirm').hidden=true;$('forms').hidden=true;$('login-help').hidden=true;$('success').hidden=false;
   document.querySelector('.mark').textContent='✓';$('title').focus();
 }
 async function run(action){
  if(busy)return;busy=true;buttons();
- try{await loadAccountSdk();if(!initialized&&action!==init)await init();await action();}
+ try{await loadAccountSdk();if(!initialized)await init();await action();}
  catch(error){
   const startup=String(error?.code||'').startsWith('client_');
   notice(startup?'账号组件暂未加载完成，验证链接仍保留，请重新连接。':emailError(error),true);
-  if(!initialized||startup){const retry=document.createElement('button');retry.type='button';retry.className='secondary';retry.textContent='重新连接';retry.addEventListener('click',()=>run(init));$('notice').append(retry);}
+  if(!initialized||startup){const retry=document.createElement('button');retry.type='button';retry.className='secondary';retry.textContent='重新连接';retry.addEventListener('click',()=>run(confirmInitialLink));$('notice').append(retry);}
  }finally{busy=false;buttons();}
+}
+async function confirmInitialLink(){
+ if(!callbackError&&(returnedSession||(credentials&&!credentials.invalid)))await finish(credentials);
 }
 async function finish(link){
   notice('正在确认邮箱，请稍候…');
@@ -62,7 +65,7 @@ async function finish(link){
   }
   const result=await completeEmailVerification(temp(),expected);
   const saved=await db().auth.setSession({access_token:result.session.access_token,refresh_token:result.session.refresh_token});if(saved.error)throw saved.error;
-  success();
+  success(result.user.email);
 }
 $('confirm-link').addEventListener('click',()=>run(()=>finish(credentials)));
 $('code-form').addEventListener('submit',event=>{event.preventDefault();run(async()=>{returnedSession=null;await finish(linkCredentials($('code').value));});});
@@ -70,7 +73,7 @@ $('resend').addEventListener('click',()=>{
   if(Date.now()<resendAt)return;
   run(async()=>{
     if(currentUser){
-      const result=await requestEmailVerification(db(),location,currentUser.email);if(result.alreadyVerified){success();return;}
+      const result=await requestEmailVerification(db(),location,currentUser.email);if(result.alreadyVerified){success(result.user.email);return;}
     }else{
       // Compatibility for an old, unconfirmed signup during deployment.
       await resendConfirmation(db().auth,$('email').value,authReturnUrl(location));
@@ -83,15 +86,15 @@ async function init(){
   if(callbackError)notice('这条邮件链接已过期或无法使用。请先登录，再从个人页发送新的验证邮件。',true);
   if(credentials?.invalid)notice('这条验证链接不完整，请使用最新邮件。',true);
   if(returnedSession||(credentials&&!credentials.invalid)){
-    $('link-confirm').hidden=false;$('intro').textContent='请确认要使用这封邮件验证您的邮箱。无需重新注册或设置密码。';
+    $('link-confirm').hidden=false;$('intro').textContent='正在确认邮件链接，完成后会显示验证结果。无需重新注册或设置密码。';
   }
   const r=await db().auth.getSession();if(r.error)throw r.error;
   if(r.data?.session){const checked=await db().auth.getUser();if(checked.error)throw checked.error;currentUser=checked.data?.user;}
   if(currentUser){
     $('email').value=currentUser.email;$('email').readOnly=true;
-    if(!returnedSession&&!credentials&&!callbackError){const state=await emailStatus(db());if(state.verified)success();}
+    if(!returnedSession&&!credentials&&!callbackError){const state=await emailStatus(db());if(state.verified)success(state.email);}
   }else if(!returnedSession&&!credentials){$('intro').textContent='请先登录，在个人页选择“验证邮箱”。已有验证邮件，也可在下方粘贴链接完成验证。';}
   initialized=true;
 }
 setInterval(buttons,1000);
-run(init);
+run(confirmInitialLink);
