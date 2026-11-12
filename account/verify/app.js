@@ -1,10 +1,12 @@
+import {loadAccountSdk} from '../sdk.js?v=20261112-complete-1';
+import {browserSessionStorage} from '../session-storage.js?v=20261112-complete-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../../analytics/config.js?v=20261031-20';
 import {publicApiFetch,authReturnUrl} from '../../zhongyi/aform/auth.js?v=20261112-flow-1';
 import {pendingEmail,forgetPendingEmail,readVerificationLink,linkCredentials,confirmEmail,resendConfirmation} from '../verification.js?v=20261112-deferred-1';
 import {emailStatus,completeEmailVerification,requestEmailVerification,emailError} from '../email-status.js?v=20261112-deferred-1';
 const $=id=>document.getElementById(id);
 const hash=new URLSearchParams(location.hash.slice(1));
-let credentials=readVerificationLink(location),returnedSession=null,currentUser=null,persistent,temporary,busy=false,resendAt=0;
+let credentials=readVerificationLink(location),returnedSession=null,currentUser=null,persistent,temporary,busy=false,resendAt=0,initialized=false;
 const callbackError=hash.has('error')||hash.has('error_code');
 if(hash.has('access_token')&&hash.has('refresh_token')&&['magiclink','signup','email'].includes(hash.get('type'))){
   returnedSession={access_token:hash.get('access_token'),refresh_token:hash.get('refresh_token')};
@@ -24,7 +26,7 @@ function createClient(persist){
     init.signal?.addEventListener('abort',abort,{once:true});if(init.signal?.aborted)abort();
     try{return await fetch(input,{...init,signal:controller.signal});}finally{clearTimeout(timer);init.signal?.removeEventListener('abort',abort);}
   };
-  return window.supabase.createClient(ANALYTICS_URL,ANALYTICS_KEY,{global:{fetch:publicApiFetch(ANALYTICS_KEY,timedFetch)},auth:{persistSession:persist,autoRefreshToken:persist,detectSessionInUrl:false,...(!persist?{storageKey:'hhq-email-verification-in-memory'}:{})}});
+  return window.supabase.createClient(ANALYTICS_URL,ANALYTICS_KEY,{global:{fetch:publicApiFetch(ANALYTICS_KEY,timedFetch)},auth:{persistSession:persist,autoRefreshToken:persist,detectSessionInUrl:false,...(!persist?{storageKey:'hhq-email-verification-in-memory'}:{storage:browserSessionStorage})}});
 }
 const db=()=>persistent||(persistent=createClient(true));
 const temp=()=>temporary||(temporary=createClient(false));
@@ -34,7 +36,15 @@ function success(){
   $('notice').hidden=true;$('link-confirm').hidden=true;$('forms').hidden=true;$('login-help').hidden=true;$('success').hidden=false;
   document.querySelector('.mark').textContent='✓';$('title').focus();
 }
-async function run(action){if(busy)return;busy=true;buttons();try{await action();}catch(error){notice(emailError(error),true);}finally{busy=false;buttons();}}
+async function run(action){
+ if(busy)return;busy=true;buttons();
+ try{await loadAccountSdk();if(!initialized&&action!==init)await init();await action();}
+ catch(error){
+  const startup=String(error?.code||'').startsWith('client_');
+  notice(startup?'账号组件暂未加载完成，验证链接仍保留，请重新连接。':emailError(error),true);
+  if(!initialized||startup){const retry=document.createElement('button');retry.type='button';retry.className='secondary';retry.textContent='重新连接';retry.addEventListener('click',()=>run(init));$('notice').append(retry);}
+ }finally{busy=false;buttons();}
+}
 async function finish(link){
   notice('正在确认邮箱，请稍候…');
   const existing=await db().auth.getSession();if(existing.error)throw existing.error;
@@ -81,6 +91,7 @@ async function init(){
     $('email').value=currentUser.email;$('email').readOnly=true;
     if(!returnedSession&&!credentials&&!callbackError){const state=await emailStatus(db());if(state.verified)success();}
   }else if(!returnedSession&&!credentials){$('intro').textContent='请先登录，在个人页选择“验证邮箱”。已有验证邮件，也可在下方粘贴链接完成验证。';}
+  initialized=true;
 }
 setInterval(buttons,1000);
 run(init);
