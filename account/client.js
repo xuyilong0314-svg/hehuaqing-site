@@ -1,3 +1,4 @@
+import {readPersonalProfile} from './profile.js?v=20261112-profile-1';
 import {authIssue} from './auth-support.js?v=20261105-auth-repair-1';
 import {ANALYTICS_URL,ANALYTICS_KEY,OWNER_DEVICE_KEY} from '../analytics/config.js?v=20261031-20';
 import {publicApiFetch} from '../zhongyi/aform/auth.js';
@@ -17,7 +18,7 @@ export async function refreshAccount(){
  if(!hasSession()){if(context){context=null;emit();}return null;}
  const db=await getClient(),{data:session,error}=await db.auth.getSession();if(error)throw error;
  if(!session.session){context=null;emit();return null;}
- const r=await db.rpc('site_reader_context');if(r.error)throw r.error;const next=r.data;
+ const r=await db.rpc('site_reader_context');if(r.error)throw r.error;const personal=await readPersonalProfile(db,{expectedUserId:session.session.user.id});const next={...r.data,...personal.profile};
  if(next.is_admin){let excluded=true;try{excluded=localStorage.getItem(OWNER_DEVICE_KEY)!=='no';if(excluded)localStorage.setItem(OWNER_DEVICE_KEY,'yes');}catch{}if(excluded)window.dispatchEvent(new Event('hhq-analytics-optout'));}
  if(JSON.stringify(context)!==JSON.stringify(next)){context=next;emit();}return context;
 }
