@@ -1,3 +1,4 @@
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-connection-1';
 // Only public error categories and anonymous connection checks. No credentials are retained.
 export const isWeChat = (ua = '') => /MicroMessenger/i.test(ua);
 
@@ -26,12 +27,12 @@ export function authIssue(error) {
   return issue('AUTH-UNEXPECTED' + (status ? '-' + status : ''), '暂时未能完成，填写的内容已保留。请检查账号连接，并将下方问题编号告知管理员。', true);
 }
 
-export async function checkAuthConnection(config, fetcher = fetch, timeoutMs = 8000) {
+export async function checkAuthConnection(config, fetcher = fetch, timeoutMs = 20000) {
   const controller = new AbortController();
   const started = Date.now();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetcher(new URL('/auth/v1/settings', config.url).href, {
+    const response = await publicApiFetch(config.key, fetcher)(new URL('/auth/v1/settings', config.url).href, {
       method: 'GET', headers: {apikey: config.key, Accept: 'application/json'},
       signal: controller.signal, cache: 'no-store', credentials: 'omit'
     });

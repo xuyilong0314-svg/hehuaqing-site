@@ -1,13 +1,20 @@
+import {connectedAccountInput,resetAccountConnection} from '../../account/connection.js?v=20261112-connection-1';
 // Only the public application key belongs in this browser bundle.
 export function publicApiFetch(key, fetcher = fetch) {
   if (!key?.startsWith('sb_publishable_')) throw new Error('网站连接参数无效，请联系管理员。');
-  return (input, init = {}) => {
+  return async (input, init = {}) => {
     const headers = new Headers(input instanceof Request ? input.headers : undefined);
     new Headers(init.headers).forEach((value, name) => headers.set(name, value));
     // The gateway requires the publishable key in apikey, never as a user JWT.
     if (headers.get('Authorization') === `Bearer ${key}`) headers.delete('Authorization');
     headers.set('apikey', key);
-    return fetcher(input, { ...init, headers });
+    const connected = await connectedAccountInput(input,key,fetcher);
+    try {
+      return await fetcher(connected, { ...init, headers, ...(connected !== input ? {credentials:'omit',cache:'no-store'} : {}) });
+    } catch (error) {
+      resetAccountConnection(key,fetcher);
+      throw error;
+    }
   };
 }
 

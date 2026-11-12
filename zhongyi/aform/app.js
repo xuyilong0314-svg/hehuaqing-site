@@ -3,10 +3,10 @@ import {rememberPendingEmail,verificationUrl} from '../../account/verification.j
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261112-deferred-1';
 import {openPlanImage} from './plan-image.js?v=20261109-client-plans-1';
 import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage} from './case-workspace.js?v=20261109-client-plans-1';
-import {authIssue} from '../../account/auth-support.js?v=20261105-auth-repair-1';
+import {authIssue} from '../../account/auth-support.js?v=20261112-connection-1';
 import {duplicateNames,memberCard,deletionDialog,matchingEmail,memberError} from './member-admin.js?v=20261105-simple-signup-1';
 import {registrationOutcome,registrationCopy} from './registration.js?v=20261112-deferred-1';
-import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261105-simple-signup-1';
+import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261112-connection-1';
 import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,csv,canTeach,cleanImageType} from './core.js?v=20261107-axis-1';
 import {accountRole,roleName,summarize,memberSummaries,archiveFilter,managementHome} from './management.js?v=20261109-client-plans-1';
 import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices} from './workflow.js?v=20261109-client-plans-1';

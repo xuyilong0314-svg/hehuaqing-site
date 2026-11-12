@@ -1,5 +1,5 @@
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../../analytics/config.js?v=20261031-20';
-import {publicApiFetch,authReturnUrl} from '../../zhongyi/aform/auth.js';
+import {publicApiFetch,authReturnUrl} from '../../zhongyi/aform/auth.js?v=20261112-connection-1';
 import {pendingEmail,forgetPendingEmail,readVerificationLink,linkCredentials,confirmEmail,resendConfirmation} from '../verification.js?v=20261112-deferred-1';
 import {emailStatus,completeEmailVerification,requestEmailVerification,emailError} from '../email-status.js?v=20261112-deferred-1';
 const $=id=>document.getElementById(id);

@@ -1,10 +1,10 @@
 import {mountEmailPanel} from './email-status.js?v=20261112-deferred-1';
 import {rememberPendingEmail,verificationUrl} from './verification.js?v=20261112-deferred-1';
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,savePersonalProfile,syncStudyField,ProfileError} from './profile.js?v=20261112-deferred-1';
-import {authIssue,isWeChat,checkAuthConnection} from './auth-support.js?v=20261105-auth-repair-1';
+import {authIssue,isWeChat,checkAuthConnection} from './auth-support.js?v=20261112-connection-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../analytics/config.js?v=20261031-20';
-import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261105-simple-signup-1';
-import {getClient,refreshAccount,signOut,friendly,hasSession} from './client.js?v=20261112-deferred-1';
+import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261112-connection-1';
+import {getClient,refreshAccount,signOut,friendly,hasSession} from './client.js?v=20261112-connection-1';
 import {escapeHtml as esc} from '../analytics/metrics.js?v=20261031-20';
 const root=document.querySelector('#account-app');let mode='login',busy=false,profileDirty=false,context=null,history=[];
 const date=t=>new Date(t).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});

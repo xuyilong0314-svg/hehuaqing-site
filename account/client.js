@@ -1,7 +1,7 @@
 import {readPersonalProfile} from './profile.js?v=20261112-deferred-1';
-import {authIssue} from './auth-support.js?v=20261105-auth-repair-1';
+import {authIssue} from './auth-support.js?v=20261112-connection-1';
 import {ANALYTICS_URL,ANALYTICS_KEY,OWNER_DEVICE_KEY} from '../analytics/config.js?v=20261031-20';
-import {publicApiFetch} from '../zhongyi/aform/auth.js';
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-connection-1';
 export const storageKey='sb-'+new URL(ANALYTICS_URL).hostname.split('.')[0]+'-auth-token';
 let promise,context=null;const listeners=new Set();
 export function hasSession(){try{return Boolean(localStorage.getItem(storageKey));}catch{return false;}}
