@@ -3,3 +3,12 @@
 .my-heading>.text-button{white-space:nowrap;flex-shrink:0}
 
 .account-help{margin-top:20px;border-top:1px solid #e2e3d9;padding-top:14px;color:#657267;font-size:13px}.account-help summary{cursor:pointer}.account-help .text-button,.auth-help-actions .text-button{min-height:44px;padding:8px 0;text-decoration:underline;text-underline-offset:4px}.account-help .text-button+.text-button{margin-left:20px}.auth-help-actions{display:flex;gap:20px;flex-wrap:wrap}.auth-reference{display:block;margin-top:8px;opacity:.8;font-size:11px;overflow-wrap:anywhere}.auth-wechat-help{margin-top:8px;font-size:12px;line-height:1.8}.connection-result{font-size:13px;line-height:1.8;padding:14px;margin-top:14px;background:#eef1e8;border-radius:4px;overflow-wrap:anywhere}.public-registration-url{width:100%;font:14px/1.8 inherit}.message p{line-height:1.8}
+
+/* Keep password entry readable and make optional visibility easy to reach. */
+.auth-card div.field{display:block;font-size:13px;margin-top:18px}
+.auth-card div.field>label{display:block}
+.password-control{display:flex;align-items:stretch;margin-top:7px;border:1px solid #b9bdb3;border-radius:2px;background:#fff}
+.password-control input{flex:1;min-width:0;margin:0;border:0;background:transparent}
+.password-control:focus-within{outline:2px solid #304b39;outline-offset:2px}
+.password-toggle{flex:0 0 56px;min-height:46px;border:0;border-left:1px solid #d9dcd3;background:transparent;color:#304b39;font:inherit;font-size:14px;cursor:pointer}
+.password-toggle:focus-visible{outline:2px solid #304b39;outline-offset:-4px}
