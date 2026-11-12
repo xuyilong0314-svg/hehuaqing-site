@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#f5f3ec">
+  <title>完成邮箱验证 · 何华清</title>
+  <link rel="icon" href="../../site-icon.svg">
+  <link rel="stylesheet" href="./style.css?v=20261112-verify-1">
+  <script src="../../zhongyi/aform/supabase.js" defer></script>
+  <script type="module" src="./app.js?v=20261112-verify-1"></script>
+</head>
+<body>
+  <header><a class="brand" href="../../#home">何华清<span>阅读与日常</span></a><a href="../">返回登录</a></header>
+  <main>
+    <p class="eyebrow">我的账号 · 邮箱验证</p>
+    <section class="card" aria-labelledby="title">
+      <div class="mark" aria-hidden="true">信</div>
+      <h1 id="title" tabindex="-1">完成邮箱验证</h1>
+      <p id="intro">只差一步。请打开注册邮箱的最新邮件，点击验证按钮。</p>
+      <div id="notice" role="status" aria-live="polite" hidden></div>
+      <div id="link-confirm" hidden>
+        <button id="confirm-link" type="button" class="primary">确认邮箱，完成注册</button>
+        <p class="hint">点击后验证本封邮件，不需要重新注册。</p>
+      </div>
+      <div id="forms">
+        <ol class="steps"><li>打开注册邮箱里的最新验证邮件。</li><li>点击邮件中的“验证邮箱”或“Verify Email”。</li><li>验证完成后，会显示“注册成功”。</li></ol>
+        <label for="email">注册邮箱</label>
+        <input id="email" name="email" type="email" autocomplete="email" placeholder="填写注册时使用的邮箱">
+        <div class="resend"><button type="button" id="resend">重新发送验证邮件</button><p class="hint">没有收到或链接已过期，可在这里重发。请查看收件箱和垃圾箱；使用最新一封，无需换邮箱或重新注册。</p></div>
+        <details><summary>邮件链接仍然打不开？</summary>
+          <form id="code-form"><p class="hint">长按邮件中的“验证邮箱 / Verify Email”按钮，选择复制链接，再粘贴到下方。我们会在这个页面完成验证。</p>
+          <label for="code">邮件里的验证链接</label>
+          <input id="code" name="link" type="url" autocomplete="off" spellcheck="false" maxlength="6000" placeholder="粘贴刚复制的完整验证链接" required>
+          <button class="primary" type="submit">在这里完成邮箱验证</button></form>
+        </details>
+      </div>
+      <div id="success" hidden>
+        <p class="welcome">很高兴，在这里遇见您。</p>
+        <a class="primary" href="../../zhongyi/aform/#/home">进入健康记录 →</a>
+        <a class="secondary" href="../../#home">进入网站阅读</a>
+      </div>
+      <p class="footnote" id="login-help">已经验证过？<a href="../">用原邮箱和密码登录</a></p>
+    </section>
+    <p class="outside">一个账号，阅读与记录都在这里。</p>
+  </main>
+  <footer><span>何华清 · 阅读与日常</span><a href="../../analytics/privacy.html">隐私与账号说明</a></footer>
+  <noscript>请开启 JavaScript 完成验证，或返回网站登录。</noscript>
+</body>
+</html>
