@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>账号连接检查 · 何华清</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f7f6f2;color:#173e35;font:18px/1.7 system-ui,-apple-system,"Microsoft YaHei",sans-serif}main{max-width:680px;margin:40px auto;padding:24px}h1{font-size:30px;margin:20px 0 8px}p{margin:12px 0}.muted{color:#65706a;font-size:16px}.card{background:#fff;border:1px solid #d9ded8;border-radius:16px;padding:24px;margin:24px 0}.row{padding:16px 0;border-bottom:1px solid #e9ece7}.row:last-child{border:0}strong{display:block}.status{display:block;color:#65706a}.ok{color:#14603d}.fail{color:#9c4435}button,.back{font:inherit;border:0;border-radius:10px;padding:13px 20px;cursor:pointer}button{background:#173e35;color:#fff;width:100%}button:disabled{opacity:.6}.back{display:block;text-align:center;color:#173e35;text-decoration:none}textarea{width:100%;min-height:180px;border:1px solid #ccd4cc;border-radius:8px;padding:12px;font:14px/1.7 monospace;color:#263b31;background:#fff}summary{cursor:pointer}a{color:inherit}#summary{font-weight:600}noscript{display:block;color:#9c4435}@media(max-width:480px){main{margin:8px auto;padding:20px}.card{padding:18px}}
+  </style>
+</head>
+<body>
+<main>
+  <a href="../../#home">何华清 · 返回网站</a>
+  <h1>账号连接检查</h1>
+  <p class="muted">不用输入邮箱或密码。这里只检查连接，不会读取个人档案。</p>
+  <div class="card" aria-live="polite">
+    <div class="row"><strong>浏览器支持</strong><span class="status" id="browser">正在检查…</span></div>
+    <div class="row"><strong>账号主线路</strong><span class="status" id="primary-fetch">网页请求：等待检查</span><span class="status" id="primary-xhr">兼容请求：等待检查</span></div>
+    <div class="row"><strong>账号备用线路</strong><span class="status" id="gateway-fetch">网页请求：等待检查</span><span class="status" id="gateway-xhr">兼容请求：等待检查</span></div>
+  </div>
+  <p id="summary" role="status">正在检查，请稍候…</p>
+  <p class="muted">连接成功只表示账号接口可访问，是否能登录仍需使用自己的账号确认。</p>
+  <button id="retry" type="button" disabled>正在检查…</button>
+  <a class="back" href="../../zhongyi/aform/?connection-check=20261116#/login">返回登录</a>
+  <details><summary>查看检查结果</summary><p class="muted">可长按复制，或截取此页。结果不包含邮箱、密码和档案内容。</p><textarea id="report" readonly aria-label="连接检查结果"></textarea></details>
+  <noscript>当前浏览器未开启 JavaScript，请允许网站运行 JavaScript 后再试。</noscript>
+</main>
+<script src="./check.js?v=20261116-1"></script>
+</body>
+</html>
