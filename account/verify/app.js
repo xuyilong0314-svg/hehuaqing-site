@@ -1,9 +1,10 @@
+import {beginLoading} from '../loading.js?v=20261118-loading-2';
 import {loadAccountSdk} from '../sdk.js?v=20261112-complete-1';
 import {browserSessionStorage} from '../session-storage.js?v=20261112-complete-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../../analytics/config.js?v=20261031-20';
 import {publicApiFetch,authReturnUrl} from '../../zhongyi/aform/auth.js?v=20261112-flow-1';
 import {pendingEmail,forgetPendingEmail,readVerificationLink,linkCredentials,confirmEmail,resendConfirmation} from '../verification.js?v=20261112-deferred-1';
-import {emailStatus,completeEmailVerification,requestEmailVerification,emailError} from '../email-status.js?v=20261112-deferred-1';
+import {emailStatus,completeEmailVerification,requestEmailVerification,emailError} from '../email-status.js?v=20261118-loading-2';
 const $=id=>document.getElementById(id);
 const hash=new URLSearchParams(location.hash.slice(1));
 let credentials=readVerificationLink(location),returnedSession=null,currentUser=null,persistent,temporary,busy=false,resendAt=0,initialized=false;
@@ -37,13 +38,13 @@ function success(email){
   document.querySelector('.mark').textContent='✓';$('title').focus();
 }
 async function run(action){
- if(busy)return;busy=true;buttons();
+ if(busy)return;busy=true;buttons();const loading=beginLoading({theme:'account',title:'正在处理邮箱验证'});
  try{await loadAccountSdk();if(!initialized)await init();await action();}
  catch(error){
   const startup=String(error?.code||'').startsWith('client_');
   notice(startup?'账号组件暂未加载完成，验证链接仍保留，请重新连接。':emailError(error),true);
   if(!initialized||startup){const retry=document.createElement('button');retry.type='button';retry.className='secondary';retry.textContent='重新连接';retry.addEventListener('click',()=>run(confirmInitialLink));$('notice').append(retry);}
- }finally{busy=false;buttons();}
+ }finally{loading.finish();busy=false;buttons();}
 }
 async function confirmInitialLink(){
  if(!callbackError&&(returnedSession||(credentials&&!credentials.invalid)))await finish(credentials);

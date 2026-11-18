@@ -1,3 +1,4 @@
+import {beginLoading,loadingMarkup} from './loading.js?v=20261118-loading-2';
 import {verificationUrl,confirmationError} from './verification.js?v=20261112-deferred-1';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export async function emailStatus(db){
@@ -35,7 +36,7 @@ export function emailError(error){
 }
 export async function mountEmailPanel(db,element,location=globalThis.location){
   if(!element)return;
-  element.innerHTML='<h2>邮箱验证</h2><p role="status">正在读取邮箱状态…</p>';
+  element.innerHTML='<h2>邮箱验证</h2><div class="hhq-loading-inline">'+loadingMarkup('正在读取邮箱状态','您可以先使用其他功能。',{theme:'account',note:'状态就绪后会自动显示。'})+'</div>';
   let status;
   try{status=await emailStatus(db);}catch{
     if(element.isConnected)element.innerHTML='<h2>邮箱验证</h2><p>暂时无法读取邮箱状态，不影响继续使用账号。</p><button type="button" class="secondary" data-email-retry>重试</button>';
@@ -48,12 +49,12 @@ export async function mountEmailPanel(db,element,location=globalThis.location){
   const tick=()=>{if(!element.isConnected){clearInterval(timer);return;}remaining--;button.textContent=remaining>0?remaining+' 秒后可重新发送':'重新发送验证邮件';button.disabled=remaining>0;if(remaining<=0)clearInterval(timer);};
   button.addEventListener('click',async()=>{
     if(button.disabled)return;button.disabled=true;button.textContent='正在发送…';
-    const feedback=element.querySelector('.email-feedback');
+    const feedback=element.querySelector('.email-feedback'),loading=beginLoading({theme:'account',title:'正在发送验证邮件'});
     try{
       const result=await requestEmailVerification(db,location,status.email);
       if(result.alreadyVerified){await mountEmailPanel(db,element,location);return;}
       feedback.textContent='请求已提交，请查看收件箱和垃圾箱，打开最新邮件中的链接完成验证。您也可以稍后再验证。';
       remaining=60;button.textContent='60 秒后可重新发送';timer=setInterval(tick,1000);
-    }catch(error){feedback.textContent=emailError(error);button.disabled=false;button.textContent='重新发送验证邮件';}
+    }catch(error){feedback.textContent=emailError(error);button.disabled=false;button.textContent='重新发送验证邮件';}finally{loading.finish();}
   });
 }

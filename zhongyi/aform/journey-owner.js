@@ -1,6 +1,8 @@
+import {withLoading,beginLoading} from '../../account/loading.js?v=20261118-loading-2';
 import {esc,dateText,stageHTML} from './journey/core.js?v=20261118-progress-2';
 export const journeyEntry=c=>'<button type="button" class="btn secondary tiny" data-journey-case="'+esc(c.id)+'">记录分享 ↗</button>';
-export async function openJourneyOwner(c,{db,demo,dialog,notify}){
+export function openJourneyOwner(c,context){return withLoading({theme:'journey',title:'正在整理服务历程'},()=>openJourneyContent(c,context));}
+async function openJourneyContent(c,{db,demo,dialog,notify}){
  if(demo){dialog('<h2>一份有温度的记录</h2><p>客户打开自己的记录页后，可以选择内容、预览，再点击分享。</p><p class="small muted">此处为虚构示例，不包含客户资料。</p><div class="dialog-actions"><button class="btn secondary" data-action="close-dialog">关闭</button><a class="btn" href="./journey/#demo" target="_blank" rel="noopener noreferrer">看看示例 ↗</a></div>');return;}
  const result=await db.rpc('preview_record_journey',{p_case_id:c.id});if(result.error)throw result.error;const state=result.data;
  if(state?.status!=='ready')throw Error('暂时无法打开这份记录。');
@@ -12,15 +14,15 @@ export async function openJourneyOwner(c,{db,demo,dialog,notify}){
   if(pending)return;const error=document.querySelector('#journey-owner-error');error.textContent='';
   if(!document.querySelector('#journey-owner-consent').checked){error.textContent='请先确认已经征得本人同意。';return;}
   const ids=[...document.querySelectorAll('[name="journey-photo"]:checked')].map(x=>x.value);if(ids.length>10){error.textContent='一次最多选择10张照片。';return;}
-  const button=event.currentTarget;pending=true;modal.querySelectorAll('button,input,a').forEach(el=>{if(el.tagName!=='A')el.disabled=true;});button.textContent='正在准备本人记录页…';
-  try{const previews=[];for(const id of ids){const photo=state.photo_candidates.find(p=>p.id===id);button.textContent='正在准备照片 '+(previews.length+1)+' / '+ids.length;const r=await db.storage.from('case-photos').download(photo.storage_path);if(r.error)throw r.error;previews.push({id,image:await thumbnail(r.data)});}
-   button.textContent='正在保存记录页…';const r=await db.rpc('publish_record_journey',{p_case_id:c.id,p_photo_previews:previews,p_confirm:true});if(r.error)throw r.error;
+  const button=event.currentTarget,loading=beginLoading({theme:'journey',title:'正在准备本人记录页'});pending=true;modal.querySelectorAll('button,input,a').forEach(el=>{if(el.tagName!=='A')el.disabled=true;});button.textContent='正在准备本人记录页…';
+  try{const previews=[];for(const id of ids){const photo=state.photo_candidates.find(p=>p.id===id);button.textContent='正在准备照片 '+(previews.length+1)+' / '+ids.length;loading.update(button.textContent);const r=await db.storage.from('case-photos').download(photo.storage_path);if(r.error)throw r.error;previews.push({id,image:await thumbnail(r.data)});}
+   button.textContent='正在保存记录页…';loading.update('正在保存记录页');const r=await db.rpc('publish_record_journey',{p_case_id:c.id,p_photo_previews:previews,p_confirm:true});if(r.error)throw r.error;
    const target=url(r.data.token),text='给你留了一份这段时间的记录。\n有空时，慢慢看看自己的感受。页面里的“分享我的记录”，可以挑选内容分享给你信任的人。\n这是你的本人管理入口，请自己保管：\n'+target;
    dialog('<h2>这份记录，可以交给本人了</h2><p class="small muted">本人入口有效至 '+dateText(r.data.expires_at.slice(0,10))+'。请只发给本人；分享给朋友请在记录页内点“分享我的记录”。</p><textarea id="journey-owner-copy" class="input" rows="7" readonly>'+esc(text)+'</textarea><p id="journey-owner-copy-status" class="small" role="status"></p><div class="dialog-actions"><button class="btn secondary" data-action="close-dialog">关闭</button><a class="btn secondary" href="'+esc(target)+'" target="_blank" rel="noopener noreferrer">打开记录页 ↗</a><button class="btn" id="copy-journey">复制本人入口与说明</button></div>');
    document.querySelector('#copy-journey').addEventListener('click',async()=>{const area=document.querySelector('#journey-owner-copy');try{await navigator.clipboard.writeText(area.value);document.querySelector('#journey-owner-copy-status').textContent='已复制，请发给本人。';}catch{area.focus();area.select();document.querySelector('#journey-owner-copy-status').textContent='请长按以上文字复制。';}});
-  }catch(e){error.textContent='这次没有完成，请稍后重试。原有记录保持不变。';modal.querySelectorAll('button,input').forEach(el=>el.disabled=false);button.textContent='重试准备记录页';}finally{pending=false;}
+  }catch(e){error.textContent='这次没有完成，请稍后重试。原有记录保持不变。';modal.querySelectorAll('button,input').forEach(el=>el.disabled=false);button.textContent='重试准备记录页';}finally{loading.finish();pending=false;}
  });
- document.querySelector('#close-journey')?.addEventListener('click',async event=>{if(pending)return;if(!confirm('关闭后，本人入口和已经发出的分享链接都将失效。原档案保留。确定关闭吗？'))return;pending=true;event.currentTarget.disabled=true;try{const r=await db.rpc('close_record_journey',{p_case_id:c.id});if(r.error)throw r.error;document.querySelector('#dialog').close();notify('本人入口与分享已关闭，原档案仍保留。');}catch{document.querySelector('#journey-owner-error').textContent='暂时没有完成关闭，请稍后重试。';event.currentTarget.disabled=false;}finally{pending=false;}});
+ document.querySelector('#close-journey')?.addEventListener('click',async event=>{if(pending)return;if(!confirm('关闭后，本人入口和已经发出的分享链接都将失效。原档案保留。确定关闭吗？'))return;pending=true;event.currentTarget.disabled=true;try{const r=await withLoading({theme:'journey',title:'正在关闭记录入口'},()=>db.rpc('close_record_journey',{p_case_id:c.id}));if(r.error)throw r.error;document.querySelector('#dialog').close();notify('本人入口与分享已关闭，原档案仍保留。');}catch{document.querySelector('#journey-owner-error').textContent='暂时没有完成关闭，请稍后重试。';event.currentTarget.disabled=false;}finally{loading.finish();pending=false;}});
 }
 async function thumbnail(blob){
  const src=URL.createObjectURL(blob);

@@ -1,9 +1,11 @@
+import {withLoading,singleFlight} from '../../../account/loading.js?v=20261118-loading-2';
 import {STAGES,ITEMS,ACTIONS,ACTION_VALUES,esc,stageLabel,today,validToken,readPayload,userError,requestUUID} from './core.js?v=20261118-progress-2';
 import {publicApiFetch} from '../auth.js?v=20261112-stability-1';
 const root=document.querySelector('#app'),config=window.AFORM_CONFIG||{};
 const token=location.hash.slice(1),demo=token==='demo',query=new URLSearchParams(location.search);
 let context,requestId,submitting=false,dirty=false;
-async function rpc(name,body){
+function rpc(name,body){return withLoading({theme:'self',title:name==='client_self_context'?'正在打开本次自评':'正在提交您的感受'},()=>rpcRequest(name,body));}
+async function rpcRequest(name,body){
  const response=await publicApiFetch(config.key)(config.url+'/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer'});
  const result=await response.json();if(!response.ok)throw Error(result?.message||'暂未完成请求');return result;
 }
@@ -31,7 +33,9 @@ async function submit(event){
  }catch(e){error.textContent=userError(e);error.hidden=false;error.focus();button.disabled=false;button.textContent='重试提交';controls.forEach(el=>el.disabled=false);}
  finally{submitting=false;}
 }
-async function start(){
+const startFlights=singleFlight();
+function start(){return startFlights('start',startPage);}
+async function startPage(){
  if(!demo&&!validToken(token)){notice('请使用上医发来的专属链接','每个链接对应一位客户和一次记录。<br>请从聊天中重新打开完整链接。');return;}
  try{
   context=demo?{status:'ready',stage:STAGES.includes(query.get('stage'))?query.get('stage'):'d7',name_hint:'陈**（示例）',record_hint:'DEMO',today:today()}:await rpc('client_self_context',{p_token:token});

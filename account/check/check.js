@@ -85,6 +85,7 @@
   function run() {
     if (running) return;
     running = true;
+    document.getElementById('connection-loading').hidden = false;
     retry.disabled = true;
     retry.textContent = '正在检查…';
     document.getElementById('summary').textContent = '正在检查，请稍候…';
@@ -108,6 +109,7 @@
       document.getElementById('summary').textContent = !browserOK ? '请先更新浏览器，再重新检查。' : successes ? '有可用的账号连接，可以返回登录。' : compatibilitySuccesses ? '兼容请求可连接，但网页请求失败。请把此页结果告知网站管理员。' : '当前浏览器未连通账号服务，请把此页结果告知网站管理员。';
       report.value = ['连接检查 20261116-1', new Date().toISOString(), '浏览器基本功能：' + (browserOK ? '通过' : '未通过'), '当前页面：' + location.origin + location.pathname, '浏览器标识：' + navigator.userAgent].concat(results).join('\n');
       running = false;
+      document.getElementById('connection-loading').hidden = true;
       retry.disabled = false;
       retry.textContent = '重新检查';
     }

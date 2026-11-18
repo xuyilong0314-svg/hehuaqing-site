@@ -1,4 +1,4 @@
-import {beginLoading,singleFlight} from '../../../account/loading.js?v=20261118-loading-1';
+import {beginLoading,singleFlight} from '../../../account/loading.js?v=20261118-loading-2';
 import {getClient} from '../../../account/client.js?v=20261118-number-live-1';
 import {resultMarkup} from './view.js?v=20261118-number-live-1';
 const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
