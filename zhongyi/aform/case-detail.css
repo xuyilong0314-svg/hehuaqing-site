@@ -1,0 +1,53 @@
+/* Detail-page hierarchy: identity, context, then actions. */
+.case-details-heading{align-items:flex-start;gap:24px}
+.case-heading-main{flex:1;min-width:0}
+.case-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:7px 0 12px}
+.case-details-heading .case-title-row h1{margin:0;overflow-wrap:anywhere}
+.case-title-row>.badge{font-size:12px;white-space:nowrap}
+.case-observation-count{margin-left:auto;white-space:nowrap;color:var(--gold);font-size:13px;line-height:1.6}
+.case-identity-tags{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 8px;margin:0 0 12px}
+.case-identity-tags:empty{display:none}
+.case-identity-tags .birth-badge{margin:0;max-width:100%;font-size:12px;padding:3px 8px;line-height:1.7}
+.case-record-meta{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 18px;color:var(--muted);font-size:14px;line-height:1.8}
+.case-record-meta>span{display:inline-flex;align-items:baseline;gap:5px;min-width:0;max-width:100%}
+.case-record-meta>span>span{overflow-wrap:anywhere}
+.case-record-meta time{white-space:nowrap}
+.case-details-heading .case-heading-actions{flex:0 0 auto;flex-wrap:nowrap;align-items:center;gap:10px;padding-top:29px}
+.case-heading-actions:empty{display:none}
+.case-details-heading [data-journey-case]{background:var(--ink);border-color:var(--ink);color:#fffdf6;font-size:14px;min-height:44px;padding:10px 18px;white-space:nowrap}
+.case-details-heading .case-delete{background:transparent;border-color:transparent;color:#8b4d42;min-height:44px;padding:10px 8px;font-size:13px}
+.case-details-heading .case-delete:hover{background:#f7e7df;border-color:transparent}
+@media(max-width:900px){
+ .case-details-heading{flex-direction:column;align-items:stretch;gap:16px}
+ .case-details-heading .case-heading-actions{padding-top:0;justify-content:flex-start}
+ .case-details-heading .case-observation-count{margin-left:auto}
+}
+@media(max-width:640px){
+ .app-shell:has(.case-details-heading) .app-header{display:none}
+ .content:has(>.case-details-heading){padding-top:12px}
+ .case-back{margin-bottom:8px;min-height:44px;font-size:14px}
+ .case-details-heading{margin-bottom:16px;gap:14px}
+ .case-details-heading .kicker{font-size:11px;line-height:1.6;letter-spacing:.07em}
+ .case-title-row{margin:6px 0 12px;gap:8px}
+ .case-details-heading .case-title-row h1{font-size:28px;line-height:1.4;letter-spacing:.02em}
+ .case-details-heading .case-title-row>.badge{font-size:11px;padding:4px 7px}
+ .case-details-heading .case-observation-count{font-size:12px}
+ .case-identity-tags{gap:6px;margin-bottom:10px}
+ .case-record-meta{font-size:13px;gap:3px 16px;line-height:1.8}
+ .case-details-heading .case-heading-actions{display:flex;gap:12px;align-items:center}
+ .case-details-heading .case-heading-actions:empty{display:none}
+ .case-details-heading [data-journey-case]{flex:1;min-height:46px;font-size:15px}
+ .case-details-heading .case-delete{flex:0 0 auto;padding:10px 8px;font-size:13px}
+ .case-tabs{display:grid;grid-template-columns:repeat(var(--case-tab-count,5),minmax(56px,1fr));gap:0;margin-bottom:16px}
+ .case-tabs button{font-size:13px;min-height:46px;padding:12px 1px;text-align:center;line-height:1.5}
+ .case-stage-rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding-bottom:16px}
+ .case-stage-rail .stage-button{min-width:0;padding:10px 2px;min-height:60px}
+ .case-stage-rail .stage-button strong{font-size:13px;line-height:1.5;white-space:nowrap}
+ .case-stage-rail .stage-button small{font-size:11px;margin-top:4px;line-height:1.4}
+ .content:has(>.case-details-heading) .client-self-panel{padding:20px 18px}
+ .content:has(>.case-details-heading) .self-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:16px 0}
+ .content:has(>.case-details-heading) .self-tools .btn{padding:11px 6px;font-size:14px;min-height:46px;white-space:nowrap}
+ .content:has(>.case-details-heading) .self-status{gap:7px;margin-top:12px}
+ .content:has(>.case-details-heading) .self-status .badge{font-size:11px;padding:4px 7px}
+}
+@media print{.case-details-heading .case-heading-actions{display:none}}
