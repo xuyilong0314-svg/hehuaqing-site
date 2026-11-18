@@ -1,4 +1,4 @@
-import {birthBadges} from '../../account/identity.js?v=20261118-number-name-1';
+import {birthBadges} from '../../account/identity.js?v=20261118-number-live-1';
 import {esc} from './core.js';
 
 export function duplicateNames(members=[]) {
