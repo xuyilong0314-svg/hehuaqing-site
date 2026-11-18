@@ -1,4 +1,4 @@
-import {normalizeIdentity,identityFields} from './identity.js?v=20261118-identity-2';
+import {normalizeIdentity,identityFields} from './identity.js?v=20261118-triangle-3';
 import {accountRequest,accountChanged} from './requests.js?v=20261112-flow-1';
 // Website and health archives use the same authenticated user's personal profile.
 // Auth user metadata is the shared source; existing name/class tables are projections

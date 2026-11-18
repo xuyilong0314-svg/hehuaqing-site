@@ -62,9 +62,12 @@ export function birthdayTriangle(birth_date) {
   return {parts,base,middle,result:reduceDigits(middle[0]+middle[1]),steps:[additionStep(base[0],base[1]),additionStep(base[2],base[3]),additionStep(middle[0],middle[1])]};
 }
 export function birthdayNumber(birth_date) { return birthdayTriangle(birth_date)?.result??null; }
+export function birthDateLabel(birth_date) {
+  return zodiacFromBirth(birth_date)?`${birth_date.slice(8,10)}日 ${birth_date.slice(5,7)}月 ${birth_date.slice(0,4)}年`:'';
+}
 export function triangleMarkup(birth_date) {
   const t=birthdayTriangle(birth_date);if(!t)return '';
-  return `<details class="birth-calculation"><summary>查看加法过程</summary><div class="birth-triangle"><svg viewBox="0 0 320 264" role="img" aria-label="生日三角算法：底层 ${t.base.join('、')}；中层 ${t.middle.join('、')}；结果 ${t.result} 号"><path d="M160 12 L16 218 L304 218 Z M112 80 H208 M66 146 H254 M160 80 V218 M88 146 V218 M232 146 V218"/><g class="triangle-numbers"><text x="160" y="58">${t.result}</text><text x="128" y="126">${t.middle[0]}</text><text x="192" y="126">${t.middle[1]}</text>${t.base.map((n,i)=>`<text x="${[58,124,196,262][i]}" y="193">${n}</text>`).join('')}</g><g class="triangle-parts">${t.parts.map((n,i)=>`<text x="${[58,124,196,262][i]}" y="240">${n}</text>`).join('')}</g><g class="triangle-labels">${['日','月','年前两位','年后两位'].map((label,i)=>`<text x="${[58,124,196,262][i]}" y="258">${label}</text>`).join('')}</g></svg></div><p class="birth-equations">${t.steps.map(step=>`<span>${step}</span>`).join('')}</p><small>依次拆分日、月、年份前两位、年份后两位。每组及每层相加，两位数继续拆开相加。</small></details>`;
+  return `<section class="birth-calculation" aria-label="完整生日三角形"><p class="birth-date-caption">${birthDateLabel(birth_date)}</p><div class="birth-triangle"><svg viewBox="0 0 320 286" role="img" aria-label="${birthDateLabel(birth_date)}，生日三角算法：底层 ${t.base.join('、')}；中层 ${t.middle.join('、')}；结果 ${t.result} 号"><path d="M160 12 L16 218 L304 218 Z M112 80 H208 M66 146 H254 M160 80 V218 M88 146 V218 M232 146 V218"/><g class="triangle-numbers"><text x="160" y="58">${t.result}</text><text x="128" y="126">${t.middle[0]}</text><text x="192" y="126">${t.middle[1]}</text>${t.base.map((n,i)=>`<text x="${[58,124,196,262][i]}" y="193">${n}</text>`).join('')}</g><g class="triangle-parts">${t.parts.map((n,i)=>`<text x="${[58,124,196,262][i]}" y="242">${n}${i===0?'日':i===1?'月':''}</text>`).join('')}</g><path class="triangle-year-bracket" d="M178 250 V255 H280 V250"/><text class="triangle-year" x="229" y="277">${birth_date.slice(0,4)}年</text></svg></div><p class="birth-equations">${t.steps.map(step=>`<span>${step}</span>`).join('')}</p><small>日、月、年份前两位、年份后两位分别相加，再逐层相加；两位数继续拆开相加。</small></section>`;
 }
 export function birthBadges({zodiac,birthday_number}={}) {
   return (zodiac?`<span class="birth-badge">${esc(zodiac)}</span>`:'')+(Number.isInteger(birthday_number)&&birthday_number>=1&&birthday_number<=9?`<span class="birth-badge" title="按公历生日三角加法计算">九型人格 · ${birthday_number} 号（生日算法）</span>`:'');
@@ -76,5 +79,5 @@ export function birthSummary(birth_date,{compact=false}={}) {
 }
 export function syncBirthSummary(form) {
   const summary=form?.querySelector('[data-birth-summary]'),field=form?.elements?.birth_date;
-  if(summary&&field){const open=summary.querySelector('details')?.open,html=birthSummary(field.value);summary.innerHTML=html.slice(html.indexOf('>')+1,html.lastIndexOf('</div>'));if(open&&summary.querySelector('details'))summary.querySelector('details').open=true;}
+  if(summary&&field){const html=birthSummary(field.value);summary.innerHTML=html.slice(html.indexOf('>')+1,html.lastIndexOf('</div>'));}
 }
