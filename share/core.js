@@ -1,4 +1,4 @@
-import {pages, routes} from '../analytics/catalog.js?v=20261105-reading-1';
+import {pages, routes} from '../analytics/catalog.js?v=20261118-name-2';
 
 export const ORIGIN = 'https://www.hehuaqing.com';
 const image = name => `${ORIGIN}/share/${name}-20261112.jpg`;
@@ -9,11 +9,11 @@ export const HOME = Object.freeze({
 });
 export const MEDICINE = Object.freeze({
   title: '古中医｜读懂身体，记录日常',
-  description: '古中医学习与上医健康服务档案。建立档案，记录变化，持续跟进。',
+  description: '古中医学习与上医健康管理服务表。建立档案，记录变化，持续跟进。',
   url: `${ORIGIN}/zhongyi/`, image: image('zhongyi')
 });
 export const RECORDS = Object.freeze({
-  title: '上医健康服务档案',
+  title: '上医健康管理服务表',
   description: '填写个人资料，记录日常观察，持续跟进变化。与何华清网站共用一个账号。',
   url: `${ORIGIN}/zhongyi/aform/`, image: image('records')
 });

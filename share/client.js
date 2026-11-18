@@ -1,4 +1,4 @@
-import {shareData, publicNavigation} from './core.js?v=20261112-share-1';
+import {shareData, publicNavigation} from './core.js?v=20261118-name-2';
 
 function meta(attribute, name, content) {
   let element = document.head.querySelector(`meta[${attribute}="${name}"]`);

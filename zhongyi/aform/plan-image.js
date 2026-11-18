@@ -69,7 +69,7 @@ export async function renderPlanImage(c,entry,{demo=false}={}){
   text(c.code||'',right-135,y,135,10,GOLD,500,false,17);
   text(planRevision(entry),right-135,y+20,135,10,MUTED,400,false,17);
   y=footerTop+Math.max(recorder+24,40)+26;
-  y+=text(demo?'虚构示例 · 不作为使用建议':'上医健康服务档案 · 按本次已保存内容整理',left,y,inner,10,MUTED,400,false,16)+32;
+  y+=text(demo?'虚构示例 · 不作为使用建议':'上医健康管理服务表 · 按本次已保存内容整理',left,y,inner,10,MUTED,400,false,16)+32;
   const height=Math.ceil(y),scale=Math.min(2,12000/height);
   canvas.width=Math.ceil(width*scale);canvas.height=Math.ceil(height*scale);ctx.scale(scale,scale);ctx.textBaseline='top';
   ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);ctx.fillStyle=INK;ctx.fillRect(0,0,width,5);
