@@ -1,5 +1,5 @@
-import {productElementLabel,STAGE_FLOW} from './workflow.js?v=20261109-client-plans-1';
-import {planRevision} from './case-workspace.js?v=20261109-client-plans-1';
+import {productElementLabel,STAGE_FLOW} from './workflow.js?v=20261118-progress-1';
+import {planRevision} from './case-workspace.js?v=20261118-progress-1';
 
 const INK='#203e34',MUTED='#728071',GOLD='#a48c57',LINE='#dce1d5',PAPER='#fffef8';
 const SERIF='"Songti SC","STSong","SimSun",serif';
@@ -12,7 +12,7 @@ export function imageProduct(product){
     amount:unused?'未用':pending?'待填写':product.amount?product.amount+(product.unit?' '+product.unit:''):'未填写',
     frequency:unused||pending?'—':product.perDay?product.perDay+' 次':'未填写'};
 }
-export const imageFilename=(c,entry)=>[c.name,STAGE_FLOW[entry.stage]?.plan||'产品方案',entry.plan?.startDate||'日期未填',planRevision(entry)].join('_').replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-')+'.png';
+export const imageFilename=(c,entry)=>[c.name,stageFlow(entry.stage)?.plan||'产品方案',entry.plan?.startDate||'日期未填',planRevision(entry)].join('_').replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-')+'.png';
 
 export async function renderPlanImage(c,entry,{demo=false}={}){
   if(!entry?.plan)throw Error('请先保存产品方案，再生成图片。');
@@ -41,7 +41,7 @@ export async function renderPlanImage(c,entry,{demo=false}={}){
   rule(106,GOLD);
   let y=132;
   y+=text(c.name||'客户',left,y,inner,31,INK,600,true,43)+12;
-  y+=text(STAGE_FLOW[entry.stage]?.plan||p.title||'产品方案',left,y,inner,18,INK,600,false,28)+8;
+  y+=text(stageFlow(entry.stage)?.plan||p.title||'产品方案',left,y,inner,18,INK,600,false,28)+8;
   y+=text(date(p.startDate)+' — '+date(p.endDate),left,y,inner,15,MUTED,400,false,24)+17;
   const edition=(entry.status==='draft'?'草稿 · ':'')+planRevision(entry)+(demo?' · 虚构示例':'');
   y+=text(edition,left,y,inner,11,GOLD,500,false,18)+19;

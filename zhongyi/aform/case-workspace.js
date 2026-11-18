@@ -1,12 +1,12 @@
-import {STAGES,esc,stageName} from './core.js?v=20261107-axis-1';
-import {STAGE_FLOW,productElementLabel,productWithPlanTime} from './workflow.js?v=20261109-client-plans-1';
+import {STAGES,esc,stageName,stageDays} from './core.js?v=20261118-progress-1';
+import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261118-progress-1';
 
 export function personalCases(cases,userId,{kind='client'}={}){
   if(!userId)return [];
   return cases.filter(c=>!c.deleted_at&&c.owner_id===userId&&(!kind||c.kind===kind));
 }
-export function preferredStage(caseId,observations,{requested='',remembered=''}={}){
-  const valid=s=>STAGES.some(n=>'d'+n===s);
+export function preferredStage(caseId,observations,{requested='',remembered='',caseRecord=null}={}){
+  const valid=s=>stageDays(caseRecord||{id:caseId},observations).some(n=>'d'+n===s);
   if(valid(requested))return requested;
   if(valid(remembered)&&observations.some(o=>o.id&&o.case_id===caseId&&o.stage===remembered))return remembered;
   const saved=observations.filter(o=>o.case_id===caseId&&o.id&&valid(o.stage)).sort((a,b)=>
@@ -55,7 +55,7 @@ export function planHistory(observation){
 }
 export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISOString(),id=()=>crypto.randomUUID()}={}){
   const history=structuredClone(planHistory(existing));
-  if(!STAGE_FLOW[stage]?.plan)return history;
+  if(!stageFlow(stage)?.plan)return history;
   const last=history.at(-1),plan=data.plan;
   if(!hasPlan(plan)&&!last)return history;
   if(last&&samePlan(last.plan,plan)){
@@ -65,7 +65,7 @@ export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISO
   history.push({id:id(),savedAt:now,status,plan:structuredClone(plan||{})});return history;
 }
 export function planEntries(caseId,observations){
-  return ['d1','d7','d14'].flatMap(stage=>{
+  return [...new Set(['d1','d7','d14',...observations.filter(o=>o.case_id===caseId&&Number(o.stage.slice(1))>21).map(o=>o.stage)])].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1))).flatMap(stage=>{
     const observation=observations.find(o=>o.case_id===caseId&&o.stage===stage);
     return planHistory(observation).map((entry,index,history)=>({...entry,stage,number:index+1,latest:index===history.length-1,observationId:observation.id}));
   });
@@ -81,13 +81,13 @@ export function planCard(c,entry,{demo=false}={}){
     const pending=!unused&&(!product.useStatus||['待填写','待核对'].includes(product.useStatus))&&!product.amount&&!product.perDay;
     return '<tr'+(unused||pending?' class="plan-inactive"':'')+'><td><strong>'+esc(product.name||'未命名产品')+'</strong><small>'+esc(productElementLabel(product))+'</small>'+(product.note?'<p class="plan-product-note">'+esc(product.note)+'</p>':'')+'</td><td>'+planTime(product.time)+'</td><td>'+(unused?'未用':pending?'待填写':esc(product.amount?product.amount+(product.unit?' '+product.unit:''):'未填写'))+'</td><td>'+(unused||pending?'—':esc(product.perDay?product.perDay+' 次':'未填写'))+'</td></tr>';
   }).join('');
-  return '<article class="plan-card" aria-label="'+esc(STAGE_FLOW[entry.stage]?.plan||'产品方案')+'"><header class="plan-card-header"><div><span class="plan-brand">上医 · 健康服务档案</span><h2>'+esc(c.name)+'</h2></div><span class="plan-edition">'+(entry.status==='draft'?'已存草稿':esc(planRevision(entry)))+'</span></header><div class="plan-card-title"><h3>'+esc(STAGE_FLOW[entry.stage]?.plan||p.title||'产品方案')+'</h3><p>'+date(p.startDate)+' — '+date(p.endDate)+'</p></div>'+(p.decision&&p.decision!=='待填写'?'<p class="plan-decision">本次安排 · '+esc(p.decision)+'</p>':'')+'<table class="plan-product-table"><colgroup><col class="product-col"><col class="time-col"><col class="amount-col"><col class="frequency-col"></colgroup><thead><tr><th>产品</th><th>时间</th><th>每次量</th><th>每日</th></tr></thead><tbody>'+rows+'</tbody></table>'+(!products.length?'<p class="plan-empty">本版未安排产品。</p>':'')+(p.note?'<section class="plan-card-note"><h4>安排说明</h4><p>'+esc(p.note)+'</p></section>':'')+'<footer class="plan-card-footer"><span>记录人 '+esc(c.partner_name||'未填写')+'<br>保存 '+stamp(entry.savedAt)+'</span><span>'+esc(c.code)+'<br>'+esc(planRevision(entry))+'</span></footer><p class="plan-card-footnote">'+(demo?'虚构示例 · ':'')+'按已保存内容整理；实际使用请按产品标签及个人情况核对。</p></article>';
+  return '<article class="plan-card" aria-label="'+esc(stageFlow(entry.stage)?.plan||'产品方案')+'"><header class="plan-card-header"><div><span class="plan-brand">上医 · 健康服务档案</span><h2>'+esc(c.name)+'</h2></div><span class="plan-edition">'+(entry.status==='draft'?'已存草稿':esc(planRevision(entry)))+'</span></header><div class="plan-card-title"><h3>'+esc(stageFlow(entry.stage)?.plan||p.title||'产品方案')+'</h3><p>'+date(p.startDate)+' — '+date(p.endDate)+'</p></div>'+(p.decision&&p.decision!=='待填写'?'<p class="plan-decision">本次安排 · '+esc(p.decision)+'</p>':'')+'<table class="plan-product-table"><colgroup><col class="product-col"><col class="time-col"><col class="amount-col"><col class="frequency-col"></colgroup><thead><tr><th>产品</th><th>时间</th><th>每次量</th><th>每日</th></tr></thead><tbody>'+rows+'</tbody></table>'+(!products.length?'<p class="plan-empty">本版未安排产品。</p>':'')+(p.note?'<section class="plan-card-note"><h4>安排说明</h4><p>'+esc(p.note)+'</p></section>':'')+'<footer class="plan-card-footer"><span>记录人 '+esc(c.partner_name||'未填写')+'<br>保存 '+stamp(entry.savedAt)+'</span><span>'+esc(c.code)+'<br>'+esc(planRevision(entry))+'</span></footer><p class="plan-card-footnote">'+(demo?'虚构示例 · ':'')+'按已保存内容整理；实际使用请按产品标签及个人情况核对。</p></article>';
 }
 export function plansPage(c,observations,{selected='',stage='',owned=false,demo=false}={}){
   const entries=planEntries(c.id,observations);
   const selectedEntry=entries.find(e=>e.id===selected)||entries.find(e=>e.latest&&e.stage===stage)||entries.filter(e=>e.latest).at(-1);
-  const groups=['d1','d7','d14'].map(stage=>{
-    const list=entries.filter(e=>e.stage===stage),flow=STAGE_FLOW[stage];
+  const groups=[...new Set(['d1','d7','d14',...entries.map(e=>e.stage)])].map(stage=>{
+    const list=entries.filter(e=>e.stage===stage),flow=stageFlow(stage);
     return '<section class="plan-period"><h3>'+esc(flow.plan)+'</h3>'+(list.length?'<div class="plan-versions">'+list.slice().reverse().map(entry=>'<a href="#/case/'+esc(c.id)+'/plans?version='+encodeURIComponent(entry.id)+'"'+(entry.id===selectedEntry?.id?' aria-current="true"':'')+'><span>'+esc(planRevision(entry))+'</span><small>'+stamp(entry.savedAt)+(entry.status==='draft'?' · 草稿':'')+'</small></a>').join('')+'</div>':'<p>本阶段尚无已保存方案。</p>')+'</section>';
   }).join('');
   return '<section class="plans-workspace"><div class="plan-view-heading"><div><h2>产品方案</h2><p>每个阶段一张清单，每次调整保留一版。</p></div>'+(selectedEntry?'<div class="plan-view-actions"><button type="button" class="btn" data-action="plan-image">生成图片</button><button type="button" class="btn secondary" data-action="plan-capture">截图模式</button></div>':'')+'</div><div class="plans-layout"><aside class="plan-history" aria-label="选择阶段与版本">'+groups+'</aside><div class="plan-preview">'+(selectedEntry?planCard(c,selectedEntry,{demo})+(owned?'<a class="plan-edit-link" href="#/case/'+esc(c.id)+'?stage='+esc(selectedEntry.stage)+'">调整这个阶段的方案 →</a>':''):'<div class="empty panel"><h3>先保存一套产品方案</h3><p>填写首次观察中的第1—7天安排并保存，这里就会出现可截图的清单。</p>'+(owned?'<a class="btn" href="#/case/'+esc(c.id)+'?stage=d1">填写第一套方案</a>':'')+'</div>')+'</div></div><div class="plan-capture-tools"><button type="button" class="btn secondary" data-action="plan-capture-exit">返回档案</button><span>请使用手机截图；页面较长时可截长图。</span></div></section>';

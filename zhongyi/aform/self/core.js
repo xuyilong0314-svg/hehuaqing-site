@@ -1,9 +1,10 @@
+import {validStage} from '../core.js?v=20261118-progress-1';
 export const STAGES=['d1','d3','d7','d14','d21'];
 export const ITEMS=[['spirit','精神'],['sleep','睡眠'],['appetite','食欲'],['bowel','排便'],['mood','情绪']];
 export const ACTIONS=[['diet','饮食有节'],['movement','运动有度'],['emotion','情志有恒'],['rest','起居有常']];
 export const ACTION_VALUES=['已落实','部分落实','未落实','尚未约定'];
 export const esc=v=>String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-export const stageLabel=s=>s==='d1'?'第 1 天 · 首次自评':STAGES.includes(s)?'第 '+s.slice(1)+' 天 · 回访自评':'客户自评';
+export const stageLabel=s=>s==='d1'?'第 1 天 · 首次自评':validStage(s)?'第 '+s.slice(1)+' 天 · 回访自评':'客户自评';
 export const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 export const validToken=t=>/^[a-f0-9]{64}$/.test(t||'');
 export function readPayload(form,stage){
