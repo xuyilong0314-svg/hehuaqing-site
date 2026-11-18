@@ -1,5 +1,5 @@
-import {stageDays,stageDateInfo} from './core.js?v=20261118-progress-1';
-import {ITEMS,ACTIONS,esc,stageLabel} from './self/core.js?v=20261118-progress-1';
+import {stageDays,stageDateInfo} from './core.js?v=20261118-progress-2';
+import {ITEMS,ACTIONS,esc,stageLabel} from './self/core.js?v=20261118-progress-2';
 export function latestSelf(rows,caseId,stage){return rows.filter(r=>r.case_id===caseId&&r.stage===stage).sort((a,b)=>String(b.submitted_at).localeCompare(String(a.submitted_at))||String(b.id).localeCompare(String(a.id)))[0]||null;}
 export function projectedSelf(record,rows,caseId,stage){
  const saved=record?.data?.clientSelfId&&rows.find(r=>r.id===record.data.clientSelfId&&r.case_id===caseId&&r.stage===stage);

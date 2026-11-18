@@ -1,4 +1,4 @@
-import {STAGES,ITEMS,ACTIONS,ACTION_VALUES,esc,stageLabel,today,validToken,readPayload,userError,requestUUID} from './core.js?v=20261118-progress-1';
+import {STAGES,ITEMS,ACTIONS,ACTION_VALUES,esc,stageLabel,today,validToken,readPayload,userError,requestUUID} from './core.js?v=20261118-progress-2';
 import {publicApiFetch} from '../auth.js?v=20261112-stability-1';
 const root=document.querySelector('#app'),config=window.AFORM_CONFIG||{};
 const token=location.hash.slice(1),demo=token==='demo',query=new URLSearchParams(location.search);

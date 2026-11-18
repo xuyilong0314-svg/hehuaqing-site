@@ -1,5 +1,5 @@
-import {esc,today,addDays,validDate,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow} from './core.js?v=20261118-progress-1';
-import {requestUUID} from './self/core.js?v=20261118-progress-1';
+import {esc,today,addDays,validDate,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow} from './core.js?v=20261118-progress-2';
+import {requestUUID} from './self/core.js?v=20261118-progress-2';
 export const stateLabel=s=>({active:'按约跟进',not_started:'尚未开始',paused:'暂停使用'}[s]||'按约跟进');
 const date=s=>esc((s||'').replaceAll('-','.'));
 export function stageRail(c,observations,responses,active){

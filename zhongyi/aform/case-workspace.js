@@ -1,5 +1,5 @@
-import {STAGES,esc,stageName,stageDays} from './core.js?v=20261118-progress-1';
-import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261118-progress-1';
+import {STAGES,esc,stageName,stageDays} from './core.js?v=20261118-progress-2';
+import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261118-progress-2';
 
 export function personalCases(cases,userId,{kind='client'}={}){
   if(!userId)return [];

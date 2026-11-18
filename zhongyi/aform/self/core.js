@@ -1,4 +1,4 @@
-import {validStage} from '../core.js?v=20261118-progress-1';
+import {validStage} from '../core.js?v=20261118-progress-2';
 export const STAGES=['d1','d3','d7','d14','d21'];
 export const ITEMS=[['spirit','精神'],['sleep','睡眠'],['appetite','食欲'],['bowel','排便'],['mood','情绪']];
 export const ACTIONS=[['diet','饮食有节'],['movement','运动有度'],['emotion','情志有恒'],['rest','起居有常']];

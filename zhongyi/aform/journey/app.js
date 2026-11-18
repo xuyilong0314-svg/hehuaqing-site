@@ -1,4 +1,4 @@
-import {DAYS,ITEMS,esc,validToken,dateText,imageSafe,today,link,initialOptions,previewContent,stageStatus,stageHTML,DEMO_CONTENT} from './core.js?v=20261118-progress-1';
+import {DAYS,ITEMS,esc,validToken,dateText,imageSafe,today,link,initialOptions,previewContent,stageStatus,stageHTML,DEMO_CONTENT} from './core.js?v=20261118-progress-2';
 import {publicApiFetch} from '../auth.js?v=20261112-stability-1';
 const root=document.querySelector('#app'),modal=document.querySelector('#dialog'),config=window.AFORM_CONFIG||{};
 const hash=location.hash.slice(1),demo=['demo','demo-share'].includes(hash),params=new URLSearchParams(hash),mode=hash==='demo-share'||params.has('s')?'share':'manage',token=params.get(mode==='share'?'s':'m');

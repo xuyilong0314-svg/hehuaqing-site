@@ -1,5 +1,5 @@
-import {productElementLabel,STAGE_FLOW} from './workflow.js?v=20261118-progress-1';
-import {planRevision} from './case-workspace.js?v=20261118-progress-1';
+import {productElementLabel,STAGE_FLOW} from './workflow.js?v=20261118-progress-2';
+import {planRevision} from './case-workspace.js?v=20261118-progress-2';
 
 const INK='#203e34',MUTED='#728071',GOLD='#a48c57',LINE='#dce1d5',PAPER='#fffef8';
 const SERIF='"Songti SC","STSong","SimSun",serif';

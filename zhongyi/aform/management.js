@@ -1,4 +1,4 @@
-import {STAGES,esc,today,addDays,nextFollow,stageDays} from './core.js?v=20261118-progress-1';
+import {STAGES,esc,today,addDays,nextFollow,stageDays} from './core.js?v=20261118-progress-2';
 
 // The caller supplies roles read from user_roles under RLS, never signup metadata.
 export function accountRole(rows=[]) {

@@ -1,4 +1,4 @@
-import {esc,dateText,stageHTML} from './journey/core.js?v=20261118-progress-1';
+import {esc,dateText,stageHTML} from './journey/core.js?v=20261118-progress-2';
 export const journeyEntry=c=>'<button type="button" class="btn secondary tiny" data-journey-case="'+esc(c.id)+'">记录分享 ↗</button>';
 export async function openJourneyOwner(c,{db,demo,dialog,notify}){
  if(demo){dialog('<h2>一份有温度的记录</h2><p>客户打开自己的记录页后，可以选择内容、预览，再点击分享。</p><p class="small muted">此处为虚构示例，不包含客户资料。</p><div class="dialog-actions"><button class="btn secondary" data-action="close-dialog">关闭</button><a class="btn" href="./journey/#demo" target="_blank" rel="noopener noreferrer">看看示例 ↗</a></div>');return;}
