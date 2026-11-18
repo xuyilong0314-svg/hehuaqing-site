@@ -1,3 +1,4 @@
+import {normalizeIdentity,identityFields} from './identity.js?v=20261118-identity-1';
 import {accountRequest,accountChanged} from './requests.js?v=20261112-flow-1';
 // Website and health archives use the same authenticated user's personal profile.
 // Auth user metadata is the shared source; existing name/class tables are projections
@@ -17,36 +18,38 @@ export function normalizeProfile(values) {
   if (has_studied === null) throw new ProfileError('请选择是否参加过古中医阴阳五行舌学习。');
   if (has_studied && (!class_name || class_name.length > 80 || !/[1-9一二三四五六七八九十百壹贰叁肆伍陆柒捌玖拾]/.test(class_name))) throw new ProfileError('参加过学习的，请填写第几期；复训可填写多个期数。');
   if (/^[1-9]\d*$/.test(class_name)) class_name = '第' + class_name + '期';
-  return {display_name, location, has_studied, class_name, profile_version: 1};
+  let identity;try { identity = normalizeIdentity(values); } catch (error) { throw new ProfileError(error.message); }
+  return {display_name, ...identity, location, has_studied, class_name, profile_version: 2};
 }
-// Registration keeps the name requirement; detailed study information is completed later.
+// Registration collects the shared identity; learning information can be completed later.
 export function signupFields(prefix='signup') {
-  return `<label class="field profile-field" for="${prefix}-name">真实姓名<input id="${prefix}-name" name="display_name" type="text" required maxlength="40" autocomplete="name" placeholder="请填写真实姓名"></label>`;
+  return `<label class="field profile-field" for="${prefix}-name">真实姓名<input id="${prefix}-name" name="display_name" type="text" required maxlength="40" autocomplete="name" placeholder="请填写真实姓名"></label>${identityFields({},prefix)}`;
 }
 export function signupProfileFromForm(form) {
-  const name=clean(new FormData(form).get('display_name')).replace(/\s+/g,' ');
-  const checked=normalizeProfile({display_name:name,location:'',has_studied:false,class_name:''});
-  return {display_name:checked.display_name};
+  const data=new FormData(form),name=clean(data.get('display_name')).replace(/\s+/g,' ');
+  const checked=normalizeProfile({display_name:name,birth_date:data.get('birth_date'),phone:data.get('phone'),location:'',has_studied:false,class_name:''});
+  return {display_name:checked.display_name,birth_date:checked.birth_date,phone:checked.phone,identity_version:1};
 }
 export function profileFromForm(form) {
   const data = new FormData(form);
-  return normalizeProfile(Object.fromEntries(['display_name','location','has_studied','class_name'].map(key => [key, data.get(key)])));
+  return normalizeProfile(Object.fromEntries(['display_name','birth_date','phone','location','has_studied','class_name'].map(key => [key, data.get(key)])));
 }
 export function resolveProfile(user, legacy = {}) {
   const meta = user?.user_metadata || {};
-  if (meta.profile_version === 1) return {
-    display_name: clean(meta.display_name), location: clean(meta.location),
+  if ([1,2].includes(meta.profile_version)) return {
+    display_name: clean(meta.display_name), birth_date: clean(meta.birth_date), phone: clean(meta.phone), location: clean(meta.location),
     has_studied: typeof meta.has_studied === 'boolean' ? meta.has_studied : null,
-    class_name: meta.has_studied === false ? '' : clean(meta.class_name), profile_version: 1
+    class_name: meta.has_studied === false ? '' : clean(meta.class_name), profile_version: meta.profile_version
   };
   const class_name = clean(legacy.class_name || meta.class_name);
-  return {display_name: clean(legacy.display_name || meta.display_name), location: clean(meta.location), has_studied: class_name ? true : null, class_name, profile_version: 0};
+  return {display_name: clean(legacy.display_name || meta.display_name), birth_date: clean(meta.birth_date), phone: clean(meta.phone), location: clean(meta.location), has_studied: class_name ? true : null, class_name, profile_version: 0};
 }
 export function profileFields(profile = {}, prefix = 'personal') {
   const studied = profile.has_studied === true ? 'yes' : profile.has_studied === false ? 'no' : '';
   return `<div class="profile-fields" data-profile-fields>
     <label class="profile-field" for="${prefix}-name">真实姓名 <span class="profile-required">必填</span><input id="${prefix}-name" name="display_name" type="text" value="${esc(profile.display_name)}" required maxlength="40" autocomplete="name" placeholder="请填写真实姓名" aria-describedby="${prefix}-name-help"></label>
     <p class="profile-help" id="${prefix}-name-help">必须使用真实姓名，请勿填写网名或昵称。</p>
+    ${identityFields(profile,prefix)}
     <label class="profile-field" for="${prefix}-location">所在地 <span class="profile-optional">选填</span><input id="${prefix}-location" name="location" type="text" value="${esc(profile.location)}" maxlength="80" autocomplete="address-level2" placeholder="例如：福建省泉州市" aria-describedby="${prefix}-location-help"></label>
     <p class="profile-help" id="${prefix}-location-help">填写省、市或地区即可，无需详细住址。</p>
     <label class="profile-field" for="${prefix}-studied">是否参加过古中医阴阳五行舌学习 <span class="profile-required">必选</span><select id="${prefix}-studied" name="has_studied" required data-study-choice aria-controls="${prefix}-course"><option value="" ${studied === '' ? 'selected' : ''}>请选择</option><option value="no" ${studied === 'no' ? 'selected' : ''}>尚未参加</option><option value="yes" ${studied === 'yes' ? 'selected' : ''}>已参加学习</option></select></label>
@@ -62,7 +65,7 @@ export function syncStudyField(select) {
 function result(response) { if (response.error) throw response.error; return response.data; }
 async function synchronize(db, user, legacy) {
   const profile = resolveProfile(user, legacy);
-  if (profile.profile_version !== 1) return profile;
+  if (profile.profile_version !== 2) return profile;
   // Recheck before projecting self-entered metadata into existing tables.
   const normalized = normalizeProfile(profile);
   if (!legacy || legacy.display_name !== normalized.display_name || (legacy.class_name || '') !== normalized.class_name) {

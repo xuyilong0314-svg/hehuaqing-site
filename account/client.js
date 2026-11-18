@@ -1,6 +1,6 @@
 import {loadAccountSdk} from './sdk.js?v=20261112-complete-1';
 import {browserSessionStorage,sessionPersistence} from './session-storage.js?v=20261112-complete-1';
-import {readPersonalProfile} from './profile.js?v=20261112-flow-1';
+import {readPersonalProfile} from './profile.js?v=20261118-identity-1';
 import {authIssue} from './auth-support.js?v=20261112-complete-1';
 import {ANALYTICS_URL,ANALYTICS_KEY,OWNER_DEVICE_KEY} from '../analytics/config.js?v=20261031-20';
 import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-flow-1';
