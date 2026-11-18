@@ -1,3 +1,4 @@
+import {beginLoading} from './loading.js?v=20261118-loading-1';
 import {syncBirthSummary} from './identity.js?v=20261118-number-live-1';
 import {sessionPersistence,temporarySessionNotice} from './session-storage.js?v=20261112-complete-1';
 import {mountEmailPanel} from './email-status.js?v=20261112-deferred-1';
@@ -73,6 +74,7 @@ function clearAccount(note='已退出当前浏览器账号。',force=false){
  if(force||view!=='auth'){mode='login';login(note);}
 }
 async function load({forceHistory=false}={}){
+ const feedback=['loading','connection'].includes(view)?beginLoading({title:'正在打开您的账号',detail:'正在确认登录并读取个人资料。'}):null;
  const version=++loadVersion,epoch=accountEpoch,edit=editRevision;
  const current=()=>version===loadVersion&&epoch===accountEpoch;
  try{
@@ -86,7 +88,7 @@ async function load({forceHistory=false}={}){
   mountEmailPanel(db,document.querySelector('#email-status'));
   // Secondary history never holds up the account or re-renders an edited form.
   loadHistory(db,userId,{force:forceHistory});
- }catch(error){if(current()&&!profileDirty&&edit===editRevision)throw error;}
+ }catch(error){if(current()&&!profileDirty&&edit===editRevision)throw error;}finally{feedback?.finish();}
 }
 function changedAccount(){
  if(context?.user_id&&sessionUserId()!==context.user_id){
@@ -99,7 +101,7 @@ function changedAccount(){
 root.addEventListener('click',async e=>{const btn=e.target.closest('button');if(!btn||busy)return;if(btn.dataset.action==='retry-history'){if(context)loadHistory(await getClient(),context.user_id,{force:true});return;}if(btn.dataset.action==='check-connection'){busy=true;btn.disabled=true;try{await diagnoseConnection();}finally{busy=false;btn.disabled=false;}return;}if(btn.dataset.action==='copy-registration-link'){await copyRegistrationLink();return;}if(btn.dataset.action==='reconnect'){busy=true;btn.disabled=true;try{await load();}catch{connectionError();}finally{busy=false;btn.disabled=false;}return;}if(btn.dataset.action==='toggle-password'){const input=document.getElementById(btn.dataset.for);if(!input)return;const show=input.type==='password';input.type=show?'text':'password';btn.textContent=show?'隐藏':'显示';btn.setAttribute('aria-pressed',String(show));btn.setAttribute('aria-label',(show?'隐藏':'显示')+btn.dataset.label);return;}if(btn.dataset.mode){if(mode===btn.dataset.mode)return;const email=root.querySelector('[name=email]')?.value||'';mode=btn.dataset.mode;login('',email);root.querySelector('[data-mode="'+mode+'"]').focus();return;}if(btn.dataset.action==='logout'){clearAccount('正在退出当前浏览器账号…',true);busy=true;btn.disabled=true;try{await signOut();clearAccount('已退出当前浏览器账号。',true);}catch(error){if(!hasSession())clearAccount('已退出当前浏览器账号。',true);else message(friendly(error),true);}finally{busy=false;btn.disabled=false;}}});
 root.addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;const f=e.target,fields=new FormData(f),button=f.querySelector('button[type=submit]'),epoch=accountEpoch,edit=editRevision;busy=true;button.disabled=true;
- const originalLabel=button.textContent;button.textContent=f.id==='account-form'?(mode==='signup'?'正在注册…':'正在登录…'):'正在保存…';
+ const feedback=beginLoading({title:f.id==='account-form'?(mode==='signup'?'正在注册账号':'正在确认登录'):'正在保存资料',detail:'已收到本次操作，请不要重复提交。'});const originalLabel=button.textContent;button.textContent=f.id==='account-form'?(mode==='signup'?'正在注册…':'正在登录…'):'正在保存…';
  const slow=setTimeout(()=>{if(epoch===accountEpoch&&busy)button.textContent='连接较慢，请稍候…';},3000);
  try{
   const db=await getClient();if(epoch!==accountEpoch)return;
@@ -115,7 +117,7 @@ root.addEventListener('submit',async e=>{
   }else{
    const r=await db.auth.signInWithPassword({email:String(fields.get('email')).trim(),password:String(fields.get('password'))});if(r.error)throw r.error;f.reset();await load();
   }
- }catch(error){if(epoch!==accountEpoch)return;if(error?.code==='email_not_confirmed')rememberPendingEmail(fields.get('email'));if(error instanceof ProfileError)message(error.message,true);else if(f.id==='account-form'&&hasSession())connectionError();else if(f.id==='account-form')showAuthError(error);else message(friendly(error),true);}finally{clearTimeout(slow);if(epoch===accountEpoch){busy=false;writeController=null;}button.disabled=false;button.textContent=originalLabel;}
+ }catch(error){if(epoch!==accountEpoch)return;if(error?.code==='email_not_confirmed')rememberPendingEmail(fields.get('email'));if(error instanceof ProfileError)message(error.message,true);else if(f.id==='account-form'&&hasSession())connectionError();else if(f.id==='account-form')showAuthError(error);else message(friendly(error),true);}finally{feedback.finish();clearTimeout(slow);if(epoch===accountEpoch){busy=false;writeController=null;}button.disabled=false;button.textContent=originalLabel;}
 });
 root.addEventListener('change',e=>{if(e.target.name==='birth_date')syncBirthSummary(e.target.form);if(e.target.matches('[data-study-choice]'))syncStudyField(e.target);const f=e.target.closest('#personal-profile, #reader-settings');if(f){dirtyForms.add(f.id);profileDirty=true;editRevision++;}});
 root.addEventListener('input',e=>{if(e.target.name==='birth_date')syncBirthSummary(e.target.form);const f=e.target.closest('#personal-profile, #reader-settings');if(f){dirtyForms.add(f.id);profileDirty=true;editRevision++;}});
