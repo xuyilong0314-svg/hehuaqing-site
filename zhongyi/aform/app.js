@@ -8,7 +8,7 @@ import {browserSessionStorage,sessionPersistence,temporarySessionNotice} from '.
 import {mountEmailPanel,completeEmailVerification} from '../../account/email-status.js?v=20261112-deferred-1';
 import {rememberPendingEmail,verificationUrl} from '../../account/verification.js?v=20261112-deferred-1';
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261118-number-name-1';
-import {openPlanImage} from './plan-image.js?v=20261118-progress-2';
+import {openPlanImage} from './plan-image.js?v=20261118-plan-image-1';
 import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage} from './case-workspace.js?v=20261118-progress-2';
 import {authIssue} from '../../account/auth-support.js?v=20261112-complete-1';
 import {duplicateNames,memberCard,deletionDialog,matchingEmail,memberError} from './member-admin.js?v=20261118-number-name-1';
