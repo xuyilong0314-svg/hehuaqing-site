@@ -1,0 +1,82 @@
+/* Intake dates use explicit Gregorian parts on every device. */
+.birth-date-field{min-width:0;padding:0;border:0}
+.birth-date-field legend{padding:0}
+.birth-date-parts{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(2,minmax(0,1fr));gap:10px}
+.birth-date-parts label{display:block;min-width:0;font-size:12px;color:var(--muted)}
+.birth-date-parts label>span{display:block;margin-bottom:5px}
+.birth-date-parts input,.birth-date-parts select{width:100%;min-width:0;margin:0;min-height:48px;font-size:16px;padding:11px 10px}
+.birth-date-field .help{min-height:20px;margin:8px 0 0}
+.birth-date-error{color:var(--red)!important}
+.case-birth-preview{grid-column:1/-1;margin:0 0 20px;font-size:13px;color:var(--muted)}
+.case-birth-preview>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;list-style:none}
+.case-birth-preview>summary::-webkit-details-marker{display:none}
+.case-birth-preview>summary:after{content:'⌄';font-size:16px}
+.case-birth-preview[open]>summary:after{content:'⌃'}
+.case-identity-preview{margin:2px 0 0}
+.case-identity-preview>summary{min-height:36px}
+.case-identity-preview .case-identity-tags{margin:0 0 8px}
+.case-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.case-topbar .case-back{display:inline-flex;align-items:center;min-height:44px;margin:0;white-space:nowrap}
+.case-top-actions{display:flex;align-items:center;gap:10px}
+.case-top-actions .btn{font-size:13px;min-height:44px;padding:8px 14px}
+.case-more{position:relative}
+.case-more>summary{display:flex;align-items:center;min-height:44px;padding:8px;list-style:none;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.case-more>summary::-webkit-details-marker{display:none}
+.case-more-menu{position:absolute;right:0;top:100%;padding:8px;background:var(--white);border:1px solid var(--line);border-radius:9px;z-index:15;box-shadow:0 8px 24px #183c3314;min-width:130px}
+.case-more-menu .case-delete{width:100%;color:var(--red);white-space:nowrap}
+.case-details-heading .kicker{overflow-wrap:anywhere;line-height:1.6;margin-bottom:8px}
+.stage-explanation{color:var(--muted);font-size:12px;font-weight:400;margin:-4px 0 16px}
+.stage-explanation>summary{display:flex;align-items:center;justify-content:space-between;min-height:36px;cursor:pointer;list-style:none;gap:12px}
+.stage-explanation>summary::-webkit-details-marker{display:none}
+.stage-explanation>summary span{white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
+.stage-explanation p{margin:0 0 8px}
+@media(max-width:640px){
+ :root{--main-site-bar-height:52px}
+ .main-site-home{background:transparent;font-size:14px;min-height:44px;padding:0}
+ .main-site-menu summary{font-size:14px;min-height:44px}
+ .app-header{height:56px}
+ .content{padding-left:16px;padding-right:16px;padding-top:20px}
+ .content:has(>#case-form)>.page-heading{margin-bottom:20px}
+ .content:has(>#case-form)>.back{margin-bottom:8px;min-height:44px;display:flex;align-items:center}
+ .content:has(>#case-form)>.page-heading h1{font-size:27px;margin-top:0}
+ #case-form{padding:20px 16px}
+ #case-form .grid2{grid-template-columns:minmax(0,1fr);gap:0}
+ #case-form .grid2>.field{min-width:0;margin-bottom:20px}
+ #case-form .label,#case-form .grid2 .label{font-size:15px;line-height:1.6}
+ #case-form .paper-section{padding-top:22px;margin-top:6px}
+ #case-form .input,#case-form select{max-width:100%;min-width:0}
+ #case-form .birth-date-parts{gap:8px}
+ #case-form .birth-date-parts select{padding-left:8px;padding-right:6px}
+ .content:has(>.case-details-heading){padding-top:8px}
+ .case-topbar{margin:0 0 8px;gap:6px}
+ .case-topbar .case-back{font-size:13px}
+ .case-top-actions{gap:4px}
+ .case-top-actions .btn{min-height:40px;padding:8px 11px;font-size:13px;background:var(--pale);border-color:var(--line);color:var(--ink)}
+ .case-more>summary{font-size:12px;padding:8px 5px}
+ .case-details-heading{margin-bottom:12px;gap:0}
+ .case-title-row{margin:0 0 6px;gap:8px}
+ .case-details-heading .case-title-row h1{font-size:27px}
+ .case-details-heading .kicker{font-size:11px;margin-bottom:4px;letter-spacing:.02em}
+ .case-record-meta{font-size:12px;gap:2px 14px;line-height:1.65}
+ .case-identity-preview>summary{min-height:32px;font-size:12px}
+ .case-tabs{display:flex;gap:20px;overflow-x:auto;margin-bottom:12px}
+ .case-tabs button{flex:0 0 auto;min-height:44px;padding:10px 0;font-size:14px}
+ .service-progress{display:grid;grid-template-columns:minmax(0,1fr) auto;padding:12px;gap:8px 10px;margin:12px 0;border-radius:9px}
+ .service-progress>div:first-child{min-width:0}
+ .service-progress strong{font-size:13px;line-height:1.5}
+ .service-progress p{font-size:13px;line-height:1.5;margin-top:4px}
+ .service-progress-actions{width:auto;display:flex;justify-content:flex-end}
+ .service-progress-actions .btn{font-size:12px;min-height:40px;padding:8px;flex:0 1 auto;white-space:nowrap}
+ .service-progress:has(.service-progress-actions>button:nth-child(2)) .service-progress-actions{grid-column:1/-1;justify-content:flex-start;flex-wrap:wrap}
+ .service-progress details{grid-column:1/-1;font-size:12px;padding-top:6px}
+ .service-progress details>summary{min-height:32px;cursor:pointer}
+ .case-stage-rail{display:flex;gap:8px;padding:2px 0 8px;overflow-x:auto;scrollbar-width:thin;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+ .case-stage-rail .stage-button{flex:0 0 88px;min-width:88px;min-height:72px;padding:9px 6px;scroll-snap-align:center}
+ .case-stage-rail .stage-button strong{font-size:14px;line-height:1.4}
+ .case-stage-rail .stage-button small{font-size:12px;white-space:nowrap;margin-top:4px}
+ .case-stage-rail .stage-button em{font-size:10px;line-height:1.4;white-space:nowrap;margin-top:3px}
+ .stage-explanation{margin:0 0 10px;font-size:11px}
+ .stage-explanation>summary{min-height:32px;font-weight:400}
+ .content:has(>.case-details-heading) .client-self-panel{padding:18px 16px}
+}
+@media print{.case-topbar,.case-identity-preview,.stage-explanation{display:none!important}}
