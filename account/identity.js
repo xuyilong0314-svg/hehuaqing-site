@@ -52,21 +52,29 @@ export function zodiacFromBirth(value) {
   const boundaries=[[120,'水瓶座'],[219,'双鱼座'],[321,'白羊座'],[420,'金牛座'],[521,'双子座'],[621,'巨蟹座'],[723,'狮子座'],[823,'处女座'],[923,'天秤座'],[1023,'天蝎座'],[1122,'射手座'],[1222,'摩羯座']];
   let sign='摩羯座';for(const [start,label] of boundaries){if(md<start)break;sign=label;}return sign;
 }
-export function birthdayNumber(birth_date) {
+const digitSum = value => String(value).split('').reduce((total,digit)=>total+Number(digit),0);
+function reduceDigits(value) { let n=Number(value);while(n>9)n=digitSum(n);return n; }
+function additionStep(a,b) { let n=a+b, text=`${a}＋${b}＝${n}`;while(n>9){n=digitSum(n);text+=' → '+n;}return text; }
+export function birthdayTriangle(birth_date) {
   if(!zodiacFromBirth(birth_date))return null;
-  let sum=String(birth_date).replace(/-/g,'').split('').reduce((total,digit)=>total+Number(digit),0);
-  while(sum>9)sum=String(sum).split('').reduce((total,digit)=>total+Number(digit),0);
-  return sum;
+  const parts=[birth_date.slice(8,10),birth_date.slice(5,7),birth_date.slice(0,2),birth_date.slice(2,4)];
+  const base=parts.map(reduceDigits),middle=[reduceDigits(base[0]+base[1]),reduceDigits(base[2]+base[3])];
+  return {parts,base,middle,result:reduceDigits(middle[0]+middle[1]),steps:[additionStep(base[0],base[1]),additionStep(base[2],base[3]),additionStep(middle[0],middle[1])]};
+}
+export function birthdayNumber(birth_date) { return birthdayTriangle(birth_date)?.result??null; }
+export function triangleMarkup(birth_date) {
+  const t=birthdayTriangle(birth_date);if(!t)return '';
+  return `<details class="birth-calculation"><summary>查看加法过程</summary><div class="birth-triangle"><svg viewBox="0 0 320 264" role="img" aria-label="生日三角算法：底层 ${t.base.join('、')}；中层 ${t.middle.join('、')}；结果 ${t.result} 号"><path d="M160 12 L16 218 L304 218 Z M112 80 H208 M66 146 H254 M160 80 V218 M88 146 V218 M232 146 V218"/><g class="triangle-numbers"><text x="160" y="58">${t.result}</text><text x="128" y="126">${t.middle[0]}</text><text x="192" y="126">${t.middle[1]}</text>${t.base.map((n,i)=>`<text x="${[58,124,196,262][i]}" y="193">${n}</text>`).join('')}</g><g class="triangle-parts">${t.parts.map((n,i)=>`<text x="${[58,124,196,262][i]}" y="240">${n}</text>`).join('')}</g><g class="triangle-labels">${['日','月','年前两位','年后两位'].map((label,i)=>`<text x="${[58,124,196,262][i]}" y="258">${label}</text>`).join('')}</g></svg></div><p class="birth-equations">${t.steps.map(step=>`<span>${step}</span>`).join('')}</p><small>依次拆分日、月、年份前两位、年份后两位。每组及每层相加，两位数继续拆开相加。</small></details>`;
 }
 export function birthBadges({zodiac,birthday_number}={}) {
-  return (zodiac?`<span class="birth-badge">${esc(zodiac)}</span>`:'')+(Number.isInteger(birthday_number)&&birthday_number>=1&&birthday_number<=9?`<span class="birth-badge" title="公历生日各位数字相加至一位数">九型数字 · ${birthday_number} 号（生日算法）</span>`:'');
+  return (zodiac?`<span class="birth-badge">${esc(zodiac)}</span>`:'')+(Number.isInteger(birthday_number)&&birthday_number>=1&&birthday_number<=9?`<span class="birth-badge" title="按公历生日三角加法计算">九型人格 · ${birthday_number} 号（生日算法）</span>`:'');
 }
 export function birthSummary(birth_date,{compact=false}={}) {
   const zodiac=zodiacFromBirth(birth_date), birthday_number=birthdayNumber(birth_date);
   if(compact)return birthBadges({zodiac,birthday_number});
-  return `<div class="birth-summary" data-birth-summary aria-live="polite">${zodiac?`<strong>${birthBadges({zodiac,birthday_number})}</strong><small>星座按公历常用日期划分，交界日期仅供参考。九型数字按年月日各位相加至 1—9，不等同九型人格测评。</small>`:'<span>填写公历出生年月日后，自动显示星座和九型数字（生日算法）。</span>'}</div>`;
+  return `<div class="birth-summary" data-birth-summary aria-live="polite">${zodiac?`<strong>${birthBadges({zodiac,birthday_number})}</strong><small>星座按公历常用日期划分，交界日期仅供参考。九型人格数字按生日三角加法计算，作个人资料参考。</small>${triangleMarkup(birth_date)}`:'<span>填写公历出生年月日后，自动显示星座和九型人格数字（生日算法）。</span>'}</div>`;
 }
 export function syncBirthSummary(form) {
   const summary=form?.querySelector('[data-birth-summary]'),field=form?.elements?.birth_date;
-  if(summary&&field){const html=birthSummary(field.value);summary.innerHTML=html.slice(html.indexOf('>')+1,html.lastIndexOf('</div>'));}
+  if(summary&&field){const open=summary.querySelector('details')?.open,html=birthSummary(field.value);summary.innerHTML=html.slice(html.indexOf('>')+1,html.lastIndexOf('</div>'));if(open&&summary.querySelector('details'))summary.querySelector('details').open=true;}
 }
