@@ -8,7 +8,7 @@ import {browserSessionStorage,sessionPersistence,temporarySessionNotice} from '.
 import {mountEmailPanel,completeEmailVerification} from '../../account/email-status.js?v=20261112-deferred-1';
 import {rememberPendingEmail,verificationUrl} from '../../account/verification.js?v=20261112-deferred-1';
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261118-number-name-1';
-import {openPlanImage} from './plan-image.js?v=20261118-plan-image-1';
+import {openPlanImage} from './plan-image.js?v=20261118-plan-title-1';
 import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage} from './case-workspace.js?v=20261118-progress-2';
 import {authIssue} from '../../account/auth-support.js?v=20261112-complete-1';
 import {duplicateNames,memberCard,deletionDialog,matchingEmail,memberError} from './member-admin.js?v=20261118-number-name-1';
@@ -273,7 +273,7 @@ async function generatePlanImage(saveFirst=false,button=null){
   const query=new URLSearchParams(cleanHash().split('?')[1]||''),entries=planEntries(currentCase.id,obs);
   const entry=saveFirst?entries.find(e=>e.stage===activeStage&&e.latest):entries.find(e=>e.id===query.get('version'))||entries.find(e=>e.latest&&e.stage===query.get('stage'))||entries.filter(e=>e.latest).at(-1);
   if(!entry)throw Error('请先保存产品方案，再生成图片。');
-  await openPlanImage(currentCase,entry,{demo});
+  await openPlanImage(currentCase,entry,{demo,practitionerName:profile.display_name});
  }finally{busy=false;if(button){button.disabled=false;button.textContent=oldLabel;}updateSaveState();}
 }
 async function compress(file){cleanImageType(file);const url=URL.createObjectURL(file);try{const im=new Image();im.src=url;await im.decode();const factor=Math.min(1,1600/Math.max(im.width,im.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(im.width*factor));canvas.height=Math.max(1,Math.round(im.height*factor));const cx=canvas.getContext('2d');cx.fillStyle='#ffffff';cx.fillRect(0,0,canvas.width,canvas.height);cx.drawImage(im,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.88));if(!blob)throw Error('图片处理失败，请更换一张照片。');return blob;}finally{URL.revokeObjectURL(url);}}

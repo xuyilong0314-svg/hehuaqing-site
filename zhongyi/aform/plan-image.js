@@ -5,6 +5,12 @@ const INK='#203e34',MUTED='#728071',GOLD='#a48c57',LINE='#dce1d5',PAPER='#fffef8
 const SERIF='"Songti SC","STSong","SimSun",serif';
 const SANS='"PingFang SC","Microsoft YaHei",sans-serif';
 const date=value=>value?String(value).slice(0,10).replaceAll('-','.'):'未填写';
+const COMPOUND_SURNAMES=['欧阳','司马','上官','诸葛','夏侯','东方','皇甫','尉迟','公孙','慕容','宇文','司徒','司空','南宫','令狐','长孙','独孤','轩辕','澹台','申屠','太史','端木','百里','呼延','东郭','西门','拓跋','公羊','公冶','宗政','濮阳','淳于','单于','太叔','仲孙','钟离','鲜于','公良','段干','巫马','公西','颛孙','子车','梁丘','左丘','东门','羊舌','微生','闾丘','谷梁'];
+export function practitionerTitle(registeredName){
+  const name=String(registeredName??'').trim().replace(/\s+/g,'');
+  if(!/^[\p{Script=Han}]{1,6}$/u.test(name)||/^(演示|测试|未填)/.test(name))return '上医';
+  return (COMPOUND_SURNAMES.find(surname=>name.startsWith(surname))||Array.from(name)[0])+'上医';
+}
 export function imageProduct(product){
   const unused=product.unused||['不安排','未使用'].includes(product.useStatus);
   const pending=!unused&&(!product.useStatus||['待填写','待核对'].includes(product.useStatus))&&!product.amount&&!product.perDay;
@@ -14,7 +20,7 @@ export function imageProduct(product){
 }
 export const imageFilename=(c,entry)=>[c.name,stageFlow(entry.stage)?.plan||'产品方案',entry.plan?.startDate||'日期未填',planRevision(entry)].join('_').replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-')+'.png';
 
-export async function renderPlanImage(c,entry,{demo=false}={}){
+export async function renderPlanImage(c,entry,{demo=false,practitionerName=''}={}){
   if(!entry?.plan)throw Error('请先保存产品方案，再生成图片。');
   if(document.fonts?.ready)await document.fonts.ready;
   const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
@@ -35,9 +41,9 @@ export async function renderPlanImage(c,entry,{demo=false}={}){
   }
   function rule(y,color=LINE){ops.push(g=>{g.strokeStyle=color;g.lineWidth=.75;g.beginPath();g.moveTo(left,y);g.lineTo(right,y);g.stroke();});}
   function rect(x,y,w,h,color){ops.push(g=>{g.fillStyle=color;g.fillRect(x,y,w,h);});}
-  text('上医',left,43,150,36,INK,600,true,46);
-  text('健康服务档案',right-105,46,110,13,GOLD,500);
-  text('产品使用安排',right-105,68,110,11,MUTED);
+  text(practitionerTitle(practitionerName),left,43,190,36,INK,600,true,46);
+  text('健康服务档案',right-148,44,148,18,GOLD,600);
+  text('产品使用安排',right-148,74,148,14,MUTED,500);
   rule(106,GOLD);
   let y=132;
   y+=text(c.name||'客户',left,y,inner,31,INK,600,true,43)+12;
