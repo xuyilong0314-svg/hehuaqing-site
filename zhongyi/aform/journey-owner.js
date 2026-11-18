@@ -22,4 +22,18 @@ export async function openJourneyOwner(c,{db,demo,dialog,notify}){
  });
  document.querySelector('#close-journey')?.addEventListener('click',async event=>{if(pending)return;if(!confirm('关闭后，本人入口和已经发出的分享链接都将失效。原档案保留。确定关闭吗？'))return;pending=true;event.currentTarget.disabled=true;try{const r=await db.rpc('close_record_journey',{p_case_id:c.id});if(r.error)throw r.error;document.querySelector('#dialog').close();notify('本人入口与分享已关闭，原档案仍保留。');}catch{document.querySelector('#journey-owner-error').textContent='暂时没有完成关闭，请稍后重试。';event.currentTarget.disabled=false;}finally{pending=false;}});
 }
-async function thumbnail(blob){const src=URL.createObjectURL(blob);try{const img=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src;});const ratio=Math.min(1,600/Math.max(img.naturalWidth,img.naturalHeight)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*ratio));canvas.height=Math.max(1,Math.round(img.naturalHeight*ratio));const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);let quality=.72,result=canvas.toDataURL('image/jpeg',quality);while(result.length>175000&&quality>.3){quality-=.1;result=canvas.toDataURL('image/jpeg',quality);}if(result.length>180000)throw Error('图片太大，请选择其他照片。');return result;}finally{URL.revokeObjectURL(src);}}
+async function thumbnail(blob){
+ const src=URL.createObjectURL(blob);
+ try{
+  const img=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src;});
+  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+  // Ten previews and their JSON wrapper stay below the existing 1 MiB account gateway.
+  for(const edge of [600,500,400,320]){
+   const ratio=Math.min(1,edge/Math.max(img.naturalWidth,img.naturalHeight));
+   canvas.width=Math.max(1,Math.round(img.naturalWidth*ratio));canvas.height=Math.max(1,Math.round(img.naturalHeight*ratio));
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+   for(const quality of [.72,.6,.48]){const result=canvas.toDataURL('image/jpeg',quality);if(result.startsWith('data:image/jpeg;base64,/9j/')&&result.length<=85000)return result;}
+  }
+  throw Error('照片暂时无法准备，请换一张或稍后再试。');
+ }finally{URL.revokeObjectURL(src);}
+}
