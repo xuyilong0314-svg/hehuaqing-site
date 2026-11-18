@@ -1,6 +1,6 @@
 import {beginLoading,singleFlight} from '../../../account/loading.js?v=20261118-loading-2';
 import {getClient} from '../../../account/client.js?v=20261118-number-live-1';
-import {resultMarkup} from './view.js?v=20261118-number-live-1';
+import {resultMarkup} from './view.js?v=20261118-members-1';
 const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let db,viewer='',context={},clients=[],members=[],current=null,revision=0,working=false,checking=false,printUntil=0;
 function clearProtected(){revision++;current=null;clients=[];members=[];context={};printUntil=0;document.body.classList.remove('print-authorized');$('#result').innerHTML='';$('#permissions').innerHTML='';$('#clients').innerHTML='';$('#workspace').hidden=true;$('#permissions').hidden=true;$('#permissions-link').hidden=true;}
