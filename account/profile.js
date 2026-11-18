@@ -1,5 +1,5 @@
 import {normalizeIdentity,identityFields} from './identity.js?v=20261118-number-live-1';
-import {accountRequest,accountChanged} from './requests.js?v=20261112-flow-1';
+import {accountRequest,accountChanged} from './requests.js?v=20261119-ux-1';
 // Website and health archives use the same authenticated user's personal profile.
 // Auth user metadata is the shared source; existing name/class tables are projections
 // for the member list, never a source of permissions.

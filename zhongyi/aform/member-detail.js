@@ -1,6 +1,6 @@
 import {esc} from './core.js';
 import {memberStatus} from './member-admin.js?v=20261118-members-1';
-import {resultMarkup} from './numbers/view.js?v=20261118-members-1';
+import {resultMarkup} from './numbers/view.js?v=20261119-ux-1';
 
 const shown=value=>esc(value||'尚未填写');
 const date=value=>value?esc(new Date(value).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false})):'尚未登录';

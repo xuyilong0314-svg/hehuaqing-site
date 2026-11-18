@@ -1,4 +1,4 @@
-import {createSharedClient,TeamApi,accountUrl,friendly} from './shared-auth.js';
+import {createSharedClient,TeamApi,accountUrl,friendly} from './shared-auth.js?v=20261119-ux-1';
 import {isInTrash,visibleRecords,trashEntries,canManageRecord} from './record-state.js';
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const roles=[

@@ -1,10 +1,10 @@
-import {withLoading,singleFlight} from '../../../account/loading.js?v=20261118-loading-2';
+import {withLoading,singleFlight} from '../../../account/loading.js?v=20261119-ux-1';
 import {STAGES,ITEMS,ACTIONS,ACTION_VALUES,esc,stageLabel,today,validToken,readPayload,userError,requestUUID} from './core.js?v=20261118-progress-2';
-import {publicApiFetch} from '../auth.js?v=20261112-stability-1';
+import {publicApiFetch} from '../auth.js?v=20261119-ux-1';
 const root=document.querySelector('#app'),config=window.AFORM_CONFIG||{};
 const token=location.hash.slice(1),demo=token==='demo',query=new URLSearchParams(location.search);
 let context,requestId,submitting=false,dirty=false;
-function rpc(name,body){return withLoading({theme:'self',title:name==='client_self_context'?'正在打开本次自评':'正在提交您的感受'},()=>rpcRequest(name,body));}
+function rpc(name,body){return withLoading({readOnly:name==='client_self_context',theme:'self',title:name==='client_self_context'?'正在打开本次自评':'正在提交您的感受'},()=>rpcRequest(name,body));}
 async function rpcRequest(name,body){
  const response=await publicApiFetch(config.key)(config.url+'/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer'});
  const result=await response.json();if(!response.ok)throw Error(result?.message||'暂未完成请求');return result;

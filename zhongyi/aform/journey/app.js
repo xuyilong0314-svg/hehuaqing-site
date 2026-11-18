@@ -1,10 +1,10 @@
-import {withLoading,singleFlight} from '../../../account/loading.js?v=20261118-loading-2';
+import {withLoading,singleFlight} from '../../../account/loading.js?v=20261119-ux-1';
 import {DAYS,ITEMS,esc,validToken,dateText,imageSafe,today,link,initialOptions,previewContent,stageStatus,stageHTML,DEMO_CONTENT} from './core.js?v=20261118-progress-2';
-import {publicApiFetch} from '../auth.js?v=20261112-stability-1';
+import {publicApiFetch} from '../auth.js?v=20261119-ux-1';
 const root=document.querySelector('#app'),modal=document.querySelector('#dialog'),config=window.AFORM_CONFIG||{};
 const hash=location.hash.slice(1),demo=['demo','demo-share'].includes(hash),params=new URLSearchParams(hash),mode=hash==='demo-share'||params.has('s')?'share':'manage',token=params.get(mode==='share'?'s':'m');
 let state,activeStage,options,busy=false,toastTimer,comparison=['d1','d7'];
-function rpc(name,body){return withLoading({theme:'journey',title:name==='record_journey_view'?'正在打开这份记录':name==='save_record_share'?'正在准备分享链接':'正在关闭分享'},()=>rpcRequest(name,body));}
+function rpc(name,body){return withLoading({readOnly:name==='record_journey_view',theme:'journey',title:name==='record_journey_view'?'正在打开这份记录':name==='save_record_share'?'正在准备分享链接':'正在关闭分享'},()=>rpcRequest(name,body));}
 async function rpcRequest(name,body){const response=await publicApiFetch(config.key)(config.url+'/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer'});const out=await response.json();if(!response.ok)throw Error(out.message||'request_failed');return out;}
 function message(e){return /journey_unavailable/.test(e?.message||'')?'这份记录暂时无法分享，请重新打开本人记录页。':/journey_invalid_photos/.test(e?.message||'')?'照片选择已发生变化，请重新打开页面后选择。':'暂未确认本次操作是否完成，请重试。你选择的内容还在。';}
 function toast(t){const e=document.querySelector('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),3500);}

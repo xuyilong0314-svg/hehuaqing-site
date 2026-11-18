@@ -1,4 +1,5 @@
-import {publicApiFetch} from '../zhongyi/aform/auth.js';
+import {loginHref} from '../account/return-to.js?v=20261119-ux-1';
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261119-ux-1';
 export function createSharedClient(config=window.AFORM_CONFIG, factory=window.supabase?.createClient) {
  if(!config?.ready || !factory) throw new Error('account_unavailable');
  // Match the existing A-form client: default Supabase storage key, same project and origin.
@@ -10,7 +11,7 @@ export function createSharedClient(config=window.AFORM_CONFIG, factory=window.su
 }
 export function accountUrl(location) {
  const local=['127.0.0.1','localhost'].includes(location.hostname);
- return local?'https://www.hehuaqing.com/zhongyi/aform/#/auth':'/zhongyi/aform/#/auth';
+ return (local?'https://www.hehuaqing.com':'')+loginHref('/team/'+(location.hash||''));
 }
 export function friendly(error) {
  const m=error?.message||String(error);

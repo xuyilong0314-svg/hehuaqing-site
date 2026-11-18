@@ -1,4 +1,4 @@
-import {loadingMarkup,beginLoading} from './loading.js?v=20261118-loading-2';
+import {loadingMarkup,beginLoading} from './loading.js?v=20261119-ux-1';
 import {LOADING_THEMES} from './loading-themes.js?v=20261118-loading-2';
 const scenes=[['health','上医服务','正在打开上医服务'],['numbers','数字性格','正在展开数字性格'],['records','健康档案','正在打开这份档案'],['self','本次自评','正在打开本次自评'],['save','保存记录','正在保存本次记录'],['journey','服务历程与分享','正在打开这份记录'],['account','登录与账号','正在连接您的账号'],['reading','文章与书籍','正在翻开这一页'],['music','音乐','正在缓冲这段旋律']];
 const grid=document.querySelector('#preview-grid'),indices=new Map();

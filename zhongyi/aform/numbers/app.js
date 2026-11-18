@@ -1,6 +1,7 @@
-import {beginLoading,singleFlight} from '../../../account/loading.js?v=20261118-loading-2';
-import {getClient} from '../../../account/client.js?v=20261118-number-live-1';
-import {resultMarkup} from './view.js?v=20261118-members-1';
+import {loginHref} from '../../../account/return-to.js?v=20261119-ux-1';
+import {beginLoading,singleFlight} from '../../../account/loading.js?v=20261119-ux-1';
+import {getClient} from '../../../account/client.js?v=20261119-ux-1';
+import {resultMarkup} from './view.js?v=20261119-ux-1';
 const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let db,viewer='',context={},clients=[],members=[],current=null,revision=0,working=false,checking=false,printUntil=0;
 function clearProtected(){revision++;current=null;clients=[];members=[];context={};printUntil=0;document.body.classList.remove('print-authorized');$('#result').innerHTML='';$('#permissions').innerHTML='';$('#clients').innerHTML='';$('#workspace').hidden=true;$('#permissions').hidden=true;$('#permissions-link').hidden=true;}
@@ -12,7 +13,7 @@ function route(){const value=location.hash.slice(1);return value==='permissions'
 function clientOptions(selected=''){const q=$('#search').value.trim().toLowerCase(),rows=clients.filter(c=>!q||c.name.toLowerCase().includes(q));$('#clients').innerHTML='<option value="">请选择客户档案</option>'+rows.map(c=>'<option value="'+esc(c.id)+'"'+(c.id===selected?' selected':'')+'>'+esc(c.name)+(c.has_birth?'':' · 生日待补填')+'</option>').join('');}
 function renderMembers(){const q=($('#member-search')?.value||'').trim().toLowerCase();$('#member-list').innerHTML=members.filter(m=>!q||[m.display_name,m.email].join(' ').toLowerCase().includes(q)).map(m=>'<article class="person"><div class="person-line"><div><strong>'+esc(m.display_name||'未填写姓名')+'</strong><p><small>'+esc(m.email||'未填写邮箱')+'</small></p></div><span>'+ (m.enabled?'已开通':'未开通')+'</span></div><div class="actions"><button data-grant="'+esc(m.id)+'" data-enabled="'+!m.enabled+'" class="'+(m.enabled?'':'primary')+'">'+(m.enabled?'关闭数字性格':'开通数字性格')+'</button><button data-history="'+esc(m.id)+'">授权记录</button></div><div class="history" id="history-'+esc(m.id)+'"></div></article>').join('')||'<p>暂无符合条件的账号。</p>';}
 const navigationFlights=singleFlight();
-function navigate(){return navigationFlights(location.hash,async()=>{const feedback=beginLoading({title:'正在展开数字性格',detail:'正在核对当前账号权限。'});try{return await navigatePage(feedback);}finally{feedback.finish();}});}
+function navigate(){return navigationFlights(location.hash,async()=>{const feedback=beginLoading({readOnly:true,title:'正在展开数字性格',detail:'正在核对当前账号权限。'});try{return await navigatePage(feedback);}finally{feedback.finish();}});}
 async function navigatePage(feedback){
  const ticket=++revision,where=route();current=null;printUntil=0;$('#result').innerHTML='';$('#workspace').hidden=true;$('#permissions').hidden=true;message('正在核对权限…');
  try{
@@ -32,15 +33,15 @@ async function navigatePage(feedback){
 async function verifyVisible(){
  if(!db||!viewer||document.hidden||working||checking)return;checking=true;
  const ticket=revision,where=route();
- try{const access=await rpc('number_character_context');if(ticket!==revision)return;if(!access.allowed||(where.admin&&!access.is_owner))throw {code:'42501'};context=access;if(current&&where.id){const fresh=await rpc('number_character_result',{p_case_id:where.id});if(ticket!==revision)return;current=fresh;$('#result').innerHTML=resultMarkup(fresh);}}
+ try{const access=await rpc('number_character_context');if(ticket!==revision)return;if(!access.allowed||(where.admin&&!access.is_owner))throw {code:'42501'};context=access;if(current&&where.id){const fresh=await rpc('number_character_result',{p_case_id:where.id});if(ticket!==revision)return;if(JSON.stringify(current)!==JSON.stringify(fresh)){$('#result').innerHTML=resultMarkup(fresh);}current=fresh;}}
  catch(error){if(ticket===revision)failure(error);}finally{checking=false;}
 }
 const startupFlights=singleFlight();
-function boot(){return startupFlights('boot',async()=>{const feedback=beginLoading({title:'正在打开数字性格',detail:'正在连接您的账号。'});try{return await bootPage(feedback);}finally{feedback.finish();}});}
+function boot(){return startupFlights('boot',async()=>{const feedback=beginLoading({readOnly:true,title:'正在打开数字性格',detail:'正在连接您的账号。'});try{return await bootPage(feedback);}finally{feedback.finish();}});}
 async function bootPage(feedback){
  clearProtected();message('正在核对账号权限…');
  try{db=await getClient();const session=await db.auth.getSession();if(session.error)throw session.error;
- if(!session.data.session){message('请先登录您的网站账号。');$('#status').insertAdjacentHTML('beforeend',' <a href="../#/auth">前往登录</a>');return;}
+ if(!session.data.session){message('请先登录您的网站账号。');$('#status').insertAdjacentHTML('beforeend',' <a href="'+esc(loginHref(location.pathname+location.hash))+'">前往登录</a>');return;}
  feedback.update('正在确认账号','确认后自动展开数字性格页面。');const verified=await db.auth.getUser();if(verified.error)throw verified.error;viewer=verified.data.user?.id||'';if(!viewer)throw Error('No user');
  db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||session?.user?.id!==viewer){viewer='';clearProtected();message('登录状态已变化，请重新打开此页面。');}});
  await navigate();
@@ -49,7 +50,7 @@ async function bootPage(feedback){
 document.addEventListener('input',e=>{if(e.target.id==='search')clientOptions(current?.id);if(e.target.id==='member-search')renderMembers();});
 document.addEventListener('change',e=>{if(e.target.id==='clients')location.hash=e.target.value?'case/'+encodeURIComponent(e.target.value):'';});
 document.addEventListener('click',async e=>{
- const b=e.target.closest('button');if(!b||working)return;if(b.id==='retry'){await boot();return;}
+ const b=e.target.closest('button');if(!b||working||b.hasAttribute('data-number-zoom')||b.hasAttribute('data-number-close'))return;if(b.id==='retry'){await boot();return;}
  const feedback=beginLoading({title:b.id==='print'?'正在准备打印':b.dataset.grant?(b.dataset.enabled==='true'?'正在开通数字性格':'正在关闭数字性格'):'正在读取授权记录',detail:'已收到本次操作，请不要重复点击。',button:b});const ticket=revision;working=true;b.disabled=true;
  try{
   if(b.id==='print'&&current){const fresh=await rpc('number_character_result',{p_case_id:current.id});if(ticket!==revision)return;current=fresh;$('#result').innerHTML=resultMarkup(fresh);printUntil=Date.now()+3000;document.body.classList.add('print-authorized');window.print();document.body.classList.remove('print-authorized');printUntil=0;}

@@ -1,4 +1,4 @@
-import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-flow-1';
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261119-ux-1';
 import {resetAccountConnection} from './connection.js?v=20261112-stability-1';
 // Only public error categories and anonymous connection checks. No credentials are retained.
 export const isWeChat = (ua = '') => /MicroMessenger/i.test(ua);

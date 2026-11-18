@@ -1,4 +1,4 @@
-import {loadingMarkup} from '../../account/loading.js?v=20261118-loading-2';
+import {loadingMarkup} from '../../account/loading.js?v=20261119-ux-1';
 import {loadingBlessing} from '../../account/loading-themes.js?v=20261118-loading-2';
 import {esc} from './core.js';
 

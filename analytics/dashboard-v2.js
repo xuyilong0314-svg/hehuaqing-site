@@ -1,4 +1,4 @@
-import {getClient,refreshAccount,signOut} from '../account/client.js?v=20261105-reading-1';
+import {getClient,refreshAccount,signOut} from '../account/client.js?v=20261119-ux-1';
 import {OWNER_DEVICE_KEY} from './config.js?v=20261031-20';
 import {escapeHtml as esc,sourceNames,deviceNames,csvCell} from './metrics.js?v=20261118-name-2';
 import {makeViews,number,date,bars,filteredPages,filteredReaders,kindName} from './report-views.js?v=20261105-reading-1';

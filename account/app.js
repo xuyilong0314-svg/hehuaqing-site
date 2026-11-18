@@ -1,15 +1,15 @@
-import {beginLoading,withLoading,loadingMarkup} from './loading.js?v=20261118-loading-2';
+import {beginLoading,withLoading,loadingMarkup} from './loading.js?v=20261119-ux-1';
 import {syncBirthSummary} from './identity.js?v=20261118-number-live-1';
 import {sessionPersistence,temporarySessionNotice} from './session-storage.js?v=20261112-complete-1';
-import {mountEmailPanel} from './email-status.js?v=20261118-loading-2';
+import {mountEmailPanel} from './email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from './verification.js?v=20261112-deferred-1';
-import {profileFields,profileFromForm,signupFields,signupProfileFromForm,savePersonalProfile,syncStudyField,ProfileError} from './profile.js?v=20261118-number-live-1';
-import {authIssue,isWeChat,checkAuthConnection} from './auth-support.js?v=20261112-complete-1';
+import {profileFields,profileFromForm,signupFields,signupProfileFromForm,savePersonalProfile,syncStudyField,ProfileError} from './profile.js?v=20261119-ux-1';
+import {authIssue,isWeChat,checkAuthConnection} from './auth-support.js?v=20261119-ux-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../analytics/config.js?v=20261031-20';
-import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261112-flow-1';
-import {getClient,refreshAccount,signOut,friendly,hasSession,onAccount,storageKey,sessionUserId,prepareAccount} from './client.js?v=20261118-number-live-1';
+import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261119-ux-1';
+import {getClient,refreshAccount,signOut,friendly,hasSession,onAccount,storageKey,sessionUserId,prepareAccount} from './client.js?v=20261119-ux-1';
 import {escapeHtml as esc} from '../analytics/metrics.js?v=20261031-20';
-import {accountRequest,accountChanged} from './requests.js?v=20261112-flow-1';
+import {accountRequest,accountChanged} from './requests.js?v=20261119-ux-1';
 const root=document.querySelector('#account-app');let mode='login',busy=false,profileDirty=false,context=null,history=[],view='loading',loadVersion=0,accountEpoch=0,editRevision=0,writeController=null;
 const dirtyForms=new Set();
 let historyState='idle',historyVersion=0,historyOwner=null,historyPending=null,historyController=null;
@@ -74,7 +74,7 @@ function clearAccount(note='已退出当前浏览器账号。',force=false){
  if(force||view!=='auth'){mode='login';login(note);}
 }
 async function load({forceHistory=false}={}){
- const feedback=['loading','connection'].includes(view)?beginLoading({title:'正在打开您的账号',detail:'正在确认登录并读取个人资料。'}):null;
+ const feedback=['loading','connection'].includes(view)?beginLoading({readOnly:true,title:'正在打开您的账号',detail:'正在确认登录并读取个人资料。'}):null;
  const version=++loadVersion,epoch=accountEpoch,edit=editRevision;
  const current=()=>version===loadVersion&&epoch===accountEpoch;
  try{

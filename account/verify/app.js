@@ -1,10 +1,11 @@
-import {beginLoading} from '../loading.js?v=20261118-loading-2';
+import {pendingReturn,clearReturn} from '../return-to.js?v=20261119-ux-1';
+import {beginLoading} from '../loading.js?v=20261119-ux-1';
 import {loadAccountSdk} from '../sdk.js?v=20261112-complete-1';
 import {browserSessionStorage} from '../session-storage.js?v=20261112-complete-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../../analytics/config.js?v=20261031-20';
-import {publicApiFetch,authReturnUrl} from '../../zhongyi/aform/auth.js?v=20261112-flow-1';
+import {publicApiFetch,authReturnUrl} from '../../zhongyi/aform/auth.js?v=20261119-ux-1';
 import {pendingEmail,forgetPendingEmail,readVerificationLink,linkCredentials,confirmEmail,resendConfirmation} from '../verification.js?v=20261112-deferred-1';
-import {emailStatus,completeEmailVerification,requestEmailVerification,emailError} from '../email-status.js?v=20261118-loading-2';
+import {emailStatus,completeEmailVerification,requestEmailVerification,emailError} from '../email-status.js?v=20261119-ux-1';
 const $=id=>document.getElementById(id);
 const hash=new URLSearchParams(location.hash.slice(1));
 let credentials=readVerificationLink(location),returnedSession=null,currentUser=null,persistent,temporary,busy=false,resendAt=0,initialized=false;
@@ -32,6 +33,7 @@ function createClient(persist){
 const db=()=>persistent||(persistent=createClient(true));
 const temp=()=>temporary||(temporary=createClient(false));
 function success(email){
+  const target=pendingReturn();if(target){const a=document.createElement('a');a.className='primary';a.href=target;a.textContent='返回刚才的页面 →';a.addEventListener('click',()=>clearReturn());$('success').prepend(a);}
   credentials=null;returnedSession=null;forgetPendingEmail();$('code').value='';
   $('title').textContent='邮箱已验证';document.title='邮箱已验证 · 何华清';$('intro').textContent='已确认 '+email+' 由您使用，验证结果已保存到个人页。';
   $('notice').hidden=true;$('link-confirm').hidden=true;$('forms').hidden=true;$('login-help').hidden=true;$('success').hidden=false;

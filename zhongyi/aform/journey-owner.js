@@ -1,4 +1,4 @@
-import {withLoading,beginLoading} from '../../account/loading.js?v=20261118-loading-2';
+import {withLoading,beginLoading} from '../../account/loading.js?v=20261119-ux-1';
 import {esc,dateText,stageHTML} from './journey/core.js?v=20261118-progress-2';
 export const journeyEntry=c=>'<button type="button" class="btn secondary tiny" data-journey-case="'+esc(c.id)+'">记录分享 ↗</button>';
 export function openJourneyOwner(c,context){return withLoading({theme:'journey',title:'正在整理服务历程'},()=>openJourneyContent(c,context));}

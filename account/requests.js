@@ -1,5 +1,5 @@
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../analytics/config.js?v=20261031-20';
-import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261112-flow-1';
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261119-ux-1';
 
 export function accountChanged() {
   const error = new Error('账号已切换，请在当前账号重新填写并保存。');

@@ -1,8 +1,8 @@
 import {ANALYTICS_URL,ANALYTICS_KEY,PREFERENCE_KEY,OWNER_DEVICE_KEY} from './analytics/config.js?v=20261031-20';
 import {sourceCategory,deviceCategory} from './analytics/metrics.js?v=20261031-20';
 import {readingPath,progressDepth,isReading} from './analytics/routing.js?v=20261105-reading-1';
-import {readingAuthorization} from './account/client.js?v=20261105-reading-1';
-import './account/nav.js?v=20261105-session-1';
+import {readingAuthorization} from './account/client.js?v=20261119-ux-1';
+import './account/nav.js?v=20261119-ux-1';
 if(!window.__hhqAnalyticsStarted){
  window.__hhqAnalyticsStarted=true;const base=new URL('./',import.meta.url);
  const production=(location.hostname==='xuyilong0314-svg.github.io'&&base.pathname==='/hehuaqing-site/')||(['www.hehuaqing.com','hehuaqing.com'].includes(location.hostname)&&base.pathname==='/');

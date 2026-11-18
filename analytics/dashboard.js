@@ -1,6 +1,6 @@
 import {ANALYTICS_URL,ANALYTICS_KEY,OWNER_DEVICE_KEY} from './config.js?v=20261031-20';
 import {escapeHtml as esc,duration,sourceNames,deviceNames,categoryNames,csvCell} from './metrics.js?v=20261031-20';
-import {publicApiFetch} from '../zhongyi/aform/auth.js';
+import {publicApiFetch} from '../zhongyi/aform/auth.js?v=20261119-ux-1';
 const root=document.querySelector('#analytics-app');
 let db,data=null,days=7,sequence=0,admin=false;
 const sections=[['overview','网站总览','让每一次阅读，被看见。','独立站访问趋势与栏目概况'],['content','内容阅读','哪些内容，值得继续写。','热门文章与电子书 · 阅读停留与到达位置'],['audience','访问来源','读者从哪里，来到这里。','微信、搜索与站内跳转 · 手机与电脑分布'],['visits','最近访问','看见最近发生的阅读。','最近20次页面访问 · 时间、来源与停留']];

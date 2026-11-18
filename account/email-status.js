@@ -1,4 +1,4 @@
-import {beginLoading,loadingMarkup} from './loading.js?v=20261118-loading-2';
+import {beginLoading,loadingMarkup} from './loading.js?v=20261119-ux-1';
 import {verificationUrl,confirmationError} from './verification.js?v=20261112-deferred-1';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export async function emailStatus(db){

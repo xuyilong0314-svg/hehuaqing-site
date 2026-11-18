@@ -1,3 +1,4 @@
+import {safeReturn,pendingReturn} from '../../account/return-to.js?v=20261119-ux-1';
 import {connectedAccountInput,resetAccountConnection} from '../../account/connection.js?v=20261112-stability-1';
 // Only the public application key belongs in this browser bundle.
 export function publicApiFetch(key, fetcher = fetch, {timeoutMs = 20000, logoutTimeoutMs = 4000} = {}) {
@@ -45,10 +46,12 @@ export function publicApiFetch(key, fetcher = fetch, {timeoutMs = 20000, logoutT
 
 export function authReturnUrl(location) {
   const url = new URL(location.origin + location.pathname);
+  const target=safeReturn(new URLSearchParams(location.search||'').get('return')||'')||pendingReturn();
+  const suffix=target?'?return='+encodeURIComponent(target):'';
   if (['www.hehuaqing.com', 'hehuaqing.com', 'xuyilong0314-svg.github.io'].includes(url.hostname)) {
-    return 'https://www.hehuaqing.com/zhongyi/aform/';
+    return 'https://www.hehuaqing.com/zhongyi/aform/'+suffix;
   }
-  return url.origin + url.pathname;
+  return url.origin + url.pathname + suffix;
 }
 
 export function authCallback(hash) {
