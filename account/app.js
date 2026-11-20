@@ -1,9 +1,10 @@
+import {syncBirthDate} from './birth-date.js?v=20261120-mobile-save-1';
 import {beginLoading,withLoading,loadingMarkup} from './loading.js?v=20261119-ux-1';
-import {syncBirthSummary} from './identity.js?v=20261118-number-live-1';
+import {syncBirthSummary} from './identity.js?v=20261120-mobile-save-1';
 import {sessionPersistence,temporarySessionNotice} from './session-storage.js?v=20261112-complete-1';
 import {mountEmailPanel} from './email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from './verification.js?v=20261112-deferred-1';
-import {profileFields,profileFromForm,signupFields,signupProfileFromForm,savePersonalProfile,syncStudyField,ProfileError} from './profile.js?v=20261119-ux-1';
+import {profileFields,profileFromForm,signupFields,signupProfileFromForm,savePersonalProfile,syncStudyField,ProfileError} from './profile.js?v=20261120-mobile-save-1';
 import {authIssue,isWeChat,checkAuthConnection} from './auth-support.js?v=20261119-ux-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../analytics/config.js?v=20261031-20';
 import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261119-ux-1';
@@ -119,8 +120,8 @@ root.addEventListener('submit',async e=>{
   }
  }catch(error){if(epoch!==accountEpoch)return;if(error?.code==='email_not_confirmed')rememberPendingEmail(fields.get('email'));if(error instanceof ProfileError)message(error.message,true);else if(f.id==='account-form'&&hasSession())connectionError();else if(f.id==='account-form')showAuthError(error);else message(friendly(error),true);}finally{feedback.finish();clearTimeout(slow);if(epoch===accountEpoch){busy=false;writeController=null;}button.disabled=false;button.textContent=originalLabel;}
 });
-root.addEventListener('change',e=>{if(e.target.name==='birth_date')syncBirthSummary(e.target.form);if(e.target.matches('[data-study-choice]'))syncStudyField(e.target);const f=e.target.closest('#personal-profile, #reader-settings');if(f){dirtyForms.add(f.id);profileDirty=true;editRevision++;}});
-root.addEventListener('input',e=>{if(e.target.name==='birth_date')syncBirthSummary(e.target.form);const f=e.target.closest('#personal-profile, #reader-settings');if(f){dirtyForms.add(f.id);profileDirty=true;editRevision++;}});
+root.addEventListener('change',e=>{if(e.target.matches('[data-birth-part]')){syncBirthDate(e.target.form);syncBirthSummary(e.target.form);}if(e.target.name==='birth_date')syncBirthSummary(e.target.form);if(e.target.matches('[data-study-choice]'))syncStudyField(e.target);const f=e.target.closest('#personal-profile, #reader-settings');if(f){dirtyForms.add(f.id);profileDirty=true;editRevision++;}});
+root.addEventListener('input',e=>{if(e.target.matches('[data-birth-part]')){syncBirthDate(e.target.form);syncBirthSummary(e.target.form);}if(e.target.name==='birth_date')syncBirthSummary(e.target.form);const f=e.target.closest('#personal-profile, #reader-settings');if(f){dirtyForms.add(f.id);profileDirty=true;editRevision++;}});
 let subscribed=false;
 onAccount(next=>{if(!subscribed){subscribed=true;return;}if(changedAccount())return;if(!next){if(view==='account'||view==='connection')clearAccount();}else if(!context&&view==='auth'&&!busy)load().catch(connectionError);});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;if(changedAccount())return;if(!hasSession()){if(view!=='auth')clearAccount();return;}if(!busy&&!profileDirty)load().catch(connectionError);});

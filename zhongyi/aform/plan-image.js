@@ -1,3 +1,4 @@
+import {openImageSave} from '../../share/image-save.js?v=20261120-mobile-save-1';
 import {productElementLabel,stageFlow} from './workflow.js?v=20261118-progress-2';
 import {planRevision} from './case-workspace.js?v=20261118-progress-2';
 
@@ -86,18 +87,7 @@ export async function renderPlanImage(c,entry,{demo=false,practitionerName=''}={
 }
 
 export async function openPlanImage(c,entry,options={}){
-  const result=await renderPlanImage(c,entry,options),url=URL.createObjectURL(result.blob),modal=document.createElement('dialog');
-  modal.className='plan-image-dialog';modal.setAttribute('aria-label','方案图片已生成');
-  modal.innerHTML='<div class="plan-image-heading"><div><h2>方案图片已生成</h2><p>可保存发送；微信中也可长按下方图片。</p></div><button type="button" class="text-btn" aria-label="关闭方案图片">关闭</button></div><div class="plan-image-scroll"><img alt="客户产品方案图片，包含使用日期、产品、用量和每日次数"></div><div class="plan-image-actions"><button type="button" class="btn" data-save-plan>保存图片</button><button type="button" class="btn secondary" data-share-plan hidden>分享图片</button></div><p class="plan-image-status" role="status">'+result.width+' × '+result.height+' · PNG 高清图片</p>';
-  modal.querySelector('img').src=url;
-  const status=modal.querySelector('[role=status]'),close=()=>typeof modal.close==='function'?modal.close():modal.remove();
-  modal.querySelector('[aria-label="关闭方案图片"]').onclick=close;
-  modal.querySelector('[data-save-plan]').onclick=()=>{const a=document.createElement('a');a.href=url;a.download=result.filename;document.body.append(a);a.click();a.remove();status.textContent='已发起保存。如未出现下载提示，可长按图片保存或发送。';};
-  const file=new File([result.blob],result.filename,{type:'image/png'});
-  if(navigator.canShare?.({files:[file]})){
-    const share=modal.querySelector('[data-share-plan]');share.hidden=false;share.onclick=async()=>{try{await navigator.share({files:[file],title:'产品使用安排'});}catch(error){if(error.name!=='AbortError')status.textContent='暂时无法直接分享，请保存图片后发送。';}};
-  }
-  modal.addEventListener('close',()=>{URL.revokeObjectURL(url);modal.remove();},{once:true});
-  document.body.append(modal);if(typeof modal.showModal==='function')modal.showModal();else modal.setAttribute('open','');
+  const result=await renderPlanImage(c,entry,options);
+  openImageSave({...result,title:'保存方案图片',alt:'客户产品方案图片，包含使用日期、产品、用量和每日次数'});
   return result;
 }

@@ -1,4 +1,5 @@
-import {normalizeIdentity,identityFields} from './identity.js?v=20261118-number-live-1';
+import {syncBirthDate} from './birth-date.js?v=20261120-mobile-save-1';
+import {normalizeIdentity,identityFields} from './identity.js?v=20261120-mobile-save-1';
 import {accountRequest,accountChanged} from './requests.js?v=20261119-ux-1';
 // Website and health archives use the same authenticated user's personal profile.
 // Auth user metadata is the shared source; existing name/class tables are projections
@@ -26,11 +27,13 @@ export function signupFields(prefix='signup') {
   return `<label class="field profile-field" for="${prefix}-name">真实姓名<input id="${prefix}-name" name="display_name" type="text" required maxlength="40" autocomplete="name" placeholder="请填写真实姓名"></label>${identityFields({},prefix)}`;
 }
 export function signupProfileFromForm(form) {
+  syncBirthDate(form);
   const data=new FormData(form),name=clean(data.get('display_name')).replace(/\s+/g,' ');
   const checked=normalizeProfile({display_name:name,birth_date:data.get('birth_date'),phone:data.get('phone'),location:'',has_studied:false,class_name:''});
   return {display_name:checked.display_name,birth_date:checked.birth_date,phone:checked.phone,identity_version:1};
 }
 export function profileFromForm(form) {
+  syncBirthDate(form);
   const data = new FormData(form);
   return normalizeProfile(Object.fromEntries(['display_name','birth_date','phone','location','has_studied','class_name'].map(key => [key, data.get(key)])));
 }

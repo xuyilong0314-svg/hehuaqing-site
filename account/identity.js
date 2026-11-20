@@ -1,3 +1,4 @@
+import {birthDateField} from './birth-date.js?v=20261120-mobile-save-1';
 // The same birth-date and mobile-number rules apply to registration and intake.
 const clean = value => String(value ?? '').trim();
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -22,7 +23,7 @@ export function normalizeIdentity(values, today = identityToday()) {
   return {birth_date, phone};
 }
 export function identityFields(profile = {}, prefix = 'personal') {
-  return `<label class="field profile-field" for="${prefix}-birth">出生年月日（公历） <span class="profile-required">必填</span><input id="${prefix}-birth" name="birth_date" type="date" value="${esc(profile.birth_date)}" min="1900-01-01" max="${identityToday()}" required autocomplete="bday"></label>
+  return `${birthDateField(profile.birth_date,prefix)}
   <label class="field profile-field" for="${prefix}-phone">手机号 <span class="profile-required">必填</span><input id="${prefix}-phone" name="phone" type="tel" value="${esc(profile.phone)}" required maxlength="24" autocomplete="tel" inputmode="tel" placeholder="大陆 11 位手机号；其他地区加国际区号"></label>${birthSummary(profile.birth_date)}`;
 }
 // Old optional contact fields may also contain WeChat IDs or notes: preserve them.

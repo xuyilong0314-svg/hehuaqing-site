@@ -3,3 +3,14 @@
 .birth-summary{grid-column:1/-1;margin:12px 0 8px;padding:12px 15px;background:#f0f3eb;border:1px solid #dce3d6;border-radius:6px;font-size:13px;line-height:1.7;color:#53634f}.birth-summary strong{display:block;color:#2c513c;font-size:14px;font-weight:500}.birth-summary small{display:block;margin-top:3px;color:#687665;font-size:12px}.birth-badge{display:inline-block;padding:2px 8px;margin:3px 6px 3px 0;background:#edf2e9;border:1px solid #d6e1cf;border-radius:5px;color:#34543d;font-size:12px;line-height:1.7;vertical-align:middle}
 
 .birth-calculation{margin-top:9px;border-top:1px solid #d5dfd0;padding-top:8px}.birth-date-caption{margin:10px 0 0!important;text-align:center;color:#294a36;font-size:17px!important;font-weight:500;letter-spacing:.04em}.triangle-year{font-size:14px}.birth-triangle{max-width:380px;margin:12px auto 0}.birth-triangle svg{display:block;width:100%;height:auto;overflow:visible}.birth-triangle path{fill:none;stroke:#6a8067;stroke-width:1.5;stroke-linejoin:round}.birth-triangle text{text-anchor:middle;fill:#2c513c;font-family:inherit}.triangle-numbers{font-size:30px}.triangle-parts{font-size:17px}.triangle-labels{font-size:10px}.birth-equations{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;margin:9px 0!important;font-size:13px!important}.birth-equations span{white-space:nowrap}
+
+/* Shared birthday controls: direct year entry avoids vendor-specific calendars. */
+.profile-field.birth-date-field{min-width:0;padding:0;border:0}
+.birth-date-field legend{padding:0;margin:0 0 8px;font-size:14px;color:#243f34}
+.birth-date-parts{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(2,minmax(0,1fr));gap:10px}
+.birth-date-parts label{display:block;min-width:0;font-size:13px;color:#657267}
+.birth-date-parts label>span{display:block;margin-bottom:5px}
+.birth-date-parts input,.birth-date-parts select{width:100%;min-width:0;margin:0;min-height:50px;font-size:16px;padding:11px 10px}
+.birth-date-field .help{min-height:20px;margin:8px 0 0;font-size:12px;line-height:1.7;color:#657267}
+.birth-date-field .birth-date-error{color:#a13b31!important}
+.birth-date-field input[type=hidden]{display:none}
