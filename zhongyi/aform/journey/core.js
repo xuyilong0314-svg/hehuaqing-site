@@ -8,6 +8,19 @@ export function healthRecordTitle(recordName) {
 }
 export const validToken=t=>/^[a-f0-9]{64}$/.test(t||'');
 export const dateText=d=>/^\d{4}-\d{2}-\d{2}$/.test(d||'')?d.replaceAll('-','.'):'日期未填写';
+// Photo labels follow the actual date of their record, including old publication snapshots.
+// taken_on is historical upload metadata and may predate a correction to the visit date.
+export function recordPhotoDate(stage,photo){
+ if(stage?.withheld)return null;
+ return /^\d{4}-\d{2}-\d{2}$/.test(stage?.actual_date||'')?stage.actual_date:photo?.taken_on||null;
+}
+export function journeyPhotoCandidates(content,photos=[]){
+ const stages=new Map((content?.stages||[]).map(s=>[s.stage,s]));
+ return photos.map((photo,index)=>({photo,index,stage:stages.get(photo.stage)}))
+ .filter(x=>x.stage?.recorded&&!x.stage.withheld)
+ .sort((a,b)=>Number(a.stage.day)-Number(b.stage.day)||a.index-b.index)
+ .map(({photo,stage})=>({...photo,record_date:recordPhotoDate(stage,photo)}));
+}
 export const imageSafe=s=>/^data:image\/jpeg;base64,\/9j\/[A-Za-z0-9+/=]+$/.test(s||'')&&s.length<=180000;
 export const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 export function link(mode,token,base=globalThis.location?.href){if(!['manage','share'].includes(mode)||!validToken(token))throw Error('链接暂不可用');const u=new URL(base);u.search='';u.hash=(mode==='manage'?'m=':'s=')+token;return u.href;}
@@ -24,7 +37,7 @@ export function stageHTML(s,{interactivePhotos=true}={}){
   if(s.source)body+='<p class="source">记录来源 · '+esc(s.source)+'</p>';
   if(s.quote)body+='<blockquote><span>当时留下的话</span><p>'+esc(s.quote)+'</p></blockquote>';
   if(s.actions&&Object.keys(s.actions).length)body+='<dl class="habits">'+ACTIONS.filter(([k])=>s.actions[k]).map(([k,l])=>'<div><dt>'+l+'</dt><dd>'+esc(s.actions[k])+'</dd></div>').join('')+'</dl>';
-  if(s.photos?.length)body+='<div class="photos">'+s.photos.filter(p=>imageSafe(p.image)).map(p=>'<figure>'+(interactivePhotos?'<button class="photo-open" data-photo="'+esc(p.id)+'" aria-label="放大第'+s.day+'天照片">':'<div>')+'<img src="'+esc(p.image)+'" alt="第'+s.day+'天，经选择的记录照片" loading="lazy">'+(interactivePhotos?'</button>':'</div>')+'<figcaption>'+dateText(p.taken_on)+'</figcaption></figure>').join('')+'</div>';
+  if(s.photos?.length)body+='<div class="photos">'+s.photos.filter(p=>imageSafe(p.image)).map(p=>'<figure>'+(interactivePhotos?'<button class="photo-open" data-photo="'+esc(p.id)+'" aria-label="放大第'+s.day+'天照片">':'<div>')+'<img src="'+esc(p.image)+'" alt="第'+s.day+'天，经选择的记录照片" loading="lazy">'+(interactivePhotos?'</button>':'</div>')+'<figcaption>'+dateText(recordPhotoDate(s,p))+'</figcaption></figure>').join('')+'</div>';
   if(!s.ratings&&!s.quote&&!s.photos?.length&&!Object.keys(s.actions||{}).length)body+='<p class="empty-note">这一天，留下过一次记录。具体内容留给了自己。</p>';
  }else body='<p class="empty-note">'+(s.withheld?'这一页，暂时留给自己。':'不必赶进度。愿意的时候，再把真实的感受记下来。')+'</p>';
  return '<article class="stage-story"><div class="story-heading"><div><p class="eyebrow">第 '+s.day+' 天</p><h2>'+title+'</h2></div><span class="date">'+(s.recorded?dateText(s.actual_date):stageStatus(s))+'</span></div>'+body+'</article>';
