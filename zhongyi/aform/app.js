@@ -1,4 +1,4 @@
-import {transferPhoto,photoUploadMessage,photoDiagnostic} from './photo-transfer.js?v=20261119-photo-1';
+import {transferPhoto,savePhotoRecord,photoUploadMessage,photoDiagnostic} from './photo-transfer.js?v=20261121-photo-2';
 import {safeHealthRoute,captureReturn,pendingReturn,rememberReturn,clearReturn} from '../../account/return-to.js?v=20261119-ux-1';
 const loginDestination=captureReturn();
 if(new URLSearchParams(location.search).has('return')){const entry=new URL(location.href);entry.searchParams.delete('return');history.replaceState(history.state,'',entry.pathname+entry.search+entry.hash);}
@@ -23,7 +23,7 @@ import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261119-ux
 import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType} from './core.js?v=20261118-progress-2';
 import {accountRole,roleName,summarize,memberSummaries,archiveFilter,managementHome} from './management.js?v=20261118-progress-2';
 import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields} from './workflow.js?v=20261118-progress-2';
-import {createPhotoTasks,runPhotoBatch,uploadCounts,renderUploadFeedback,uploadDeadline} from './photo-upload.js?v=20261119-photo-1';
+import {createPhotoTasks,runPhotoBatch,uploadCounts,renderUploadFeedback} from './photo-upload.js?v=20261121-photo-2';
 import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards} from './comparison.js?v=20261118-progress-2';
 const config=window.AFORM_CONFIG||{};
 const root=document.querySelector('#app');
@@ -286,9 +286,9 @@ setInterval(verifyMemberDetail,15000);
 const renderFlights=singleFlight();
 function render(){const path=cleanHash();if(path==='/registration-result')return renderContent();return renderFlights(path+(path.startsWith('/member/')?'|'+memberViewEpoch:''),async()=>{const feedback=beginLoading({readOnly:true,theme:path.startsWith('/member/')?'numbers':/\/self(?:\?|$)/.test(path)?'self':undefined,title:path.startsWith('/member/')?'正在打开学员后台':path.startsWith('/case/')?'正在打开这份档案':'正在打开档案页面',detail:'已经收到您的点击，正在准备页面。'});try{return await renderContent(feedback);}finally{feedback.finish();}});}
 async function renderContent(feedback){document.body.classList.remove('plan-capture');const token=++loadId;activeMember=null;let path=cleanHash();lastHash=location.hash;if(path==='/privacy'){root.innerHTML=privacy();return;}if(path==='/registration-result'){if(!registrationResult&&db){await checkRegistration();return;}root.innerHTML=registrationPage();return;}if(path==='/forgot'){authMode='forgot';root.innerHTML=authPage();return;}if(path==='/login'){root.innerHTML=authPage();return;}if(profileError&&!demo){root.innerHTML=connectionPage();return;}if(path==='/auth'&&user&&!demo&&authMode!=='setup'){const target=pendingReturn()||loginDestination;if(target&&!target.startsWith('/zhongyi/aform/#')){clearReturn();location.assign(target);return;}path=safeHealthRoute(target.split('#')[1])||requestedRoute;clearReturn();history.replaceState(null,'','#'+path);lastHash=location.hash;}if(path==='/auth'){root.innerHTML=authPage();return;}if(path==='/'&&!demo&&!user){root.innerHTML=welcome();return;}if(!demo&&!user){const next=safeHealthRoute(path);if(next){requestedRoute=next;rememberReturn('/zhongyi/aform/#'+next);}root.innerHTML=authPage();return;}if(!loaded){root.innerHTML='<div class="hhq-loading-spacer"></div>';feedback?.update('正在读取您的档案','取回已有记录后，会自动显示。');try{await refresh();}catch(e){if(token===loadId)root.innerHTML=shell(errBox(friendly(e))+'<button class="btn mt" data-action="reload">重新读取</button>');return;}}if(token!==loadId)return;const parts=path.split('?')[0].split('/');if(['clients','records','collect','home','due','library'].includes(parts[1]))recordListRoute=path;if(parts[1]!=='case')currentCase=null;if(parts[1]==='member'){await openMemberDetail(parts[2],token,feedback);if(token!==loadId)return;}else if(parts[1]==='case'){const c=cases.find(x=>x.id===parts[2]);if(!c){root.innerHTML=shell('<div class="empty">未找到档案，或当前账号无权查看。</div>');return;}const stageQuery=new URLSearchParams(path.split('?')[1]||'').get('stage');activeStage=preferredStage(c.id,obs,{requested:stageQuery,remembered:stageMemory.get(c.id),caseRecord:c});currentCase=c;stageMemory.set(c.id,activeStage);const tab=parts[3]||'record';if(tab==='record'){const query=new URLSearchParams(path.split('?')[1]||'');query.set('stage',activeStage);history.replaceState(null,'','#/case/'+c.id+'?'+query);lastHash=location.hash;}if(tab==='review'&&!isTeacher()){root.innerHTML=shell(errBox('没有老师权限。'));return;}selfLoadError='';feedback?.update('正在读取客户反馈','正在连接这份档案的观察记录与自评。');if(!demo){try{const rows=await loadSelf(db,c.id);if(token!==loadId)return;selfResponses=rows;}catch(e){if(token!==loadId)return;selfResponses=[];selfLoadError='客户自评暂未载入，请点击刷新客户反馈重试。';}}feedback?.update('正在准备照片与记录','内容就绪后，页面会自动展开。');try{await signPhotos(photos.filter(p=>p.case_id===c.id));}catch(e){notify('部分照片暂时未载入，请重试。');}if(token!==loadId)return;root.innerHTML=detailsPage(c,tab);lockSelfQuote();}else if(parts[1]==='clients'){root.innerHTML=clientsPage();}else if(parts[1]==='comparisons'){const previewPhotos=cases.flatMap(c=>{const v=comparisonAt(caseTimeline(c.id,obs,photos));return [v.baseline?.photos[0],v.selected?.photos[0]].filter(Boolean);});try{await signPhotos([...new Map(previewPhotos.map(p=>[p.id,p])).values()]);}catch(e){notify('部分照片暂时未载入，您仍可查看评分。');}if(token!==loadId)return;root.innerHTML=comparisonsPage();}else if(parts[1]==='new')root.innerHTML=shell(newForm(),'new');else if(parts[1]==='edit'){const c=cases.find(x=>x.id===parts[2]);root.innerHTML=shell(c&&(demo||c.owner_id===user?.id)?newForm(c):errBox('您没有编辑权限。'));}else if(['collect','records','library'].includes(parts[1])){root.innerHTML=collection(parts[1]==='library');if(isTeacher())filterCollection();}else if(parts[1]==='students'){root.innerHTML=studentsPage();if(isTeacher())filterMembers();}else if(parts[1]==='trash')root.innerHTML=trashPage();else if(parts[1]==='account'){root.innerHTML=accountPage();if(!demo)mountEmailPanel(db,document.querySelector('#aform-email-status'));else document.querySelector('#aform-email-status').innerHTML='<h2>邮箱验证</h2><p>体验模式不发送邮件。</p>';}else root.innerHTML=dashboard(parts[1]==='due');syncBirthDate(document.querySelector('#case-form'),{fromValue:true});rememberForm();updateSaveState();centerActiveStage();window.scrollTo({top:0,behavior:'instant'});}
-async function saveObservation(form,intent,{quiet=false,formData=null,products=null}={}){
+async function saveObservation(form,intent,{quiet=false,formData=null,products=null,preparingPhoto=false}={}){
  const advance=intent==='continue';if(advance)intent='submitted';
- const pending=uploadCounts(photoBatches.get(photoBatchKey())?.items||[]).pending;if(intent==='submitted'&&pending){document.querySelector('#upload-status')?.scrollIntoView({block:'center'});throw Error('还有'+pending+'张照片尚未上传成功，请先重试或移出待传列表，再保存并查看对照。');}
+ const pending=uploadCounts(photoBatches.get(photoBatchKey())?.items||[]).pending;if(intent==='submitted'&&pending&&!preparingPhoto){document.querySelector('#upload-status')?.scrollIntoView({block:'center'});throw Error('还有'+pending+'张照片尚未上传成功，请先重试或移出待传列表，再保存并查看对照。');}
  const c=currentCase,f=formData||new FormData(form),existing=obs.find(o=>o.id===form.dataset.id)||obs.find(o=>o.case_id===c.id&&o.stage===activeStage);
  if(existing&&!dirty&&(!form.dataset.clientSelfId||form.dataset.clientSelfId===existing.data?.clientSelfId)&&(intent!=='submitted'||existing.status==='submitted')){form.dataset.id=existing.id;rememberForm(form);updateSaveState();if(!quiet&&advance){await advanceService(c,existing);return existing;}if(!quiet&&intent==='submitted'){history.replaceState(null,'','#/case/'+c.id+'/compare?visit='+encodeURIComponent(existing.id));await render();}return existing;}
  const data={...existing?.data,ratings:Object.fromEntries(ITEMS.map(([k])=>[k,Number(f.get('rating_'+k))||null])),tongue:Object.fromEntries(['gloss','strength','source','coating','yinyang','form'].map(k=>[k,f.get(k)]).concat([['axis',readAxis(f)],['elements',f.getAll('shape_elements')]])),compare:Object.fromEntries([0,1,2,3].map(k=>[k,f.get('compare_'+k)||'未评'])),products:activeStage==='d1'?(existing?.data?.products||[]):products||readProducts(form,'actual',f),...readWorkflow(f,activeStage,existing?.data)};
@@ -320,7 +320,34 @@ async function generatePlanImage(saveFirst=false,button=null){
   await openPlanImage(currentCase,entry,{demo,practitionerName:profile.display_name});
  }finally{feedback.finish();busy=false;if(button){button.disabled=false;button.textContent=oldLabel;}updateSaveState();}
 }
-async function compress(file){cleanImageType(file);const url=URL.createObjectURL(file);try{const im=new Image();im.src=url;await im.decode();const factor=Math.min(1,1600/Math.max(im.width,im.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(im.width*factor));canvas.height=Math.max(1,Math.round(im.height*factor));const cx=canvas.getContext('2d');cx.fillStyle='#ffffff';cx.fillRect(0,0,canvas.width,canvas.height);cx.drawImage(im,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.88));if(!blob)throw Error('图片处理失败，请更换一张照片。');return blob;}finally{URL.revokeObjectURL(url);}}
+async function compress(file){
+ cleanImageType(file);
+ const url=URL.createObjectURL(file);
+ try {
+  const image=new Image();
+  image.src=url;
+  await image.decode();
+  const scale=Math.min(1,1600/Math.max(image.naturalWidth,image.naturalHeight));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));
+  canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+  const context=canvas.getContext('2d');
+  context.fillStyle='#ffffff';
+  context.fillRect(0,0,canvas.width,canvas.height);
+  context.drawImage(image,0,0,canvas.width,canvas.height);
+  const encode=quality=>new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+  const jpeg=await encode(.88);
+  if(!jpeg?.size)throw Error('图片处理失败，请更换一张照片。');
+  // Large images get a second JPEG pass at the same dimensions.
+  if(jpeg.size>480*1024){
+   const smaller=await encode(.78);
+   if(smaller?.size&&smaller.size<jpeg.size)return smaller;
+  }
+  return jpeg;
+ } finally {
+  URL.revokeObjectURL(url);
+ }
+}
 function updatePhotoFeedback(item){
  if(item?.status==='success'&&item.blob){const preview=URL.createObjectURL(item.blob);URL.revokeObjectURL(item.preview);item.preview=preview;item.file={name:item.file.name,size:item.file.size,lastModified:item.file.lastModified};item.blob=null;}
  const batch=photoBatches.get(photoBatchKey()),el=document.querySelector('#upload-status');
@@ -344,14 +371,8 @@ async function persistPhoto(item,phase,c,stage,{signal,viewerId}={}){
    item.storageUploaded=true;
   }
   phase('confirming');
-  // A prior insert may have succeeded even if its response was lost.
-  const existing=checkResult(await uploadDeadline(db.from('photos').select('*').eq('id',item.id).maybeSingle()));
-  guard();if(existing){if(existing.storage_path!==item.path||existing.case_id!==c.id)throw Object.assign(Error('photo_mismatch'),{code:'photo_mismatch'});saved=existing;}
-  else{
-   const result=await uploadDeadline(db.from('photos').insert({...item.metadata,storage_path:item.path}).select().single());
-   if(result.error?.code==='23505')saved=checkResult(await uploadDeadline(db.from('photos').select('*').eq('id',item.id).single()));
-   else saved=checkResult(result);
-  }
+  guard();
+  saved=await savePhotoRecord({db,item,signal});
  }
  guard();if(!saved?.id)throw Error('照片保存尚未确认，请重试。');
  photos=photos.filter(p=>p.id!==saved.id);photos.push(saved);return saved;
@@ -371,14 +392,16 @@ async function performPhotoUpload(){
   if(!c.consent_photo)throw Error('请先取得本人照片保存授权。');
   if(!demo&&c.owner_id!==user?.id)throw Error('当前账号没有上传权限。');
   if(photos.filter(p=>p.case_id===c.id&&p.stage===stage).length+batch.items.filter(i=>i.status!=='success'&&!photos.some(p=>p.id===i.id)).length>3)throw Error('每次观察最多3张照片，请移出多余的待传照片。');
-  if(dirty||!existing)await saveObservation(form,existing?.status||'draft',{quiet:true,formData:snapshot,products});
+  if(dirty||!existing)await saveObservation(form,existing?.status||'draft',{quiet:true,formData:snapshot,products,preparingPhoto:true});
   batch.phase='uploading';updatePhotoFeedback();
   if(controller.signal.aborted)return;
   await runPhotoBatch({items:batch.items,signal:controller.signal,prepare:compress,persist:(item,phase)=>persistPhoto(item,phase,c,stage,{signal:controller.signal,viewerId}),onChange:updatePhotoFeedback,message:photoUploadMessage});
  }catch(error){batch.error=friendly(error);}
  finally{
   clearTimeout(slowTimer);batch.running=false;busy=false;if(photoController===controller)photoController=null;if(controller.signal.aborted||(!demo&&user?.id!==viewerId)||currentCase?.id!==c.id)return;controls.forEach(([el,disabled])=>el.disabled=disabled);form.querySelector('.photo-grid')?.removeAttribute('aria-busy');
-  updatePhotoGrid();updatePhotoFeedback();if(!dirty)rememberForm(form);updateObservationProgress();document.querySelector('#upload-status')?.scrollIntoView({block:'center'});
+  updatePhotoGrid();updatePhotoFeedback();if(!dirty)rememberForm(form);updateObservationProgress();
+  const photoFeedback=document.querySelector('#upload-status .upload-result-actions')||document.querySelector('#upload-status');
+  photoFeedback?.scrollIntoView({block:'center'});
   const counts=uploadCounts(batch.items);updateSaveState();
   notify(counts.pending?'有照片尚未成功，请在上传区重试。':demo?'照片已添加到体验页面，未上传':'照片上传成功，已私密保存');
  }
