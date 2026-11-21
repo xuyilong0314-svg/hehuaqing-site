@@ -1,9 +1,16 @@
-import {esc,today,addDays,validDate,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow,cloneRecordData} from './core.js?v=20261121-save-compat-1';
+import {esc,today,addDays,validDate,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow,cloneRecordData,caseStageActivity} from './core.js?v=20261121-photo-visibility-2';
 import {requestUUID} from './self/core.js?v=20261118-progress-2';
 export const stateLabel=s=>({active:'按约跟进',not_started:'尚未开始',paused:'暂停使用'}[s]||'按约跟进');
 const date=s=>esc((s||'').replaceAll('-','.'));
-export function stageRail(c,observations,responses,active){
- return '<div class="stage-rail case-stage-rail" aria-label="回访节点，可左右滑动">'+stageDays(c,observations).map(n=>{const d=stageDateInfo(c,n,observations,responses),missed=!d.completed&&stageDays(c,observations).some(day=>day>n&&stageRecord(c,observations,day));return '<button class="stage-button '+(active==='d'+n?'active ':'')+(d.completed?'done':'')+'" data-stage="d'+n+'"'+(active==='d'+n?' aria-current="step"':'')+'><strong>'+(n===1?'首次':'第'+n+'天')+'</strong><small>'+(d.actual?'实际 ':missed?'未记录 ':'约定 ')+date((d.actual||d.planned).slice(5))+'</small>'+(d.actual&&d.actual!==d.original?'<em>原计划 '+date(d.original.slice(5))+'</em>':'')+'</button>';}).join('')+'</div><details class="stage-explanation"><summary>日期随实际回访调整 <span>查看规则</span></summary><p class="small muted">按实际回访日期自动调整后续安排；补填旧记录按实际日期计算。节点不代表连续使用天数。</p></details>';
+export function stageButtons(c,observations,responses,active,photos=[]){
+ return caseStageActivity(c,observations,photos).stages.map(({day,stage,status,photoCount})=>{
+  const d=stageDateInfo(c,day,observations,responses);
+  const state=(status==='submitted'?'已提交':status==='draft'?'草稿待提交':'')+(photoCount?(status?' · ':'')+'照片 '+photoCount+' 张':'');
+  return '<button class="stage-button '+(active===stage?'active ':'')+(d.completed?'done':status==='draft'?'draft':'')+'" data-stage="'+stage+'"'+(active===stage?' aria-current="step"':'')+'><strong>'+(day===1?'首次':'第'+day+'天')+'</strong><small>'+(d.actual?'实际 ':'约定 ')+date((d.actual||d.planned).slice(5))+'</small>'+(state?'<span class="stage-save-state">'+state+'</span>':'')+(d.actual&&d.actual!==d.original?'<em>原计划 '+date(d.original.slice(5))+'</em>':'')+'</button>';
+ }).join('');
+}
+export function stageRail(c,observations,responses,active,photos=[]){
+ return '<div class="stage-rail case-stage-rail" aria-label="回访节点，可左右滑动">'+stageButtons(c,observations,responses,active,photos)+'</div><details class="stage-explanation"><summary>日期随实际回访调整 <span>查看规则</span></summary><p class="small muted">按实际回访日期自动调整后续安排；补填旧记录按实际日期计算。节点不代表连续使用天数。</p></details>';
 }
 export function syncSuggestion(c,observations){
  const next=nextFollow(c,observations);if(!next||next.continuing)return null;

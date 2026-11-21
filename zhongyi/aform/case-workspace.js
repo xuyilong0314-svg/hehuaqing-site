@@ -23,8 +23,8 @@ export function saveStateText({record,stage,dirty=false,photos=0,pending=0,demo=
   const prefix=stageName(stage)+' · ';
   if(dirty)return prefix+'有修改待保存'+(photos?' · 已存照片 '+photos+' 张，无需重传':'');
   if(!record?.id)return prefix+'尚未填写 · 其他阶段的记录仍已保留';
-  const saved=demo?'已保留在体验页面':record.status==='submitted'?'已保存到云端':'草稿已保存到云端';
-  return prefix+saved+(photos?' · 照片 '+photos+' 张，无需重传':'')+(pending?' · '+pending+' 张待重试':'');
+  const saved=record.status==='submitted'?'本次观察已提交':'草稿已保存 · 待提交';
+  return prefix+saved+(demo?'（体验）':'')+(photos?' · 照片 '+photos+' 张，无需重传':'')+(pending?' · '+pending+' 张待重试':'');
 }
 function stable(value){
   if(Array.isArray(value))return value.map(stable);

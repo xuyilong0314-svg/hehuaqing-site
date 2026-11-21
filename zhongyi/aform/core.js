@@ -14,6 +14,27 @@ export function stageDays(c,observations=[]){
  const last=Math.max(21,Number(c?.progress?.last_day)||21,...observations.filter(o=>o.case_id===c?.id&&validStage(o.stage)).map(o=>Number(o.stage.slice(1))));
  return [...STAGES,...Array.from({length:Math.max(0,Math.floor((Math.min(last,36500)-21)/7))},(_,i)=>28+i*7)];
 }
+export function caseStageActivity(c,observations=[],photos=[]){
+ const statuses=new Map(),counts=new Map();
+ for(const o of observations){
+  if(o.case_id!==c.id||!o.id)continue;
+  if(o.status==='submitted'||(o.status==='draft'&&!statuses.has(o.stage)))statuses.set(o.stage,o.status);
+ }
+ let photoCount=0;
+ for(const photo of photos){
+  if(photo.case_id!==c.id||!photo.id)continue;
+  counts.set(photo.stage,(counts.get(photo.stage)||0)+1);
+  photoCount++;
+ }
+ const stages=stageDays(c,observations).map(day=>{
+  const stage='d'+day;
+  return {day,stage,status:statuses.get(stage)||'',photoCount:counts.get(stage)||0};
+ });
+ return {stages,photoCount,submitted:stages.filter(item=>item.status==='submitted').length,drafts:stages.filter(item=>item.status==='draft').length};
+}
+export function caseActivityText({submitted,drafts,photoCount}){
+ return [submitted?'已提交 '+submitted+' 次':'',drafts?'待提交草稿 '+drafts+' 份':'',photoCount?'照片已保存 '+photoCount+' 张':''].filter(Boolean).join(' · ')||'尚未保存观察';
+}
 export function stageRecord(c,observations,day){return observations.filter(o=>o.case_id===c.id&&o.stage==='d'+day&&o.status==='submitted').sort((a,b)=>String(b.updated_at||b.actual_date||'').localeCompare(String(a.updated_at||a.actual_date||'')))[0]||null;}
 export function stageSchedule(c,observations=[]){
  const dates={},days=stageDays(c,observations);
