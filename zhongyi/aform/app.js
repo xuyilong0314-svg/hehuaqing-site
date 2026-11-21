@@ -18,7 +18,7 @@ import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPer
 import {openPlanImage} from './plan-image.js?v=20261120-mobile-save-1';
 import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage} from './case-workspace.js?v=20261121-photo-visibility-2';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
-import {duplicateNames,memberCard,deletionDialog,matchingEmail,memberError} from './member-admin.js?v=20261121-list-age-2';
+import {duplicateNames,memberCard,deletionDialog,deletionRequest,matchingEmail,memberError} from './member-admin.js?v=20261121-member-cleanup-1';
 import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-member-age-1';
 import {registrationOutcome,registrationCopy} from './registration.js?v=20261112-deferred-1';
 import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261119-ux-1';
@@ -137,16 +137,16 @@ function openMemberDeletion(id){return withLoading({theme:'account',title:'正�
 async function openMemberDeletionContent(id){
  if(demo||role!=='admin')return;
  busy=true;
- try{memberDeletion=checkResult(await db.rpc('preview_site_member_deletion',{p_user_id:id}));dialog(deletionDialog(memberDeletion));}
+ try{memberDeletion=checkResult(await db.rpc('preview_unused_site_member_deletion',{p_user_id:id}));dialog(deletionDialog(memberDeletion));}
  catch(error){notify(memberError(error));}finally{busy=false;}
 }
 async function deleteMember(form){
  if(role!=='admin'||!memberDeletion?.deletable)throw Error('member_admin_only');
  const email=String(new FormData(form).get('confirm_email')||'');
  if(!matchingEmail(email,memberDeletion.email))throw Error('member_email_mismatch');
- const result=checkResult(await db.rpc('delete_empty_site_member',{p_user_id:memberDeletion.id,p_email:email.trim(),p_revision:memberDeletion.revision}));
+ const result=checkResult(await db.rpc('delete_unused_site_member',deletionRequest(memberDeletion,email)));
  if(result?.deleted!==true)throw Error('member_changed');
- memberDeletion=null;document.querySelector('#dialog').close();await refresh();await render();notify('多余空账号已删除，其他账号与资料未受影响。');
+ memberDeletion=null;document.querySelector('#dialog').close();await refresh();await render();notify('多余账号已删除，其他账号与资料未受影响。');
 }
 function footer(){return '<footer class="site-foot"><div>何华清 · 古中医阴阳五行舌<br>用于学习与状态观察，不作为诊断或疗效证明。</div><span><a href="../../#home">完整首页</a> · <a href="../../#zhongyi">古中医栏目</a> · <a href="../../books/shenti-shiheng/">免费电子书</a> · <a href="#/privacy">记录与隐私说明</a> V1</span></footer>';}
 function welcome(){return '<div class="wrap"><header class="site-head">'+brand+'<a class="text-btn" href="#/auth">登录 / 注册 ↗</a></header>'+browserHint()+'<main class="lead"><section><div class="eyebrow">OBSERVE · RECORD · FOLLOW UP</div><h1>每一次观察，<br>都值得认真留存。</h1><p>一人一档，持续记录。<br>学员用手机建档、上传照片、跟进回访；<br>老师在同一处看见完整的服务过程。</p><div class="actions"><button class="btn" data-action="start">'+icon('plus')+(live()?'登录 / 注册':'体验建档')+'</button></div><p class="small mt">'+(live()?'每人独立注册，档案与照片按权限保存。':'公开体验版 · 无需登录 · 刷新后体验记录不保留')+'</p></section><div class="hero-visual"><div class="sample"><div class="row between"><div class="row"><div class="avatar">'+icon('folder')+'</div><div><h3>一份观察档案</h3><small class="muted">手机记录 · 随时复看</small></div></div><span class="badge gold">21 天</span></div><div class="steps">'+STAGES.map((n,i)=>'<div class="step-node '+(i<3?'done':'')+'"><span>'+(i<3?'✓':n)+'</span>第'+n+'天</div>').join('')+'</div>'+trend([{status:'submitted',actual_date:'2026-10-01',data:{ratings:{spirit:3,sleep:2,appetite:3,bowel:3,mood:3}}},{status:'submitted',actual_date:'2026-10-03',data:{ratings:{spirit:3,sleep:3,appetite:4,bowel:3,mood:4}}},{status:'submitted',actual_date:'2026-10-07',data:{ratings:{spirit:4,sleep:3,appetite:3,bowel:4,mood:4}}}])+'<footer>界面示例 · 虚构数据，仅展示记录方式</footer></div></div></main><section class="feature-strip"><div><b>01</b><section><h3>扫码，建立一份档案</h3><p>本人或服务对象，基本信息填写一次。</p></section></div><div><b>02</b><section><h3>拍照，补充每次观察</h3><p>照片、体感和回访，沿时间保存。</p></section></div><div><b>03</b><section><h3>汇总，看见服务过程</h3><p>老师查看记录，筛选导出授权案例。</p></section></div></section>'+footer()+'</div>';}
