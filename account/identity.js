@@ -31,8 +31,32 @@ export function normalizeIdentity(values, today = identityToday()) {
   if (!validPhone(phone)) throw Error('请填写正确的手机号：大陆手机号填 11 位，其他地区请加国际区号（如 +852）。');
   return {birth_date, phone};
 }
+const genders = {male:'男', female:'女'};
+export function normalizeGender(value) {
+  const key = clean(value).toLowerCase();
+  if (key === 'male' || key === '男') return 'male';
+  if (key === 'female' || key === '女') return 'female';
+  return '';
+}
+export function genderLabel(value) {
+  return genders[normalizeGender(value)] || '';
+}
+export function genderField(value = '', prefix = 'personal') {
+  const selected = normalizeGender(value), id = esc(prefix) + '-gender';
+  const options = Object.entries(genders).map(([key,label]) =>
+    `<option value="${key}"${key===selected?' selected':''}>${label}</option>`
+  ).join('');
+  return `<label class="field profile-field" for="${id}">性别
+    <select class="input" id="${id}" name="gender"><option value="">未填写</option>${options}</select>
+  </label>`;
+}
+export function genderBadge(value) {
+  const label = genderLabel(value);
+  return label ? `<span class="birth-badge" data-gender>${label}</span>` :
+    '<span class="list-gender-unavailable">性别待填</span>';
+}
 export function identityFields(profile = {}, prefix = 'personal') {
-  return `${birthDateField(profile.birth_date,prefix)}
+  return `${birthDateField(profile.birth_date,prefix)}${genderField(profile.gender,prefix)}
   <label class="field profile-field" for="${prefix}-phone">手机号 <span class="profile-required">必填</span><input id="${prefix}-phone" name="phone" type="tel" value="${esc(profile.phone)}" required maxlength="24" autocomplete="tel" inputmode="tel" placeholder="大陆 11 位手机号；其他地区加国际区号"></label>${birthSummary(profile.birth_date,{showAge:true})}`;
 }
 // Old optional contact fields may also contain WeChat IDs or notes: preserve them.
@@ -44,8 +68,9 @@ export function caseIdentity(record = {}) {
 export function syncCaseIdentity(form, profile) {
   if (form.dataset.id) return;
   const own = form.elements.kind.value === 'self';
-  for (const [key, value] of Object.entries({name:profile.display_name, birth_date:profile.birth_date, phone:profile.phone})) {
+  for (const [key, value] of Object.entries({name:profile.display_name, birth_date:profile.birth_date, phone:profile.phone, gender:normalizeGender(profile.gender)})) {
     const field = form.elements[key];
+    if (!field) continue;
     if (own && !field.value && value) { field.value = value; field.dataset.identityAutofill = value; }
     if (!own && field.dataset.identityAutofill) {
       if (field.value === field.dataset.identityAutofill) field.value = '';

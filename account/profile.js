@@ -1,5 +1,5 @@
 import {syncBirthDate} from './birth-date.js?v=20261120-mobile-save-1';
-import {normalizeIdentity,identityFields} from './identity.js?v=20261121-member-age-1';
+import {normalizeIdentity,identityFields,normalizeGender} from './identity.js?v=20261121-gender-1';
 import {accountRequest,accountChanged} from './requests.js?v=20261119-ux-1';
 // Website and health archives use the same authenticated user's personal profile.
 // Auth user metadata is the shared source; existing name/class tables are projections
@@ -20,7 +20,8 @@ export function normalizeProfile(values) {
   if (has_studied && (!class_name || class_name.length > 80 || !/[1-9一二三四五六七八九十百壹贰叁肆伍陆柒捌玖拾]/.test(class_name))) throw new ProfileError('参加过学习的，请填写第几期；复训可填写多个期数。');
   if (/^[1-9]\d*$/.test(class_name)) class_name = '第' + class_name + '期';
   let identity;try { identity = normalizeIdentity(values); } catch (error) { throw new ProfileError(error.message); }
-  return {display_name, ...identity, location, has_studied, class_name, profile_version: 2};
+  const gender=values.gender===undefined?{}:{gender:normalizeGender(values.gender)};
+  return {display_name, ...identity, ...gender, location, has_studied, class_name, profile_version: 2};
 }
 // Registration collects the shared identity; learning information can be completed later.
 export function signupFields(prefix='signup') {
@@ -29,23 +30,27 @@ export function signupFields(prefix='signup') {
 export function signupProfileFromForm(form) {
   syncBirthDate(form);
   const data=new FormData(form),name=clean(data.get('display_name')).replace(/\s+/g,' ');
-  const checked=normalizeProfile({display_name:name,birth_date:data.get('birth_date'),phone:data.get('phone'),location:'',has_studied:false,class_name:''});
-  return {display_name:checked.display_name,birth_date:checked.birth_date,phone:checked.phone,identity_version:1};
+  const checked=normalizeProfile({display_name:name,birth_date:data.get('birth_date'),phone:data.get('phone'),gender:data.has('gender')?data.get('gender'):undefined,location:'',has_studied:false,class_name:''});
+  return {display_name:checked.display_name,birth_date:checked.birth_date,phone:checked.phone,...(checked.gender?{gender:checked.gender}:{}),identity_version:1};
 }
 export function profileFromForm(form) {
   syncBirthDate(form);
   const data = new FormData(form);
-  return normalizeProfile(Object.fromEntries(['display_name','birth_date','phone','location','has_studied','class_name'].map(key => [key, data.get(key)])));
+  const values=Object.fromEntries(['display_name','birth_date','phone','location','has_studied','class_name'].map(key=>[key,data.get(key)]));
+  if(data.has('gender'))values.gender=data.get('gender');
+  return normalizeProfile(values);
 }
 export function resolveProfile(user, legacy = {}) {
   const meta = user?.user_metadata || {};
+  const gender=normalizeGender(meta.gender);
+  const genderValue=gender?{gender}:{};
   if ([1,2].includes(meta.profile_version)) return {
     display_name: clean(meta.display_name), birth_date: clean(meta.birth_date), phone: clean(meta.phone), location: clean(meta.location),
     has_studied: typeof meta.has_studied === 'boolean' ? meta.has_studied : null,
-    class_name: meta.has_studied === false ? '' : clean(meta.class_name), profile_version: meta.profile_version
+    class_name: meta.has_studied === false ? '' : clean(meta.class_name), ...genderValue, profile_version: meta.profile_version
   };
   const class_name = clean(legacy.class_name || meta.class_name);
-  return {display_name: clean(legacy.display_name || meta.display_name), birth_date: clean(meta.birth_date), phone: clean(meta.phone), location: clean(meta.location), has_studied: class_name ? true : null, class_name, profile_version: 0};
+  return {display_name: clean(legacy.display_name || meta.display_name), birth_date: clean(meta.birth_date), phone: clean(meta.phone), location: clean(meta.location), has_studied: class_name ? true : null, class_name, ...genderValue, profile_version: 0};
 }
 export function profileFields(profile = {}, prefix = 'personal') {
   const studied = profile.has_studied === true ? 'yes' : profile.has_studied === false ? 'no' : '';

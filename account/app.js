@@ -1,14 +1,14 @@
 import {syncBirthDate} from './birth-date.js?v=20261120-mobile-save-1';
 import {beginLoading,withLoading,loadingMarkup} from './loading.js?v=20261119-ux-1';
-import {syncBirthSummary} from './identity.js?v=20261121-member-age-1';
+import {syncBirthSummary} from './identity.js?v=20261121-gender-1';
 import {sessionPersistence,temporarySessionNotice} from './session-storage.js?v=20261112-complete-1';
 import {mountEmailPanel} from './email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from './verification.js?v=20261112-deferred-1';
-import {profileFields,profileFromForm,signupFields,signupProfileFromForm,savePersonalProfile,syncStudyField,ProfileError} from './profile.js?v=20261121-member-age-1';
+import {profileFields,profileFromForm,signupFields,signupProfileFromForm,savePersonalProfile,syncStudyField,ProfileError} from './profile.js?v=20261121-gender-1';
 import {authIssue,isWeChat,checkAuthConnection} from './auth-support.js?v=20261119-ux-1';
 import {ANALYTICS_URL,ANALYTICS_KEY} from '../analytics/config.js?v=20261031-20';
 import {authReturnUrl} from '../zhongyi/aform/auth.js?v=20261119-ux-1';
-import {getClient,refreshAccount,signOut,friendly,hasSession,onAccount,storageKey,sessionUserId,prepareAccount} from './client.js?v=20261119-ux-1';
+import {getClient,refreshAccount,signOut,friendly,hasSession,onAccount,storageKey,sessionUserId,prepareAccount} from './client.js?v=20261121-gender-1';
 import {escapeHtml as esc} from '../analytics/metrics.js?v=20261031-20';
 import {accountRequest,accountChanged} from './requests.js?v=20261119-ux-1';
 const root=document.querySelector('#account-app');let mode='login',busy=false,profileDirty=false,context=null,history=[],view='loading',loadVersion=0,accountEpoch=0,editRevision=0,writeController=null;
