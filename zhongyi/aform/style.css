@@ -182,3 +182,7 @@
 
 .field-needs-attention{outline:2px solid #a6533d;outline-offset:2px}
 .field-validation-hint{display:block;margin:7px 0 10px;color:#853c29;font-size:.875rem;line-height:1.55}
+
+.case-age-field{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;margin:8px 0 14px}
+.case-age-field .label{margin:0}
+.case-age-field output{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
