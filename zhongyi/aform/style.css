@@ -214,3 +214,5 @@
 
 .record h3 [data-age-years],.member-card h3 [data-age-years],.record h3 [data-gender],.member-card h3 [data-gender],.list-age-unavailable,.list-gender-unavailable{white-space:nowrap;vertical-align:middle;font-size:.8125rem;font-weight:600;margin:0 .2em}
 .list-age-unavailable,.list-gender-unavailable{display:inline-block;color:var(--muted)}
+
+@media(max-width:640px){.records-filters .input{flex-basis:100%;max-width:none}.records-filters select{flex:1;min-width:0;max-width:none}}
