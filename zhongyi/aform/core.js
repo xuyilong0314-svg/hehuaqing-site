@@ -39,6 +39,10 @@ export function extensionReady(c,observations=[]){return Boolean(stageRecord(c,o
 
 export function csv(rows){return '\ufeff'+rows.map(r=>r.map(v=>{let s=String(v??'');if(/^[\s\u0000-\u001f]*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}).join(',')).join('\r\n');}
 export const canTeach=c=>c.consent_teaching===true;
+// Stored plans, observations and follow-up state use JSON data.
+export function cloneRecordData(value){
+ return typeof globalThis.structuredClone==='function' ? globalThis.structuredClone(value) : JSON.parse(JSON.stringify(value));
+}
 export function cleanImageType(file){if(/\.hei[cf]$/i.test(file.name)||/hei[cf]/i.test(file.type))throw Error('请先将 HEIC 照片转换为 JPG，再上传。');if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('支持 JPG、PNG、WebP 图片。');if(file.size>10*1024*1024)throw Error('单张照片请小于 10MB。');return true;}
 // Mirrors the server rule for the isolated demonstration and date-rule tests.
 export function applyActualFollowup(c,observations,record,existing=null,stamp=new Date().toISOString()){
@@ -50,7 +54,7 @@ export function applyActualFollowup(c,observations,record,existing=null,stamp=ne
  const explicit=record.data?.nextDateSetAt&&record.data.nextDateSetAt!==existing?.data?.nextDateSetAt;
  if(explicit&&next&&validDate(record.data.nextDate))delta=Math.round((Date.parse(record.data.nextDate)-Date.parse(before['d'+next]))/86400000);
  if(!delta||!Number.isFinite(delta))return {record,progress:c.progress};
- const progress=structuredClone(c.progress||{case_id:c.id,last_day:21,state:'active',dates:{},history:[],version:0}),saved=structuredClone(record);
+ const progress=cloneRecordData(c.progress||{case_id:c.id,last_day:21,state:'active',dates:{},history:[],version:0}),saved=cloneRecordData(record);
  for(const n of days)if(n>day&&!stageRecord(c,observations,n))progress.dates['d'+n]={date:addDays(before['d'+n],delta),updated_at:stamp};
  if(next)saved.data={...saved.data,nextDate:addDays(before['d'+next],delta),nextDateSetAt:stamp,nextDateSource:explicit?'agreed':'actual_followup'};
  else if(!explicit&&validDate(saved.data?.nextDate))saved.data={...saved.data,nextDate:addDays(saved.data.nextDate,delta),nextDateSetAt:stamp,nextDateSource:'actual_followup'};

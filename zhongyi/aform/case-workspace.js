@@ -1,4 +1,5 @@
-import {STAGES,esc,stageName,stageDays} from './core.js?v=20261118-progress-2';
+import {STAGES,esc,stageName,stageDays,cloneRecordData} from './core.js?v=20261121-save-compat-1';
+import {requestUUID} from './self/core.js?v=20261118-progress-2';
 import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261118-progress-2';
 
 export function personalCases(cases,userId,{kind='client'}={}){
@@ -51,10 +52,10 @@ export function planHistory(observation){
   const history=Array.isArray(observation.data?.planHistory)?observation.data.planHistory.filter(s=>s?.id&&s.plan):[];
   if(history.length)return history;
   const plan=observation.data?.plan;
-  return hasPlan(plan)?[{id:'existing-'+observation.id,plan:structuredClone(plan),savedAt:observation.updated_at||observation.created_at||observation.actual_date||'',status:observation.status,legacy:true}]:[];
+  return hasPlan(plan)?[{id:'existing-'+observation.id,plan:cloneRecordData(plan),savedAt:observation.updated_at||observation.created_at||observation.actual_date||'',status:observation.status,legacy:true}]:[];
 }
-export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISOString(),id=()=>crypto.randomUUID()}={}){
-  const history=structuredClone(planHistory(existing));
+export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISOString(),id=requestUUID}={}){
+  const history=cloneRecordData(planHistory(existing));
   if(!stageFlow(stage)?.plan)return history;
   const last=history.at(-1),plan=data.plan;
   if(!hasPlan(plan)&&!last)return history;
@@ -62,7 +63,7 @@ export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISO
     // Confirming an unchanged draft does not create a fictitious product adjustment.
     last.status=status;return history;
   }
-  history.push({id:id(),savedAt:now,status,plan:structuredClone(plan||{})});return history;
+  history.push({id:id(),savedAt:now,status,plan:cloneRecordData(plan||{})});return history;
 }
 export function planEntries(caseId,observations){
   return [...new Set(['d1','d7','d14',...observations.filter(o=>o.case_id===caseId&&Number(o.stage.slice(1))>21).map(o=>o.stage)])].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1))).flatMap(stage=>{

@@ -1,9 +1,10 @@
 import {loadingMarkup} from '../../account/loading.js?v=20261119-ux-1';
 import {loadingBlessing} from '../../account/loading-themes.js?v=20261118-loading-2';
-import {esc} from './core.js';
+import {esc} from './core.js?v=20261121-save-compat-1';
+import {requestUUID} from './self/core.js?v=20261118-progress-2';
 
 // Tasks live only in this page's memory; never persist private images in browser storage.
-export function createPhotoTasks(files,{id=()=>crypto.randomUUID(),preview=file=>URL.createObjectURL(file)}={}){
+export function createPhotoTasks(files,{id=requestUUID,preview=file=>URL.createObjectURL(file)}={}){
  return files.map(file=>({id:id(),file,preview:preview(file),status:'queued',error:'',blob:null,storageUploaded:false}));
 }
 export function uploadCounts(items){return {total:items.length,saved:items.filter(i=>i.status==='success').length,failed:items.filter(i=>i.status==='error').length,pending:items.filter(i=>i.status!=='success').length};}

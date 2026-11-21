@@ -1,4 +1,4 @@
-import {esc,today,addDays,validDate,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow} from './core.js?v=20261118-progress-2';
+import {esc,today,addDays,validDate,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow,cloneRecordData} from './core.js?v=20261121-save-compat-1';
 import {requestUUID} from './self/core.js?v=20261118-progress-2';
 export const stateLabel=s=>({active:'按约跟进',not_started:'尚未开始',paused:'暂停使用'}[s]||'按约跟进');
 const date=s=>esc((s||'').replaceAll('-','.'));
@@ -27,7 +27,7 @@ export function openProgress(c,observations,action,{dialog,save,onSaved,suggeste
  form.addEventListener('submit',async e=>{e.preventDefault();e.stopPropagation();const b=form.querySelector('[type=submit]');if(b.disabled)return;const f=new FormData(form),payload={p_case_id:c.id,p_action:action,p_stage:f.get('stage'),p_date:f.get('date'),p_state:f.get('state'),p_shift:!extend&&f.has('shift'),p_note:String(f.get('note')||''),p_expected_version:version,p_request_id:requestId};b.disabled=true;form.querySelector('#service-error').textContent='';try{const result=await save(payload);await onSaved(result,payload);}catch(err){form.querySelector('#service-error').textContent=progressError(err);b.disabled=false;}});
 }
 export function demoProgress(c,observations,p){
- const progress=structuredClone(c.progress||{case_id:c.id,last_day:21,dates:{},history:[],version:0,state:'active'}),before=stageSchedule(c,observations),n=Number(p.p_stage.slice(1)),stamp=new Date().toISOString();
+ const progress=cloneRecordData(c.progress||{case_id:c.id,last_day:21,dates:{},history:[],version:0,state:'active'}),before=stageSchedule(c,observations),n=Number(p.p_stage.slice(1)),stamp=new Date().toISOString();
  if(p.p_action==='extend'){if(!extensionReady(c,observations))throw Error('service_complete_current_first');progress.last_day=n;progress.dates[p.p_stage]={date:p.p_date,updated_at:stamp};}
  else{const delta=Math.round((Date.parse(p.p_date)-Date.parse(before[p.p_stage]))/86400000);for(const day of stageDays(c,observations))if(day>=n&&!stageRecord(c,observations,day))progress.dates['d'+day]={date:addDays(before['d'+day],day===n||p.p_shift?delta:0),updated_at:stamp};}
  progress.state=p.p_state;progress.version++;progress.updated_at=stamp;progress.history.push({action:p.p_action,stage:p.p_stage,date:p.p_date,shift:p.p_shift,state:p.p_state,note:p.p_note,at:stamp,before});return progress;
