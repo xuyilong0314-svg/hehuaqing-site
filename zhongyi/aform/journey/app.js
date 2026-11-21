@@ -1,5 +1,5 @@
 import {withLoading,singleFlight} from '../../../account/loading.js?v=20261119-ux-1';
-import {DAYS,ITEMS,esc,validToken,dateText,imageSafe,today,link,initialOptions,previewContent,stageStatus,stageHTML,DEMO_CONTENT} from './core.js?v=20261118-progress-2';
+import {DAYS,ITEMS,esc,validToken,dateText,imageSafe,today,link,initialOptions,previewContent,stageStatus,stageHTML,DEMO_CONTENT,healthRecordTitle} from './core.js?v=20261121-record-title';
 import {publicApiFetch} from '../auth.js?v=20261119-ux-1';
 const root=document.querySelector('#app'),modal=document.querySelector('#dialog'),config=window.AFORM_CONFIG||{};
 const hash=location.hash.slice(1),demo=['demo','demo-share'].includes(hash),params=new URLSearchParams(hash),mode=hash==='demo-share'||params.has('s')?'share':'manage',token=params.get(mode==='share'?'s':'m');
@@ -14,7 +14,8 @@ const sprout='<svg class="sprout" viewBox="0 0 110 120" fill="none" aria-hidden=
 function render(){
  const content=state.content,recorded=content.stages.filter(s=>s.recorded),manager=mode==='manage';
  if(!content.stages.some(s=>s.stage===activeStage))activeStage=recorded.at(-1)?.stage||'d1';
- const title=content.title||'我的健康记录';
+ const title=manager&&!demo?healthRecordTitle(state.record_name):content.title||'我的健康记录';
+ if(manager&&!demo) document.title=title+'｜上医';
  root.innerHTML=(demo?'<div class="demo-note">虚构示例 · 只体验页面，内容不会上传</div>':'')+'<section class="hero">'+sprout+'<p class="eyebrow">持续记录 · 按自己的节奏</p><h1>'+esc(title)+'</h1><p class="intro">'+(manager?'这段时间，辛苦你认真照顾自己。<br>状态有起伏也没关系，把真实的感受慢慢记下来。':'与你分享，这段认真照顾自己的日子。<br>这里有当时的感受，也有一步一步留下的记录。')+'</p>'+(content.note?'<p class="personal-note">'+esc(content.note)+'</p>':'')+'<div class="meta">'+(manager&&content.started_on?'<span>从 '+dateText(content.started_on)+' 开始</span>':'')+'<span>更新于 '+dateText(state.published_at?.slice(0,10))+'</span></div></section><section class="journey"><div class="journey-top"><h2>沿着时间，看看自己</h2><p>'+(manager?'已留下 '+recorded.length+' 次记录':'这次分享了 '+recorded.length+' 个节点')+'</p></div><nav class="landmarks" aria-label="服务记录节点">'+content.stages.map(s=>'<button class="landmark '+(s.recorded?'done ':'')+(s.stage===activeStage?'active':'')+'" data-stage="'+s.stage+'" aria-pressed="'+(s.stage===activeStage)+'"><strong>'+s.day+'</strong><span>第 '+s.day+' 天</span><small>'+stageStatus(s)+'</small></button>').join('')+'</nav></section><div id="stage-detail">'+stageHTML(content.stages.find(s=>s.stage===activeStage))+'</div>'+comparisonHTML(content)+'<section class="closing"><p>照顾自己，是一件可以慢慢来的事。</p><small>不必每一天都很好，每一次真实的感受都值得留下。</small></section><div class="share-bar"><button class="primary" id="share-record">'+(manager?'分享我的记录':'转发这份记录')+' <span aria-hidden="true">↗</span></button>'+(manager?'<button class="text-btn" id="manage-share">管理分享</button>':'')+'</div>';
  root.querySelectorAll('[data-stage]').forEach(b=>b.addEventListener('click',()=>{activeStage=b.dataset.stage;const y=window.scrollY;render();root.querySelector('[data-stage="'+activeStage+'"]').focus({preventScroll:true});window.scrollTo(0,y);}));
  root.querySelector('#share-record').addEventListener('click',()=>manager?openOptions():sendDialog(demo?location.href:link('share',token),false));

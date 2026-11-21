@@ -2,6 +2,10 @@ export const DAYS=[1,3,7,14,21];
 export const ITEMS=[['spirit','精神'],['sleep','睡眠'],['appetite','食欲'],['bowel','排便'],['mood','情绪']];
 export const ACTIONS=[['diet','饮食有节'],['movement','运动有度'],['emotion','情志有和'],['rest','起居有常']];
 export const esc=v=>String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+export function healthRecordTitle(recordName) {
+ const name = typeof recordName === 'string' ? recordName.trim() : '';
+ return name ? name + '的健康记录' : '我的健康记录';
+}
 export const validToken=t=>/^[a-f0-9]{64}$/.test(t||'');
 export const dateText=d=>/^\d{4}-\d{2}-\d{2}$/.test(d||'')?d.replaceAll('-','.'):'日期未填写';
 export const imageSafe=s=>/^data:image\/jpeg;base64,\/9j\/[A-Za-z0-9+/=]+$/.test(s||'')&&s.length<=180000;
