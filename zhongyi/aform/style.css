@@ -211,3 +211,6 @@
  .observation-save-actions button{min-height:46px;min-width:0;font-size:13px;padding:8px 4px}
  .observation-save-actions [value="continue"]{grid-column:1/-1;margin-left:0;font-size:15px}
 }
+
+.record h3 [data-age-years],.member-card h3 [data-age-years],.list-age-unavailable{white-space:nowrap;vertical-align:middle;font-size:.8125rem;font-weight:600;margin:0 .2em}
+.list-age-unavailable{display:inline-block;color:var(--muted)}
