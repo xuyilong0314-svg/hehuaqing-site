@@ -56,13 +56,52 @@
   font-weight: 600;
 }
 .book-listening-dialog button:disabled { opacity: .55; }
-.book-listening-options, .book-listening-status {
+.book-listening-options, .book-listening-status, .book-listening-voice-status {
   color: var(--reader-muted, var(--muted, #5e6a5d));
   font-size: .875rem;
 }
 .book-listening-status { margin: .75rem 0 0; }
-.book-listening-status:empty { display: none; }
+.book-listening-status:empty, .book-listening-voice-status:empty { display: none; }
 .book-listening-dialog button:focus-visible, .book-listening-dialog select:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
+}
+
+.book-listening-voice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: .5rem;
+  margin: .9rem 0 .65rem;
+}
+.book-listening-voice label {
+  display: grid;
+  min-width: 0;
+  gap: .25rem;
+  font-size: .875rem;
+  font-weight: 600;
+}
+.book-listening-voice select {
+  width: 100%;
+  min-width: 0;
+  font-weight: 400;
+  text-overflow: ellipsis;
+}
+.book-listening-voice button {
+  min-width: 5.25rem;
+  color: var(--green, #315b43);
+  font-size: .875rem;
+  font-weight: 600;
+}
+.book-listening-options { justify-content: flex-start; column-gap: 1rem; }
+.book-listening-options label { display: inline-flex; align-items: center; gap: .4rem; }
+.book-listening-voice-status { margin: .65rem 0 0; }
+
+@media (max-width: 370px) {
+  .book-listening-dialog .book-listening-transport button {
+    min-width: 0;
+    padding-inline: .375rem;
+    font-size: .875rem;
+    white-space: nowrap;
+  }
 }
