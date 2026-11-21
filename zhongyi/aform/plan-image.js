@@ -96,16 +96,13 @@ export async function renderPlanImage(c,selection,{demo=false,practitionerName='
     if(!compact)y+=text('保存日期 '+savedDate(entry),left,y,inner,12,GOLD,500,false,19);
     return y;
   }
-  function planDetails(y,entry,context=''){
-    const {decision,note}=entry.plan;
-    if(decision&&decision!=='待填写')y+=text('本次安排 · '+decision,left,y,inner,13,MUTED,400,false,21)+5;
-    if(note){
-      y+=text('安排说明',left,y,inner,13,GOLD,600,false,22)+3;
-      // Long free-text notes can continue on another page without shrinking the table.
-      for(const line of wrap(note,inner,14)){
-        y+=text(line,left,y,inner,14,INK,400,false,24);
-        pageBreak(y,context+' · 安排说明');
-      }
+  function planNote(y,note,context){
+    if(!note)return y;
+    y+=text('安排说明',left,y,inner,13,GOLD,600,false,22)+3;
+    // Long free-text notes can continue on another page without shrinking the table.
+    for(const line of wrap(note,inner,14)){
+      y+=text(line,left,y,inner,14,INK,400,false,24);
+      pageBreak(y,context+' · 安排说明');
     }
     return y;
   }
@@ -117,11 +114,16 @@ export async function renderPlanImage(c,selection,{demo=false,practitionerName='
       y=tableHead(y,'产品');
       for(const item of products)y=productRow(y,item,item.name,item.element,context);
     }else y+=text('本版未安排产品。',left,y,inner,14,MUTED)+14;
-    return planDetails(y+12,entry,context)+18;
+    y+=12;
+    const {decision,note}=entry.plan;
+    if(decision&&decision!=='待填写')y+=text('本次安排 · '+decision,left,y,inner,13,MUTED,400,false,21)+5;
+    return planNote(y,note,context)+18;
   }
   function comparisonSection(y){
     for(const entry of entries){
-      y=editionHeader(y,entry,{compact:true})+14;
+      y=editionHeader(y,entry,{compact:true});
+      if(entry.plan.note)y=planNote(y+4,entry.plan.note,planSetLabel(entry.stage));
+      y+=14;
       pageBreak(y);
     }
     const products=new Map();
@@ -146,13 +148,6 @@ export async function renderPlanImage(c,selection,{demo=false,practitionerName='
         for(const item of rows)y=productRow(y,item,planSetLabel(entry.stage),'',name);
       }
       y+=20;
-    }
-    for(const entry of entries){
-      if(!entry.plan.note&&(!entry.plan.decision||entry.plan.decision==='待填写'))continue;
-      pageBreak(y);
-      const section=planSetLabel(entry.stage);
-      y+=text(section,left,y,inner,16,INK,600,false,24)+7;
-      y=planDetails(y,entry,section)+16;
     }
     return y;
   }
