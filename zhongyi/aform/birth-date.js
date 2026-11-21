@@ -1,16 +1,7 @@
 import {birthDateField, daysInBirthMonth, birthDateFromParts, syncBirthDate as syncSharedBirthDate} from '../../account/birth-date.js?v=20261120-mobile-save-1';
-import {identityToday} from '../../account/identity.js?v=20261120-mobile-save-1';
+import {ageFromBirthDate} from '../../account/identity.js?v=20261121-member-age-1';
 
-export {birthDateField, daysInBirthMonth, birthDateFromParts};
-
-export function ageFromBirthDate(birthDate, referenceDate = identityToday()) {
-  const value = String(birthDate ?? '').trim();
-  const [year, month, day] = value.split('-');
-  if (!value || birthDateFromParts(year, month, day, referenceDate).date !== value) return null;
-
-  const birthdayPending = referenceDate.slice(5) < value.slice(5);
-  return Number(referenceDate.slice(0, 4)) - Number(year) - (birthdayPending ? 1 : 0);
-}
+export {birthDateField, daysInBirthMonth, birthDateFromParts, ageFromBirthDate};
 
 export function syncBirthDate(form, options) {
   const result = syncSharedBirthDate(form, options);

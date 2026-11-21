@@ -1,5 +1,6 @@
+import {ageFromBirthDate} from '../../account/identity.js?v=20261121-member-age-1';
 import {esc} from './core.js';
-import {memberStatus} from './member-admin.js?v=20261118-members-1';
+import {memberStatus} from './member-admin.js?v=20261121-member-age-1';
 import {resultMarkup} from './numbers/view.js?v=20261119-ux-1';
 
 const shown=value=>esc(value||'尚未填写');
@@ -14,7 +15,8 @@ export function memberDetailMarkup(member,{cases=[],observations=[],photos=[],re
  const self=owned.filter(c=>c.kind==='self'),clients=owned.filter(c=>c.kind!=='self');
  const observationsCount=observations.filter(o=>ids.has(o.case_id)&&o.status==='submitted').length;
  const photoCount=photos.filter(p=>ids.has(p.case_id)).length;
- const info=[['邮箱',member.email],['联系电话',member.phone],['公历生日',member.birth_date],['所在地',member.location],['学习情况',member.has_studied===true?'已参加学习':member.has_studied===false?'尚未参加学习':'尚未填写'],['学习期数',member.class_name|| (member.has_studied===false?'暂无':'尚未填写')]];
+ const age=ageFromBirthDate(member.birth_date);
+ const info=[['邮箱',member.email],['联系电话',member.phone],['公历生日',member.birth_date],['年龄（周岁）',age===null?'':String(age)],['所在地',member.location],['学习情况',member.has_studied===true?'已参加学习':member.has_studied===false?'尚未参加学习':'尚未填写'],['学习期数',member.class_name|| (member.has_studied===false?'暂无':'尚未填写')]];
  const number=member.number_allowed&&member.number_result?resultMarkup(member.number_result,{print:false}):'<div class="empty">您的账号尚未开通数字性格。</div>';
  return `<div class="member-detail" data-member-id="${esc(member.id)}">
  <a class="back" href="#/students">← 返回学员列表</a>

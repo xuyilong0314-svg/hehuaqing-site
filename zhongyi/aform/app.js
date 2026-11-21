@@ -5,21 +5,21 @@ import {safeHealthRoute,captureReturn,pendingReturn,rememberReturn,clearReturn} 
 const loginDestination=captureReturn();
 if(new URLSearchParams(location.search).has('return')){const entry=new URL(location.href);entry.searchParams.delete('return');history.replaceState(history.state,'',entry.pathname+entry.search+entry.hash);}
 import {beginLoading,singleFlight,withLoading} from '../../account/loading.js?v=20261119-ux-1';
-import {birthDateField,syncBirthDate,ageFromBirthDate} from './birth-date.js?v=20261121-age-1';
+import {birthDateField,syncBirthDate,ageFromBirthDate} from './birth-date.js?v=20261121-member-age-1';
 import {stageRail,progressPanel,openProgress,demoProgress,stateLabel,syncSuggestion} from './progress.js?v=20261121-save-compat-1';
 import {journeyEntry,openJourneyOwner} from './journey-owner.js?v=20261121-record-title';
-import {normalizeIdentity,caseIdentity,syncCaseIdentity,birthSummary,syncBirthSummary,birthDateLabel} from '../../account/identity.js?v=20261120-mobile-save-1';
+import {normalizeIdentity,caseIdentity,syncCaseIdentity,birthSummary,syncBirthSummary,birthDateLabel} from '../../account/identity.js?v=20261121-member-age-1';
 import {latestSelf,projectedSelf,selfRatings,selfPanel,selfOverview,selfLink,loadSelf} from './client-self.js?v=20261118-progress-2';
 import {loadAccountSdk} from '../../account/sdk.js?v=20261112-complete-1';
 import {browserSessionStorage,sessionPersistence,temporarySessionNotice} from '../../account/session-storage.js?v=20261112-complete-1';
 import {mountEmailPanel,completeEmailVerification} from '../../account/email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from '../../account/verification.js?v=20261112-deferred-1';
-import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261120-mobile-save-1';
+import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261121-member-age-1';
 import {openPlanImage} from './plan-image.js?v=20261120-mobile-save-1';
 import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage} from './case-workspace.js?v=20261121-save-compat-1';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
-import {duplicateNames,memberCard,deletionDialog,matchingEmail,memberError} from './member-admin.js?v=20261118-members-1';
-import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261119-ux-1';
+import {duplicateNames,memberCard,deletionDialog,matchingEmail,memberError} from './member-admin.js?v=20261121-member-age-1';
+import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-member-age-1';
 import {registrationOutcome,registrationCopy} from './registration.js?v=20261112-deferred-1';
 import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261119-ux-1';
 import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType} from './core.js?v=20261121-save-compat-1';
@@ -156,14 +156,30 @@ function shell(html,active='home'){
  return (demo?'<div class="demo-banner"><span>体验模式 · 虚构示例，编辑仅保留在当前页面，不上传</span><button data-action="exit-demo">退出体验</button></div>':'')+'<div class="app-shell"><aside class="sidebar">'+brand+'<nav>'+nav.map(([k,url,ic,l])=>'<a class="navitem '+(active===k?'active':'')+'" href="'+('#'+url)+'">'+icon(ic)+l+'</a>').join('')+'</nav><div class="sidebar-reading">'+publicLinks+'</div><div class="sidebar-bottom"><strong>'+esc(name)+'</strong><br>'+esc(manager?roleName(role):profile.class_name||'欢迎使用观察档案')+'<div class="divider"></div><a href="#/privacy">记录与隐私说明 ↗</a></div></aside><section class="workspace"><header class="app-header"><a class="mobile-brand" href="#/home">'+brand+'</a><span class="small muted desktop-only">上医健康管理服务表 / '+(manager?'管理工作台':'个人空间')+'</span><div class="row gap8"><span class="small header-name">'+esc(name)+'</span><a href="#/account" class="badge outline">'+(demo?'体验版':roleName(role))+'</a></div></header><main class="content">'+html+'<div class="mobile-reading">'+publicLinks+'</div></main></section></div><nav class="bottom-nav">'+(manager?nav.filter(([k])=>['home','new','clients','students','account'].includes(k)).map(([k,url,ic,l])=>'<a href="#'+url+'" class="'+((active===k||k==='clients'&&active==='records')?'active':'')+'">'+icon(ic)+(k==='home'?'工作台':k==='new'?'会员建档':k==='clients'?'我的客户':k==='students'?'学员':'我的')+'</a>').join(''):'<a href="#/home" class="'+(active==='home'?'active':'')+'">'+icon('folder')+'档案</a><a href="#/due" class="'+(active==='due'?'active':'')+'">'+icon('clock')+'跟进</a><a href="#/new"><span class="add">'+icon('plus')+'</span>会员建档</a><a href="#/account" class="'+(active==='account'?'active':'')+'">'+icon('user')+'我的</a>')+'</nav>';
 }
 async function fetchAll(table,columns='*'){let out=[],start=0;for(;;){const r=await db.from(table).select(columns).range(start,start+499);const rows=checkResult(r)||[];out.push(...rows);if(rows.length<500)break;start+=500;}return out;}
+async function fetchBirthLabels(rpc){
+ const all=[];
+ for(let from=0;;from+=200){
+  const rows=checkResult(await db.rpc(rpc).range(from,from+199))||[];
+  all.push(...rows);
+  if(rows.length<200)return all;
+ }
+}
 async function fetchMembersWithBirth(){
- const [people,labels]=await Promise.all([role==='admin'?fetchAdminMembers():fetchAll('profiles','id,display_name,class_name,email,created_at'),(async()=>{const all=[];for(let from=0;;from+=200){const rows=checkResult(await db.rpc('list_member_birth_labels').range(from,from+199))||[];all.push(...rows);if(rows.length<200)return all;}})()]);
- const byId=new Map(labels.map(row=>[row.id,row]));return people.map(person=>({...person,birth_labels:byId.get(person.id)||null}));
+ const labelsRequest=fetchBirthLabels('list_member_birth_labels_with_age').catch(error=>{
+  if(!['PGRST202','42883'].includes(error?.code))throw error;
+  return fetchBirthLabels('list_member_birth_labels');
+ });
+ const [people,labels]=await Promise.all([
+  role==='admin'?fetchAdminMembers():fetchAll('profiles','id,display_name,class_name,email,created_at'),
+  labelsRequest
+ ]);
+ const byId=new Map(labels.map(row=>[row.id,row]));
+ return people.map(person=>({...person,birth_labels:byId.get(person.id)||null}));
 }
 async function refresh(){if(demo||!user)return;const userId=user.id;const result=await Promise.all([fetchAll('cases'),fetchAll('observations'),fetchAll('photos'),staff?fetchAll('teacher_reviews'):Promise.resolve([]),staff?fetchMembersWithBirth():Promise.resolve([]),fetchAll('case_service_progress')]);if(user?.id!==userId)return;[cases,obs,photos,reviews,members]=result;const progress=new Map(result[5].map(p=>[p.case_id,p]));cases.forEach(c=>{c.progress=progress.get(c.id)||null;});archivedCases=cases.filter(c=>c.deleted_at);cases=cases.filter(c=>!c.deleted_at);cases.sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));loaded=true;}
 function canManageRecord(c){return Boolean(c&&(demo||c.owner_id===user?.id||role==='admin'));}
 function recordListTools(collection=false){return '<div class="section-head records-toolbar"><div><h2>'+(collection?'档案目录':'我的档案')+'</h2>'+(collection?'<small class="muted" id="collect-count"></small>':'')+'</div><a class="btn tiny secondary" href="#/trash">回收站'+(archivedCases.length?'（'+archivedCases.length+'）':'')+'</a></div><p class="small muted record-delete-hint">误填或测试档案可直接删除，误删可到回收站恢复。</p>';}
-function recordRow(c){const items=obs.filter(o=>o.case_id===c.id),next=nextFollow(c,items);return '<article class="record-card"><a class="record" href="#/case/'+esc(c.id)+'"><div class="record-avatar">'+esc(c.name.slice(0,1))+'</div><div class="grow"><h3>'+esc(c.name)+' <span class="badge outline">'+(c.kind==='self'?'本人':'服务对象')+'</span></h3>'+birthSummary(c.birth_date,{compact:true})+'<p>'+esc(c.code)+' · '+esc(c.class_name||'未填班级')+'</p><div class="record-steps">'+stageDays(c,items).map(n=>'<i class="'+(items.some(o=>o.stage==='d'+n&&o.status==='submitted')?'done':'')+'"></i>').join('')+'</div></div><div class="record-meta">'+(next?'<span class="badge '+(next.date<=today()?'gold':'outline')+'">'+(next.state==='paused'?'暂停·联系':next.state==='not_started'?'未开始·联系':next.continuing?'后续约定':next.date<=today()?'待跟进':'下次')+' '+dateText(next.date.slice(5))+'</span>':'<span class="badge">本阶段已记录</span>')+'<span>建档 '+dateText(c.created_on)+'</span></div><span class="arrow">›</span></a>'+(canManageRecord(c)?'<div class="record-actions"><small>建档人：'+esc(c.partner_name||'未填写')+'</small><button type="button" class="btn tiny danger-outline" data-delete-case="'+esc(c.id)+'" aria-label="删除档案：'+esc(c.name)+'">删除档案</button></div>':'')+'</article>';}
+function recordRow(c){const items=obs.filter(o=>o.case_id===c.id),next=nextFollow(c,items);return '<article class="record-card"><a class="record" href="#/case/'+esc(c.id)+'"><div class="record-avatar">'+esc(c.name.slice(0,1))+'</div><div class="grow"><h3>'+esc(c.name)+' <span class="badge outline">'+(c.kind==='self'?'本人':'服务对象')+'</span></h3>'+birthSummary(c.birth_date,{compact:true,showAge:true})+'<p>'+esc(c.code)+' · '+esc(c.class_name||'未填班级')+'</p><div class="record-steps">'+stageDays(c,items).map(n=>'<i class="'+(items.some(o=>o.stage==='d'+n&&o.status==='submitted')?'done':'')+'"></i>').join('')+'</div></div><div class="record-meta">'+(next?'<span class="badge '+(next.date<=today()?'gold':'outline')+'">'+(next.state==='paused'?'暂停·联系':next.state==='not_started'?'未开始·联系':next.continuing?'后续约定':next.date<=today()?'待跟进':'下次')+' '+dateText(next.date.slice(5))+'</span>':'<span class="badge">本阶段已记录</span>')+'<span>建档 '+dateText(c.created_on)+'</span></div><span class="arrow">›</span></a>'+(canManageRecord(c)?'<div class="record-actions"><small>建档人：'+esc(c.partner_name||'未填写')+'</small><button type="button" class="btn tiny danger-outline" data-delete-case="'+esc(c.id)+'" aria-label="删除档案：'+esc(c.name)+'">删除档案</button></div>':'')+'</article>';}
 function dashboard(due=false){if(isTeacher()&&!due)return shell(managementHome({summary:summarize({cases,observations:obs,photos,reviews,members,userId:user?.id}),cases,profile,role,personalCount:ownCases().length},recordRow,icon));const dueCases=cases.filter(c=>{const n=nextFollow(c,obs);return n&&n.date<=today();});const days=cases.reduce((n,c)=>n+obs.filter(o=>o.case_id===c.id&&o.status==='submitted').length,0);return shell('<div class="page-heading"><div><div class="eyebrow">健康观察记录</div><h1>'+(due?'今天，继续跟进':isTeacher()?'档案总览':'我的空间')+'</h1><p>'+(due?'按已约定日期或阶段计划整理。':'为自己，也为每一位服务对象。')+'</p></div><a href="#/new" class="btn">'+icon('plus')+'为新会员建档</a></div><div class="stats"><div class="stat"><span>正在记录的档案</span><strong>'+cases.length+'</strong><small>份</small></div><div class="stat"><span>待跟进</span><strong>'+dueCases.length+'</strong><small>份</small></div><div class="stat"><span>已提交观察</span><strong>'+days+'</strong><small>次</small></div></div><a class="comparison-entry" href="#/comparisons"><div><span>照片 · 评分 · 连续跟进</span><strong>连续观察对照</strong><p>每份档案自动整理，随时回看每一次变化。</p></div><b>查看对照 ↗</b></a>'+recordListTools()+'<div class="filters"><input class="input" id="search" type="search" placeholder="搜索称呼、档案编号、班级" aria-label="搜索档案"><select id="kind-filter" aria-label="档案类型"><option value="">全部类型</option><option value="client">服务对象</option><option value="self">本人记录</option></select></div><div id="record-list" class="record-list" data-due="'+due+'">'+(due?dueCases:cases).map(recordRow).join('')+(!cases.length?'<div class="empty"><h3>开始第一份记录</h3><p>先建档，再按时间补充观察与照片。</p><a class="btn" href="#/new">新建档案</a></div>':'')+'</div>'+(!dueCases.length&&due?'<p class="empty">暂时没有到期的跟进记录。</p>':''),due?'due':'home');}
 function newForm(c=null){
  const identity=caseIdentity(c||{}),b=c?.baseline||{},first=obs.find(o=>o.case_id===c?.id&&o.stage==='d1'),ratings=first?.data?.ratings||b.initialRatings||{};
