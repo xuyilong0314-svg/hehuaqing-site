@@ -15,8 +15,9 @@ import {browserSessionStorage,sessionPersistence,temporarySessionNotice} from '.
 import {mountEmailPanel,completeEmailVerification} from '../../account/email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from '../../account/verification.js?v=20261112-deferred-1';
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261121-member-age-1';
-import {openPlanImage} from './plan-image.js?v=20261120-mobile-save-1';
-import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage} from './case-workspace.js?v=20261121-photo-visibility-2';
+import {openPlanImage} from './plan-image.js?v=20261121-plan-sharing-1';
+import {choosePlanShare} from './plan-share.js?v=20261121-plan-sharing-1';
+import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261121-plan-sharing-1';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
 import {duplicateNames,memberCard,deletionDialog,deletionRequest,matchingEmail,memberError} from './member-admin.js?v=20261121-member-cleanup-1';
 import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-member-age-1';
@@ -406,19 +407,30 @@ async function saveObservation(form,intent,{quiet=false,formData=null,products=n
  return saved;
 }
 async function generatePlanImage(saveFirst=false,button=null){
+ const c=currentCase,route=cleanHash();
+ if(!c)return;
+ let selection;
+ if(!saveFirst){
+  const query=new URLSearchParams(route.split('?')[1]||''),entries=planEntries(c.id,obs);
+  const current=selectedPlanEntry(entries,{selected:query.get('version'),stage:query.get('stage')});
+  if(!current)throw Error('请先保存产品方案，再生成图片。');
+  selection=await choosePlanShare(entries,current);
+  if(!selection||cleanHash()!==route||currentCase?.id!==c.id)return;
+ }
  const feedback=beginLoading({title:saveFirst?'正在保存并生成方案图片':'正在生成方案图片',detail:'图片准备好后会自动显示。'});const oldLabel=button?.textContent;busy=true;if(button){button.disabled=true;button.textContent='正在生成…';}
  try{
   if(saveFirst){
    const form=document.querySelector('#observation-form');if(!form||!form.reportValidity())return;
-   syncFormDirty();const existing=obs.find(o=>o.case_id===currentCase.id&&o.stage===activeStage);
-   const plan=readWorkflow(new FormData(form),activeStage,existing?.data).plan;
+   const stage=activeStage;
+   syncFormDirty();const existing=obs.find(o=>o.case_id===c.id&&o.stage===stage);
+   const plan=readWorkflow(new FormData(form),stage,existing?.data).plan;
    if(!hasPlan(plan))throw Error('请先填写产品用量或本次安排，再生成图片。');
    await saveObservation(form,existing?.status==='submitted'?'submitted':'draft',{quiet:true});
+   const entry=planEntries(c.id,obs).find(e=>e.stage===stage&&e.latest);
+   if(!entry)throw Error('请先保存产品方案，再生成图片。');
+   selection={mode:'single',entries:[entry]};
   }
-  const query=new URLSearchParams(cleanHash().split('?')[1]||''),entries=planEntries(currentCase.id,obs);
-  const entry=saveFirst?entries.find(e=>e.stage===activeStage&&e.latest):entries.find(e=>e.id===query.get('version'))||entries.find(e=>e.latest&&e.stage===query.get('stage'))||entries.filter(e=>e.latest).at(-1);
-  if(!entry)throw Error('请先保存产品方案，再生成图片。');
-  await openPlanImage(currentCase,entry,{demo,practitionerName:profile.display_name});
+  if(currentCase?.id===c.id)await openPlanImage(c,selection.entries,{demo,practitionerName:profile.display_name,compare:selection.mode==='compare'});
  }finally{feedback.finish();busy=false;if(button){button.disabled=false;button.textContent=oldLabel;}updateSaveState();}
 }
 async function compress(file){
