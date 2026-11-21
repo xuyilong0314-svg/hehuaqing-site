@@ -179,3 +179,6 @@
 .upload-transfer-progress{padding:10px 12px;border-radius:7px;background:#eef4e8;color:#264d3e;font-size:14px;line-height:1.7;font-variant-numeric:tabular-nums}.upload-result [data-action="copy-photo-diagnostic"]{margin-top:12px;min-height:44px}
 
 .upload-result-actions{display:grid;gap:6px;margin:12px 0;scroll-margin-block:96px}.upload-result-actions .text-btn{min-height:44px}
+
+.field-needs-attention{outline:2px solid #a6533d;outline-offset:2px}
+.field-validation-hint{display:block;margin:7px 0 10px;color:#853c29;font-size:.875rem;line-height:1.55}

@@ -25,8 +25,12 @@ export function productWithPlanTime(product,scope='plan'){
 export function paperPlanRows(rows=[]){
  return [...PRODUCT_TABLE.map(p=>productWithPlanTime(rows.find(r=>r.name===p.name)||{name:p.name,useStatus:'待填写'})),...rows.filter(p=>!productTemplate(p.name)).map(p=>({...p}))];
 }
-export function choiceGroup(label,name,value,options){
- return '<fieldset class="paper-choice"><legend>'+label+'</legend><div class="paper-options">'+options.map((o,i)=>{const [v,l]=Array.isArray(o)?o:[o,o];return '<label><input type="radio" name="'+esc(name)+'" value="'+esc(v)+'"'+(v===value?' checked':'')+'><span>'+esc(l)+'</span></label>';}).join('')+'</div></fieldset>';
+export function choiceGroup(label,name,value,options,{required=false}={}){
+ const choices=options.map(option=>{
+  const [v,l]=Array.isArray(option)?option:[option,option];
+  return '<label><input type="radio" name="'+esc(name)+'" value="'+esc(v)+'"'+(v===value?' checked':'')+(required?' required':'')+'><span>'+esc(l)+'</span></label>';
+ }).join('');
+ return '<fieldset class="paper-choice"><legend>'+label+'</legend><div class="paper-options">'+choices+'</div></fieldset>';
 }
 export const AXIS_OPTIONS=['火扶正','土水固本','金木起势','待定'];
 export function axisValues(value){
