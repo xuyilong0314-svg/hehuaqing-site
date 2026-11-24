@@ -69,7 +69,9 @@ export function stageFlow(stage){
 }
 export function readProductRows(f,scope='actual'){
  const prefix=scope==='plan'?'plan_product_':'product_';
- return f.getAll(prefix+'index').map(i=>({name:String(f.get(prefix+'name_'+i)||''),time:String(f.get(prefix+'time_'+i)||''),amount:String(f.get(prefix+'amount_'+i)||''),unit:String(f.get(prefix+'unit_'+i)||''),perDay:String(f.get(prefix+'times_'+i)||''),note:String(f.get(prefix+'note_'+i)||''),useStatus:String(f.get(prefix+'status_'+i)||'待核对'),element:productTemplate(String(f.get(prefix+'name_'+i)||''))?.element||'',unused:['未使用','不安排'].includes(f.get(prefix+'status_'+i))}));
+ const indices=f.getAll(prefix+'index');
+ if(scope==='plan')indices.sort((a,b)=>Number(a)-Number(b));
+ return indices.map(i=>({name:String(f.get(prefix+'name_'+i)||''),time:String(f.get(prefix+'time_'+i)||''),amount:String(f.get(prefix+'amount_'+i)||''),unit:String(f.get(prefix+'unit_'+i)||''),perDay:String(f.get(prefix+'times_'+i)||''),note:String(f.get(prefix+'note_'+i)||''),useStatus:String(f.get(prefix+'status_'+i)||'待核对'),element:productTemplate(String(f.get(prefix+'name_'+i)||''))?.element||'',unused:['未使用','不安排'].includes(f.get(prefix+'status_'+i))}));
 }
 export function readWorkflow(f,stage,previous={}){
  const flow=stageFlow(stage);
@@ -87,10 +89,26 @@ export function syncActualDateFields(form){
  for(const name of ['nextDate','plan_startDate','plan_endDate']){const input=form.elements[name];if(input?.dataset.initialDate&&input.dataset.dateTouched!=='true')input.value=addDays(input.dataset.initialDate,delta);}
 }
 const PLAN_PRODUCT_VIEWS=[
- ['metal-wood','金木起势'],
- ['earth-water','土水固本'],
- ['all','全部产品']
+ ['metal-wood','金木起势',['金','火·必用','木','调和']],
+ ['earth-water','土水固本',['土','火·必用','水','调和']],
+ ['all','全部产品',[]]
 ];
+export function setPlanProductView(editor,view){
+ const option=PLAN_PRODUCT_VIEWS.find(([key])=>key===view);
+ const list=editor.querySelector('#plan-product-rows');
+ if(!option||!list||editor.dataset.planProductView===view)return;
+ const ranks=new Map(option[2].map((element,index)=>[element,index]));
+ const rows=[...list.children].map(row=>({
+  row,index:Number(row.dataset.index),rank:ranks.get(row.dataset.planElement)??ranks.size
+ }));
+ rows.sort((a,b)=>a.rank-b.rank||a.index-b.index);
+ for(const {row,rank} of rows)row.hidden=ranks.size>0&&rank===ranks.size;
+ list.append(...rows.map(({row})=>row));
+ editor.dataset.planProductView=view;
+ for(const control of editor.querySelectorAll('[data-plan-product-group]')){
+  control.setAttribute('aria-pressed',String(control.dataset.planProductGroup===view));
+ }
+}
 function planProductButtons(jump=false){
  const buttons=PLAN_PRODUCT_VIEWS.map(([view,label])=>'<button type="button" class="btn tiny secondary" data-action="plan-product-view" data-plan-product-group="'+view+'"'+
   (jump?' data-plan-product-jump aria-controls="plan-product-editor"':' aria-pressed="'+(view==='all')+'" aria-controls="plan-product-rows"')+'>'+label+'</button>').join('');
@@ -122,7 +140,7 @@ export function renderStageForm(c,o,stage,ctx,h){
   <p id="observation-progress">已评 ${ITEMS.filter(([k])=>Number(d.ratings?.[k])>0).length} / 5 项</p>
   ${ctx.isOwner?'<button type="button" class="text-btn observation-save-jump" data-observation-save-jump aria-controls="observation-save">去保存或提交 ↓</button>':''}
  </div>`;
- const shortcuts=flow.plan&&ctx.isOwner?'<div class="plan-product-quick"><div><strong>产品速填</strong><small>金木、土水两组都含火项</small></div>'+planProductButtons(true)+'</div>':'';
+ const shortcuts=flow.plan&&ctx.isOwner?'<div class="plan-product-quick"><div><strong>产品速填</strong><small>两组均含火项，可选灵芝孢子油</small></div>'+planProductButtons(true)+'</div>':'';
  const finishActions=`<div id="observation-save" class="savebar" tabindex="-1" role="group" aria-label="保存与提交">
   <div id="form-error"></div>
   <small id="save-state" role="status">${ctx.demo?'体验模式，未上传云端':status}</small>

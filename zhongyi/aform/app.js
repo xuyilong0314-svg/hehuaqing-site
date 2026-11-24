@@ -17,7 +17,7 @@ import {rememberPendingEmail,verificationUrl} from '../../account/verification.j
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261121-gender-1';
 import {openPlanImage} from './plan-image.js?v=20261121-plan-compare-2';
 import {choosePlanShare} from './plan-share.js?v=20261121-plan-sharing-1';
-import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261121-plan-sharing-1';
+import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261124-plan-order-1';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
 import {duplicateNames,memberCard,deletionDialog,deletionRequest,matchingEmail,memberError} from './member-admin.js?v=20261121-gender-1';
 import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-gender-1';
@@ -25,7 +25,7 @@ import {registrationOutcome,registrationCopy} from './registration.js?v=20261112
 import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261119-ux-1';
 import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType,caseStageActivity,caseActivityText} from './core.js?v=20261121-photo-visibility-2';
 import {accountRole,roleName,summarize,memberSummaries,archiveFilter,managementHome} from './management.js?v=20261118-progress-2';
-import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields} from './workflow.js?v=20261124-plan-quick-1';
+import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields,setPlanProductView} from './workflow.js?v=20261124-plan-order-1';
 import {createPhotoTasks,runPhotoBatch,uploadCounts,renderUploadFeedback} from './photo-upload.js?v=20261121-photo-visibility-2';
 import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards,savedPhotoPreview,photoPreviewBody} from './comparison.js?v=20261121-photo-visibility-2';
 const config=window.AFORM_CONFIG||{};
@@ -245,7 +245,7 @@ function productsHTML(rows=[],scope='actual'){
  return '<div id="'+(plan?'plan-product-rows':'product-rows')+'">'+rows.map((source,i)=>{
  const p=productWithPlanTime(source,scope),fixed=plan&&productTemplate(p.name),legacy=fixed&&((p.time!==fixed.time)||(p.unit!==fixed.unit));
  const element=fixed?' data-plan-element="'+esc(fixed.element)+'"':'';
- return '<section class="product-row paper-product" data-index="'+i+'" data-product-scope="'+scope+'"'+element+'><div class="paper-product-heading"><h4>'+esc(p.name)+'</h4>'+(productTemplate(p.name)?'<span class="paper-element">'+esc(productElementLabel(p))+'</span>':'')+(!fixed?'<button type="button" class="text-btn" data-remove-product="'+i+'" data-scope="'+scope+'">移除此项</button>':'')+'</div><input type="hidden" name="'+prefix+'index" value="'+i+'"><input type="hidden" name="'+prefix+'name_'+i+'" value="'+esc(p.name)+'">'+choiceGroup(plan?'使用安排':'使用状态',prefix+'status_'+i,p.useStatus||(p.unused?(plan?'不安排':'未使用'):(plan?'待填写':'待核对')),plan?['待填写','拟用',['不安排','未用']]:['待核对','已使用','未使用','已填写'])+'<div class="record-select-grid">'+field(plan?'服用时间':'实际服用时间',prefix+'time_'+i,p.time||'','text',fixed?'readonly aria-readonly="true"':'maxlength="80"')+field('单位',prefix+'unit_'+i,p.unit||'','text',fixed?'readonly aria-readonly="true"':'maxlength="20" placeholder="例如：袋、粒"')+field('每次量',prefix+'amount_'+i,p.amount||'','text','maxlength="30"')+field('每日次数',prefix+'times_'+i,p.perDay||'','text','maxlength="20"')+'</div>'+(legacy?'<p class="small muted">此项保留历史填写：'+esc(p.time)+' / '+esc(p.unit)+'。原表固定值为 '+esc(fixed.time)+' / '+esc(fixed.unit)+'。</p>':'')+'<details class="product-note"><summary>补充说明</summary>'+area('本项说明',prefix+'note_'+i,p.note,'按实际安排填写。')+'</details></section>';
+ return '<section class="product-row paper-product" data-index="'+i+'" data-product-scope="'+scope+'"'+element+'><div class="paper-product-heading"><h4>'+esc(p.name)+'</h4>'+(productTemplate(p.name)?'<span class="paper-element">'+esc(productElementLabel(p))+(fixed?.element==='调和'?' · 可选':'')+'</span>':'')+(!fixed?'<button type="button" class="text-btn" data-remove-product="'+i+'" data-scope="'+scope+'">移除此项</button>':'')+'</div><input type="hidden" name="'+prefix+'index" value="'+i+'"><input type="hidden" name="'+prefix+'name_'+i+'" value="'+esc(p.name)+'">'+choiceGroup(plan?'使用安排':'使用状态',prefix+'status_'+i,p.useStatus||(p.unused?(plan?'不安排':'未使用'):(plan?'待填写':'待核对')),plan?['待填写','拟用',['不安排','未用']]:['待核对','已使用','未使用','已填写'])+'<div class="record-select-grid">'+field(plan?'服用时间':'实际服用时间',prefix+'time_'+i,p.time||'','text',fixed?'readonly aria-readonly="true"':'maxlength="80"')+field('单位',prefix+'unit_'+i,p.unit||'','text',fixed?'readonly aria-readonly="true"':'maxlength="20" placeholder="例如：袋、粒"')+field('每次量',prefix+'amount_'+i,p.amount||'','text','maxlength="30"')+field('每日次数',prefix+'times_'+i,p.perDay||'','text','maxlength="20"')+'</div>'+(legacy?'<p class="small muted">此项保留历史填写：'+esc(p.time)+' / '+esc(p.unit)+'。原表固定值为 '+esc(fixed.time)+' / '+esc(fixed.unit)+'。</p>':'')+'<details class="product-note"><summary>补充说明</summary>'+area('本项说明',prefix+'note_'+i,p.note,'按实际安排填写。')+'</details></section>';
  }).join('')+'</div>';
 }
 function readProducts(form,scope='actual',snapshot){return readProductRows(snapshot||new FormData(form),scope);}
@@ -804,11 +804,7 @@ function openServiceProgress(action,suggestedDate=null){
 function showPlanProductGroup(button){
  const editor=button.form?.querySelector('#plan-product-editor');
  if(!editor)return;
- const view=button.dataset.planProductGroup;
- editor.dataset.planProductView=view;
- for(const control of editor.querySelectorAll('[data-plan-product-group]')){
-  control.setAttribute('aria-pressed',String(control.dataset.planProductGroup===view));
- }
+ setPlanProductView(editor,button.dataset.planProductGroup);
  if(button.hasAttribute('data-plan-product-jump'))focusObservationArea(editor.querySelector('#plan-product-heading'));
 }
 function focusObservationArea(element){

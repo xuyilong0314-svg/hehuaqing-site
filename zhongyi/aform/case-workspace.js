@@ -16,8 +16,12 @@ export function preferredStage(caseId,observations,{requested='',remembered='',c
 }
 export function formFingerprint(form){
   // Disabled/readonly toggles during uploads do not change the underlying form data.
-  return JSON.stringify([...form.elements].filter(e=>e.name&&!['file','submit','button','reset'].includes(e.type)&&(!['checkbox','radio'].includes(e.type)||e.checked))
-    .flatMap(e=>e.tagName==='SELECT'&&e.multiple?[...e.selectedOptions].map(o=>[e.name,o.value]):[[e.name,e.value??'']]));
+  const fields=[...form.elements].filter(e=>e.name&&!['file','submit','button','reset'].includes(e.type)&&(!['checkbox','radio'].includes(e.type)||e.checked))
+    .flatMap(e=>e.tagName==='SELECT'&&e.multiple?[...e.selectedOptions].map(o=>[e.name,o.value]):[[e.name,e.value??'']]);
+  // Product shortcuts can reorder controls while their saved row indices stay fixed.
+  const productField=([name])=>name.startsWith('plan_product_');
+  const plan=fields.filter(productField).sort(([a,x],[b,y])=>a.localeCompare(b)||(a==='plan_product_index'?Number(x)-Number(y):0));
+  return JSON.stringify([...fields.filter(field=>!productField(field)),...plan]);
 }
 export function saveStateText({record,stage,dirty=false,photos=0,pending=0,demo=false}){
   const prefix=stageName(stage)+' · ';
