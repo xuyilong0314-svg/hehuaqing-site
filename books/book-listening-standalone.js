@@ -8,7 +8,7 @@ const chapters = tanjing || !contents.length
   ? [...units].map(([id, unit]) => ({ id, title: unit.querySelector('h1,h2')?.textContent.trim() || '正文' }))
   : contents.map(link => ({
     id: link.dataset.chapter,
-    title: (link.lastElementChild || link).textContent.trim(),
+    title: (link.querySelector('.toc-title') || link.lastElementChild || link).textContent.trim(),
     url: link.href,
   }));
 
