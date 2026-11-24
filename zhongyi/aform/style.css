@@ -216,3 +216,25 @@
 .list-age-unavailable,.list-gender-unavailable{display:inline-block;color:var(--muted)}
 
 @media(max-width:640px){.records-filters .input{flex-basis:100%;max-width:none}.records-filters select{flex:1;min-width:0;max-width:none}}
+
+/* Product shortcuts reuse the existing fields and keep every row in the form. */
+.plan-product-quick{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;
+ margin:-10px 0 20px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#f7f7ef
+}
+.plan-product-quick strong{display:block;font-size:15px}
+.plan-product-quick small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+.plan-product-buttons{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.plan-product-buttons .btn{min-height:44px;padding:8px 12px;font-size:14px;line-height:1.45;transition:none}
+.plan-product-buttons .btn[aria-pressed="true"]{background:var(--deep);color:#fff;border-color:var(--deep)}
+#plan-product-editor>.plan-product-buttons{margin-bottom:10px}
+#plan-product-editor[data-plan-product-view="metal-wood"] .paper-product:not([data-plan-element="金"]):not([data-plan-element="木"]):not([data-plan-element="火·必用"]),
+#plan-product-editor[data-plan-product-view="earth-water"] .paper-product:not([data-plan-element="土"]):not([data-plan-element="水"]):not([data-plan-element="火·必用"]),
+#plan-product-editor:not([data-plan-product-view="all"])>.product-add{display:none}
+#plan-product-editor:not([data-plan-product-view="all"]) [data-plan-element="火·必用"]{
+ padding-inline:12px;border:1px solid #e1d8bb;border-radius:8px;background:#f7f3e5
+}
+@media(max-width:540px){
+ .plan-product-quick{padding:10px;margin-top:0}
+ .plan-product-buttons .btn{padding:8px 9px}
+}
