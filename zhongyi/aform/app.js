@@ -694,7 +694,11 @@ async function showSelfLink(stage,action='get'){
  const result=checkResult(await db.rpc('manage_client_self_link',{p_case_id:c.id,p_stage:stage,p_action:action}));
  if(user?.id!==actor||currentCase?.id!==c.id)return;
  if(action==='revoke'){notify('当前节点链接已停用，已有自评记录保留。');return;}
- const url=selfLink(result.token,location),message=c.name+'，请填写第'+stage.slice(1)+'天的自评，点开即可填写：\n'+url;
+ const url=selfLink(result.token,location);
+ const invitation=stage==='d1'
+  ?'这是我们的第一次记录。您有空时，点开下面的链接，简单记一下现在的感受就好。'
+  :'这几天感觉怎么样？这是第'+stage.slice(1)+'天的回访链接。您有空时点开，简单记一下自己的感受就好。';
+ const message=c.name+'，您好！'+invitation+'\n'+url;
  const introduction=result.status==='submitted'
   ?'这条链接已收到填写。需要更正时，请返回“链接管理”重新邀请。'
   :'复制后发给本人。客户无需注册，填写五项体感'+(stage==='d1'?'':'、四有行动')+'和感受。';
