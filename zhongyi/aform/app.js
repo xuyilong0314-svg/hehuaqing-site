@@ -697,9 +697,9 @@ async function showSelfLink(stage,action='get'){
  if(action==='revoke'){notify('当前节点链接已停用，已有自评记录保留。');return;}
  const url=selfLink(result.token,location);
  const invitation=stage==='d1'
-  ?'这是我们的第一次记录。您有空时，点开下面的链接，简单记一下现在的感受就好。'
-  :'这几天感觉怎么样？这是第'+stage.slice(1)+'天的回访链接。您有空时点开，简单记一下自己的感受就好。';
- const message=c.name+'，您好！'+invitation+'\n'+url;
+  ?'想先听听您现在的感受。您愿意的话，等方便时点开下面的链接，简单记一记就好。'
+  :'这几天过得怎么样？想听听您这段时间的感受。下面是第'+stage.slice(1)+'天的回访链接，您愿意的话，等方便时点开，按自己的感受填就好。';
+ const message=c.name+'，您好！'+invitation+'我会认真看您留下的记录。\n'+url;
  const introduction=result.status==='submitted'
   ?'这条链接已收到填写。需要更正时，请返回“链接管理”重新邀请。'
   :'复制后发给本人。客户无需注册，填写五项体感'+(stage==='d1'?'':'、四有行动')+'和感受。';
