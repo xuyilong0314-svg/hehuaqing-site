@@ -1,6 +1,6 @@
 import {STAGES,esc,stageName,stageDays,cloneRecordData,validStage} from './core.js?v=20261121-save-compat-1';
 import {requestUUID} from './self/core.js?v=20261118-progress-2';
-import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261118-progress-2';
+import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261124-fire-label-1';
 
 export function personalCases(cases,userId,{kind='client'}={}){
   if(!userId)return [];

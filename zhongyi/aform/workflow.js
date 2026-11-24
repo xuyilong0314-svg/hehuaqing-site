@@ -13,9 +13,10 @@ export const PRODUCT_PLAN_TIMES=Object.freeze(Object.fromEntries(PRODUCT_TABLE.m
 export const productTemplate=name=>PRODUCT_TABLE.find(p=>p.name===name);
 export function productElementLabel(product){
  const fixed=productTemplate(product.name);
+ if((fixed?.element||product.element)==='火·必用')return '火 心 小肠';
  if(!fixed)return product.element||'';
  if(fixed.element==='调和')return '五脏调和';
- return fixed.element.replace('·必用','')+' · '+fixed.organs+(fixed.element.includes('必用')?' · 必用':'');
+ return fixed.element+' · '+fixed.organs;
 }
 export function productWithPlanTime(product,scope='plan'){
  const fixed=productTemplate(product.name);
@@ -140,7 +141,7 @@ export function renderStageForm(c,o,stage,ctx,h){
   <p id="observation-progress">已评 ${ITEMS.filter(([k])=>Number(d.ratings?.[k])>0).length} / 5 项</p>
   ${ctx.isOwner?'<button type="button" class="text-btn observation-save-jump" data-observation-save-jump aria-controls="observation-save">去保存或提交 ↓</button>':''}
  </div>`;
- const shortcuts=flow.plan&&ctx.isOwner?'<div class="plan-product-quick"><div><strong>产品速填</strong><small>两组均含火项，可选灵芝孢子油</small></div>'+planProductButtons(true)+'</div>':'';
+ const shortcuts=flow.plan&&ctx.isOwner?'<div class="plan-product-quick"><div><strong>产品速填</strong><small>两组均可选灵芝孢子油</small></div>'+planProductButtons(true)+'</div>':'';
  const finishActions=`<div id="observation-save" class="savebar" tabindex="-1" role="group" aria-label="保存与提交">
   <div id="form-error"></div>
   <small id="save-state" role="status">${ctx.demo?'体验模式，未上传云端':status}</small>

@@ -230,9 +230,6 @@
 #plan-product-editor>.plan-product-buttons{margin-bottom:10px}
 #plan-product-rows>.paper-product[hidden],
 #plan-product-editor:not([data-plan-product-view="all"])>.product-add{display:none}
-#plan-product-editor:not([data-plan-product-view="all"]) [data-plan-element="火·必用"]{
- padding-inline:12px;border:1px solid #e1d8bb;border-radius:8px;background:#f7f3e5
-}
 @media(max-width:540px){
  .plan-product-quick{padding:10px;margin-top:0}
  .plan-product-buttons .btn{padding:8px 9px}
