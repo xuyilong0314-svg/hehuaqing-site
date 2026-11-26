@@ -10,9 +10,20 @@ export const dayNumber=(date,now=today())=>Math.round((Date.parse(now+'T00:00:00
 export const stageName=s=>s==='extra'?'补充记录':s==='d1'?'首次观察':`第 ${s.slice(1)} 天`;
 export const validStage=s=>/^d[1-9]\d{0,4}$/.test(s||'')&&(STAGES.includes(Number(s.slice(1)))||(Number(s.slice(1))>21&&Number(s.slice(1))<=36500&&Number(s.slice(1))%7===0));
 export const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')&&Number.isFinite(Date.parse(s+'T00:00:00Z'))&&new Date(s+'T00:00:00Z').toISOString().slice(0,10)===s;
-export function firstPlanDates(c,stage){
+export function firstPlanDates(c,stage,plan){
  const startDate=c?.progress?.actual_started_on;
- return stage==='d1'&&validDate(startDate)?{startDate,endDate:addDays(startDate,6)}:null;
+ return stage==='d1'&&validDate(startDate)&&plan?.manualDateAnchor!==startDate?{startDate,endDate:addDays(startDate,6)}:null;
+}
+export const keepsFollowupSchedule=data=>data?.entrySource==='paper'&&data.schedulePolicy==='keep';
+export function schedulingActualDate(record){
+ const date=keepsFollowupSchedule(record?.data)?record.data.scheduleAnchor:record?.actual_date;
+ return validDate(date)?date:null;
+}
+export function preserveFollowupSchedule(data,existing){
+ const prior=existing?.status==='submitted'?existing:null;
+ const previous=prior?.data||{};
+ return {...data,scheduleAnchor:schedulingActualDate(prior),nextDate:previous.nextDate||'',
+  nextDateSetAt:previous.nextDateSetAt||null,nextDateSource:previous.nextDateSource||null,nextService:previous.nextService||''};
 }
 export function stageDays(c,observations=[]){
  const last=Math.max(21,Number(c?.progress?.last_day)||21,...observations.filter(o=>o.case_id===c?.id&&validStage(o.stage)).map(o=>Number(o.stage.slice(1))));
@@ -46,7 +57,7 @@ export function stageSchedule(c,observations=[]){
   const prior=i?stageRecord(c,observations,days[i-1]):null,override=c.progress?.dates?.['d'+day];
   const agreed=validDate(prior?.data?.nextDate)?prior.data.nextDate:null;
   const useAgreed=agreed&&(!override||String(prior.data.nextDateSetAt||'')>String(override.updated_at||''));
-  dates['d'+day]=useAgreed?agreed:validDate(override?.date)?override.date:agreed|| (i?addDays(prior?.actual_date||dates['d'+days[i-1]],day-days[i-1]):c.created_on);
+  dates['d'+day]=useAgreed?agreed:validDate(override?.date)?override.date:agreed|| (i?addDays(schedulingActualDate(prior)||dates['d'+days[i-1]],day-days[i-1]):c.created_on);
  });
  return dates;
 }
@@ -72,9 +83,11 @@ export function cleanImageType(file){if(/\.hei[cf]$/i.test(file.name)||/hei[cf]/
 // Mirrors the server rule for the isolated demonstration and date-rule tests.
 export function applyActualFollowup(c,observations,record,existing=null,stamp=new Date().toISOString()){
  if(record.status!=='submitted'||!validStage(record.stage))return {record,progress:c.progress};
+ if(keepsFollowupSchedule(record.data))return {record:{...record,data:preserveFollowupSchedule(record.data,existing)},progress:c.progress};
  const day=Number(record.stage.slice(1)),days=stageDays(c,observations);
  if(observations.some(o=>o.case_id===c.id&&o.id!==record.id&&o.status==='submitted'&&validStage(o.stage)&&Number(o.stage.slice(1))>day))return {record,progress:c.progress};
- const before=stageSchedule(c,observations),next=days.find(n=>n>day),anchor=existing?.status==='submitted'?existing.actual_date:before[record.stage];
+ const before=stageSchedule(c,observations),next=days.find(n=>n>day);
+ const anchor=(existing?.status==='submitted'?schedulingActualDate(existing):null)||before[record.stage];
  let delta=Math.round((Date.parse(record.actual_date)-Date.parse(anchor))/86400000);
  const explicit=record.data?.nextDateSetAt&&record.data.nextDateSetAt!==existing?.data?.nextDateSetAt;
  if(!explicit&&firstPlanDates(c,record.stage))return {record,progress:c.progress};

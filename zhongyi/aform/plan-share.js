@@ -1,5 +1,5 @@
 import {esc} from './core.js?v=20261121-save-compat-1';
-import {planEdition,planStamp,planTitle,planUsageLabel} from './case-workspace.js?v=20261126-week-review-1';
+import {planEdition,planStamp,planTitle,planUsageLabel} from './case-workspace.js?v=20261126-paper-entry-1';
 
 const optionLabel = entry => esc(planEdition(entry)) + (entry.savedAt ? ' · 保存于 ' + planStamp(entry.savedAt) : '');
 const usageRow = entry => '<span class="plan-share-period">' + esc(planUsageLabel(entry)) + '</span>';

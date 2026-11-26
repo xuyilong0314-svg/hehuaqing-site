@@ -75,6 +75,12 @@
   border-radius:10px;background:#f3f5ee;scroll-margin-top:92px;min-width:0;
 }
 #week-plan-form{scroll-margin-top:92px}
+.observation-entry-source{max-width:480px;margin:0 0 16px}
+.observation-entry-source>label{display:block;margin-bottom:5px;font-weight:600}
+.observation-entry-source [data-paper-entry-fields]{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:8px}
+.observation-entry-source [data-paper-entry-fields][hidden],
+.observation-sheet [data-active-followup][hidden],
+.observation-sheet [data-recalculate-plan-dates][hidden]{display:none!important}
 .week-review h3{margin-top:0}
 .week-review>.field{max-width:480px}
 .week-review-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}

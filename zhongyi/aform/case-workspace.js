@@ -1,6 +1,6 @@
-import {STAGES,esc,stageName,stageDays,cloneRecordData,validStage,firstPlanDates} from './core.js?v=20261126-actual-start-1';
+import {STAGES,esc,stageName,stageDays,cloneRecordData,validStage,firstPlanDates} from './core.js?v=20261126-paper-entry-1';
 import {requestUUID} from './self/core.js?v=20261118-progress-2';
-import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261126-week-review-1';
+import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime,productTemplate} from './workflow.js?v=20261126-paper-entry-1';
 
 export function personalCases(cases,userId,{kind='client'}={}){
   if(!userId)return [];
@@ -49,7 +49,7 @@ function comparablePlan(plan={}){
 export const samePlan=(a,b)=>JSON.stringify(stable(comparablePlan(a||{})))===JSON.stringify(stable(comparablePlan(b||{})));
 export function hasPlan(plan){
   return Boolean(plan&&(plan.basis?.trim()||plan.note?.trim()||(plan.decision&&plan.decision!=='待填写')||
-    plan.products?.some(p=>p.unused===true||p.amount?.trim()||p.perDay?.trim()||p.note?.trim()||(p.useStatus&&!['待填写','待核对'].includes(p.useStatus)))));
+    plan.products?.some(p=>p.unused===true||p.amount?.trim()||typeof p.time==='string'&&p.time.trim()&&p.time.replace(/[—–]/g,'-')!==productTemplate(p.name)?.time||p.perDay?.trim()||p.note?.trim()||(p.useStatus&&!['待填写','待核对'].includes(p.useStatus)))));
 }
 export function planHistory(observation){
   if(!observation?.id)return [];
@@ -72,7 +72,7 @@ export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISO
 export function planEntries(caseId,observations,caseRecord){
   return [...new Set(['d1','d7','d14','d21',...observations.filter(o=>o.case_id===caseId&&Number(o.stage.slice(1))>21).map(o=>o.stage)])].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1))).flatMap(stage=>{
     const observation=observations.find(o=>o.case_id===caseId&&o.stage===stage);
-    const dates=firstPlanDates(caseRecord,stage);
+    const dates=firstPlanDates(caseRecord,stage,observation?.data?.plan);
     return planHistory(observation).map((entry,index,history)=>{
       const latest=index===history.length-1;
       const plan=latest&&dates?{...entry.plan,...dates}:entry.plan;

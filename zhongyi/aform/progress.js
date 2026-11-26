@@ -1,4 +1,4 @@
-import {esc,today,addDays,validDate,validStage,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow,cloneRecordData,caseStageActivity,firstPlanDates} from './core.js?v=20261126-actual-start-1';
+import {esc,today,addDays,validDate,validStage,stageDays,stageRecord,stageSchedule,stageDateInfo,extensionReady,nextFollow,cloneRecordData,caseStageActivity,firstPlanDates,schedulingActualDate} from './core.js?v=20261126-paper-entry-1';
 import {requestUUID} from './self/core.js?v=20261118-progress-2';
 export const stateLabel=s=>({active:'按约跟进',not_started:'尚未开始',paused:'暂停使用'}[s]||'按约跟进');
 const date=s=>esc((s||'').replaceAll('-','.'));
@@ -15,8 +15,8 @@ export function stageRail(c,observations,responses,active,photos=[]){
 }
 export function syncSuggestion(c,observations){
  const next=nextFollow(c,observations);if(!next||next.continuing)return null;
- const previous=stageDays(c,observations).filter(n=>n<next.day&&stageRecord(c,observations,n)).at(-1);if(!previous||(previous===1&&firstPlanDates(c,'d1')))return null;
- const expected=addDays(stageRecord(c,observations,previous).actual_date,next.day-previous);
+ const previous=stageDays(c,observations).filter(n=>n<next.day&&schedulingActualDate(stageRecord(c,observations,n))).at(-1);if(!previous||(previous===1&&firstPlanDates(c,'d1')))return null;
+ const expected=addDays(schedulingActualDate(stageRecord(c,observations,previous)),next.day-previous);
  return expected===next.date?null:{day:next.day,date:expected};
 }
 export function progressPanel(c,observations,{owner=false}={}){

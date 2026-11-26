@@ -6,29 +6,30 @@ const loginDestination=captureReturn();
 if(new URLSearchParams(location.search).has('return')){const entry=new URL(location.href);entry.searchParams.delete('return');history.replaceState(history.state,'',entry.pathname+entry.search+entry.hash);}
 import {beginLoading,singleFlight,withLoading} from '../../account/loading.js?v=20261119-ux-1';
 import {birthDateField,syncBirthDate,ageFromBirthDate} from './birth-date.js?v=20261121-member-age-1';
-import {stageRail,stageButtons,progressPanel,openProgress,openActualStart,demoProgress,stateLabel,syncSuggestion} from './progress.js?v=20261126-actual-start-1';
+import {stageRail,stageButtons,progressPanel,openProgress,openActualStart,demoProgress,stateLabel,syncSuggestion} from './progress.js?v=20261126-paper-entry-1';
 import {journeyEntry,openJourneyOwner} from './journey-owner.js?v=20261121-share-dates-1';
 import {normalizeIdentity,caseIdentity,syncCaseIdentity,normalizeGender,genderField,genderBadge,genderLabel,birthBadges,birthSummary,syncBirthSummary,birthDateLabel} from '../../account/identity.js?v=20261121-gender-1';
-import {latestSelf,projectedSelf,selfRatings,selfPanel,selfOverview,selfLink,loadSelf} from './client-self.js?v=20261118-progress-2';
+import {latestSelf,projectedSelf,selfRatings,selfPanel,selfOverview,selfLink,loadSelf} from './client-self.js?v=20261126-paper-entry-1';
 import {loadAccountSdk} from '../../account/sdk.js?v=20261112-complete-1';
 import {browserSessionStorage,sessionPersistence,temporarySessionNotice} from '../../account/session-storage.js?v=20261112-complete-1';
 import {mountEmailPanel,completeEmailVerification} from '../../account/email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from '../../account/verification.js?v=20261112-deferred-1';
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261121-gender-1';
-import {openPlanImage} from './plan-image.js?v=20261126-week-review-1';
-import {choosePlanShare} from './plan-share.js?v=20261126-week-review-1';
-import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261126-week-review-1';
+import {openPlanImage} from './plan-image.js?v=20261126-paper-entry-1';
+import {choosePlanShare} from './plan-share.js?v=20261126-paper-entry-1';
+import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261126-paper-entry-1';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
 import {duplicateNames,memberCard,deletionDialog,deletionRequest,matchingEmail,memberError} from './member-admin.js?v=20261121-gender-1';
 import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-gender-1';
 import {registrationOutcome,registrationCopy} from './registration.js?v=20261112-deferred-1';
 import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261119-ux-1';
-import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType,caseStageActivity,caseActivityText,firstPlanDates} from './core.js?v=20261126-actual-start-1';
-import {accountRole,roleName,summarize,memberSummaries,archiveFilter,managementHome} from './management.js?v=20261118-progress-2';
-import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields,setPlanProductView} from './workflow.js?v=20261126-week-review-1';
+import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType,caseStageActivity,caseActivityText,firstPlanDates} from './core.js?v=20261126-paper-entry-1';
+import {accountRole,roleName,summarize,memberSummaries,archiveFilter,managementHome} from './management.js?v=20261126-paper-entry-1';
+import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields,setPlanProductView} from './workflow.js?v=20261126-paper-entry-1';
 import {createPhotoTasks,runPhotoBatch,uploadCounts,renderUploadFeedback} from './photo-upload.js?v=20261121-photo-visibility-2';
-import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards,savedPhotoPreview,photoPreviewBody} from './comparison.js?v=20261126-week-review-1';
-import {weekReviewMarkup,weekReviewContent,changeWeekReference,readWeekAssessment} from './week-review.js?v=20261126-week-review-1';
+import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards,savedPhotoPreview,photoPreviewBody} from './comparison.js?v=20261126-paper-entry-1';
+import {weekReviewMarkup,weekReviewContent,changeWeekReference,readWeekAssessment} from './week-review.js?v=20261126-paper-entry-1';
+import {syncPaperEntry,captureEntry,updatePlanDateControls,recalculatePlanDates} from './paper-entry.js?v=20261126-paper-entry-1';
 const config=window.AFORM_CONFIG||{};
 const root=document.querySelector('#app');
 // The public-site navigation remains outside the app's route-rendered content.
@@ -66,7 +67,11 @@ function updateSaveState(){
  const record=obs.find(o=>o.case_id===currentCase.id&&o.stage===activeStage);
  state.textContent=saveStateText({record,stage:activeStage,dirty,demo,photos:photos.filter(p=>p.case_id===currentCase.id&&p.stage===activeStage).length,pending:uploadCounts(photoBatches.get(photoBatchKey())?.items||[]).pending});
  if(form.dataset.clientSelfId&&form.dataset.clientSelfId!==record?.data?.clientSelfId)state.textContent='客户自评已载入，请补充上医记录后保存';
- const draft=form.querySelector('button[value="draft"]');if(draft)draft.disabled=busy||Boolean(record&&!dirty&&(!form.dataset.clientSelfId||form.dataset.clientSelfId===record.data?.clientSelfId));
+ const draft=form.querySelector('button[value="draft"]');
+ if(draft){
+  draft.disabled=busy||Boolean(record&&!dirty&&(!form.dataset.clientSelfId||form.dataset.clientSelfId===record.data?.clientSelfId));
+  draft.textContent=record?.status==='submitted'&&form.elements.entrySource.value==='paper'?'保存补录修改':'暂存草稿';
+ }
  const submitted=record?.status==='submitted'&&!dirty;
  const submit=form.querySelector('button[value="submitted"]');if(submit)submit.textContent=submitted?'查看已提交对照':'提交并查看对照';
  const advance=form.querySelector('button[value="continue"]');if(advance)advance.textContent=(submitted?'':'提交并')+advance.dataset.advanceLabel;
@@ -244,9 +249,9 @@ function ratingControls(r={}){return '<div class="ratings">'+ITEMS.map(([k,l])=>
 function productsHTML(rows=[],scope='actual'){
  const prefix=scope==='plan'?'plan_product_':'product_',plan=scope==='plan';
  return '<div id="'+(plan?'plan-product-rows':'product-rows')+'">'+rows.map((source,i)=>{
- const p=productWithPlanTime(source,scope),template=productTemplate(p.name),fixed=plan&&template,legacy=fixed&&((p.time!==fixed.time)||(p.unit!==fixed.unit));
+ const p=productWithPlanTime(source,scope),template=productTemplate(p.name),fixed=plan&&template,legacy=fixed&&p.unit!==fixed.unit;
  const element=fixed?' data-plan-element="'+esc(fixed.element)+'"':'';
- return '<section class="product-row paper-product" data-index="'+i+'" data-product-scope="'+scope+'"'+element+'><div class="paper-product-heading"><h4>'+esc(p.name)+'</h4>'+(template?'<span class="'+(template.element==='火·必用'?'small':'paper-element')+'">'+esc(productElementLabel(p))+(fixed?.element==='调和'?' · 可选':'')+'</span>':'')+(!fixed?'<button type="button" class="text-btn" data-remove-product="'+i+'" data-scope="'+scope+'">移除此项</button>':'')+'</div><input type="hidden" name="'+prefix+'index" value="'+i+'"><input type="hidden" name="'+prefix+'name_'+i+'" value="'+esc(p.name)+'">'+choiceGroup(plan?'使用安排':'使用状态',prefix+'status_'+i,p.useStatus||(p.unused?(plan?'不安排':'未使用'):(plan?'待填写':'待核对')),plan?['待填写','拟用',['不安排','未用']]:['待核对','已使用','未使用','已填写'])+'<div class="record-select-grid">'+field(plan?'服用时间':'实际服用时间',prefix+'time_'+i,p.time||'','text',fixed?'readonly aria-readonly="true"':'maxlength="80"')+field('单位',prefix+'unit_'+i,p.unit||'','text',fixed?'readonly aria-readonly="true"':'maxlength="20" placeholder="例如：袋、粒"')+field('每次量',prefix+'amount_'+i,p.amount||'','text','maxlength="30"')+field('每日次数',prefix+'times_'+i,p.perDay||'','text','maxlength="20"')+'</div>'+(legacy?'<p class="small muted">此项保留历史填写：'+esc(p.time)+' / '+esc(p.unit)+'。原表固定值为 '+esc(fixed.time)+' / '+esc(fixed.unit)+'。</p>':'')+'<details class="product-note"><summary>补充说明</summary>'+area('本项说明',prefix+'note_'+i,p.note,'按实际安排填写。')+'</details></section>';
+ return '<section class="product-row paper-product" data-index="'+i+'" data-product-scope="'+scope+'"'+element+'><div class="paper-product-heading"><h4>'+esc(p.name)+'</h4>'+(template?'<span class="'+(template.element==='火·必用'?'small':'paper-element')+'">'+esc(productElementLabel(p))+(fixed?.element==='调和'?' · 可选':'')+'</span>':'')+(!fixed?'<button type="button" class="text-btn" data-remove-product="'+i+'" data-scope="'+scope+'">移除此项</button>':'')+'</div><input type="hidden" name="'+prefix+'index" value="'+i+'"><input type="hidden" name="'+prefix+'name_'+i+'" value="'+esc(p.name)+'">'+choiceGroup(plan?'使用安排':'使用状态',prefix+'status_'+i,p.useStatus||(p.unused?(plan?'不安排':'未使用'):(plan?'待填写':'待核对')),plan?['待填写','拟用',['不安排','未用']]:['待核对','已使用','未使用','已填写'])+'<div class="record-select-grid">'+field(plan?'使用时间':'实际使用时间',prefix+'time_'+i,p.time||'','text','maxlength="80"')+field('单位',prefix+'unit_'+i,p.unit||'','text',fixed?'readonly aria-readonly="true"':'maxlength="20" placeholder="例如：袋、粒"')+field('每次量',prefix+'amount_'+i,p.amount||'','text','maxlength="30"')+field('每日次数',prefix+'times_'+i,p.perDay||'','text','maxlength="20"')+'</div>'+(legacy?'<p class="small muted">原记录单位 '+esc(p.unit)+' · 原表单位 '+esc(fixed.unit)+'。</p>':'')+'<details class="product-note"><summary>补充说明</summary>'+area('本项说明',prefix+'note_'+i,p.note,'按实际安排填写。')+'</details></section>';
  }).join('')+'</div>';
 }
 function readProducts(form,scope='actual',snapshot){return readProductRows(snapshot||new FormData(form),scope);}
@@ -427,12 +432,14 @@ async function saveObservation(form,intent,{quiet=false,formData=null,products=n
  const pending=uploadCounts(photoBatches.get(photoBatchKey())?.items||[]).pending;if(intent==='submitted'&&pending&&!preparingPhoto){document.querySelector('#upload-status')?.scrollIntoView({block:'center'});throw Error('还有'+pending+'张照片尚未上传成功，请先重试或移出待传列表，再提交本次观察。');}
  const c=currentCase,f=formData||new FormData(form),existing=obs.find(o=>o.id===form.dataset.id)||obs.find(o=>o.case_id===c.id&&o.stage===activeStage);
  if(existing&&!dirty&&(!form.dataset.clientSelfId||form.dataset.clientSelfId===existing.data?.clientSelfId)&&(intent!=='submitted'||existing.status==='submitted')){form.dataset.id=existing.id;rememberForm(form);updateSaveState();if(!quiet&&advance){await advanceService(c,existing);return existing;}if(!quiet&&intent==='submitted'){history.replaceState(null,'','#/case/'+c.id+'/compare?visit='+encodeURIComponent(existing.id));await render();}return existing;}
- const data={...existing?.data,ratings:Object.fromEntries(ITEMS.map(([k])=>[k,Number(f.get('rating_'+k))||null])),tongue:Object.fromEntries(['gloss','strength','source','coating','yinyang','form'].map(k=>[k,f.get(k)]).concat([['axis',readAxis(f)],['elements',f.getAll('shape_elements')]])),...readWeekAssessment(f,c,activeStage,obs,existing),products:activeStage==='d1'?(existing?.data?.products||[]):products||readProducts(form,'actual',f),...readWorkflow(f,activeStage,existing?.data)};
+ let data={...existing?.data,ratings:Object.fromEntries(ITEMS.map(([k])=>[k,Number(f.get('rating_'+k))||null])),tongue:Object.fromEntries(['gloss','strength','source','coating','yinyang','form'].map(k=>[k,f.get(k)]).concat([['axis',readAxis(f)],['elements',f.getAll('shape_elements')]])),...readWeekAssessment(f,c,activeStage,obs,existing),products:activeStage==='d1'?(existing?.data?.products||[]):products||readProducts(form,'actual',f),...readWorkflow(f,activeStage,existing?.data,c)};
  ['usage','action','usageNote','quote','handling','handlingReason','nextDate','nextMethod','lifeChange','tongueChange','partnerReview','nextService','nextFocus'].forEach(k=>{if(f.has(k))data[k]=f.get(k)||'';});
- if(form.elements?.nextDate?.dataset.dateTouched==='true')data.nextDateSetAt=new Date().toISOString();
+ if(f.has('nextDate')&&form.elements?.nextDate?.dataset.dateTouched==='true')data.nextDateSetAt=new Date().toISOString();
+ data=captureEntry(data,f,existing);
  if(form.dataset.clientSelfId){const source=selfResponses.find(r=>r.id===form.dataset.clientSelfId&&r.case_id===c.id&&r.stage===activeStage);if(!source)throw Error('请刷新客户自评后再保存。');data.ratings={...source.ratings};data.quote=source.quote;data.clientSelfId=source.id;data.clientSelfSubmittedAt=source.submitted_at;}
- data.planHistory=nextPlanHistory(existing,data,activeStage,intent||'draft',{planDates:firstPlanDates(c,activeStage)});
- const payload={case_id:c.id,stage:activeStage,actual_date:f.get('actual_date'),status:intent||'draft',data};let saved;
+ const status=data.entrySource==='paper'&&existing?.status==='submitted'?'submitted':intent||'draft';
+ data.planHistory=nextPlanHistory(existing,data,activeStage,status,{planDates:firstPlanDates(c,activeStage,data.plan)});
+ const payload={case_id:c.id,stage:activeStage,actual_date:f.get('actual_date'),status,data};let saved;
  if(demo){saved={...existing,...payload,id:existing?.id||requestUUID(),version:(existing?.version||0)+1};const adjusted=applyActualFollowup(c,obs,saved,existing);saved=adjusted.record;c.progress=adjusted.progress;}
  else if(existing)saved=checkResult(await db.from('observations').update({...payload,version:existing.version+1}).eq('id',existing.id).eq('version',existing.version).select().single());
  else saved=checkResult(await db.from('observations').insert(payload).select().single());
@@ -467,7 +474,7 @@ async function generatePlanImage(saveFirst=false,button=null){
    const form=document.querySelector('#observation-form');if(!form||!form.reportValidity())return;
    const stage=activeStage;
    syncFormDirty();const existing=obs.find(o=>o.case_id===c.id&&o.stage===stage);
-   const plan=readWorkflow(new FormData(form),stage,existing?.data).plan;
+   const plan=readWorkflow(new FormData(form),stage,existing?.data,c).plan;
    if(!hasPlan(plan))throw Error('请先填写产品用量或本次安排，再生成图片。');
    await saveObservation(form,existing?.status==='submitted'?'submitted':'draft',{quiet:true});
    const entry=planEntries(c.id,obs,c).find(e=>e.stage===stage&&e.latest);
@@ -597,7 +604,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button,a')
 document.addEventListener('input',e=>{if(e.target.matches('[data-birth-part]')){syncBirthDate(e.target.form);syncBirthSummary(e.target.form);}if(e.target.name==='birth_date')syncBirthSummary(e.target.form);if(e.target.id==='member-confirm-email'){const button=document.querySelector('#delete-member-form button[type=submit]');if(button)button.disabled=!matchingEmail(e.target.value,memberDeletion?.email);}if(e.target.type!=='file'&&e.target.closest('#case-form,#observation-form,#review-form,#profile-form')){syncFormDirty();updateSaveState();}if(e.target.id==='client-search')filterClients();if(e.target.id==='comparison-search')filterComparisons();if(e.target.id==='name')matchingCaseHint();if(e.target.id==='search')filterDashboard();if(e.target.id==='collect-search')filterCollection();if(e.target.id==='member-search')filterMembers();});
 function filterDashboard(){const due=document.querySelector('#record-list')?.dataset.due==='true',q=document.querySelector('#search')?.value.toLowerCase()||'',kind=document.querySelector('#kind-filter')?.value||'',month=document.querySelector('#month-filter')?.value||'';const list=cases.filter(c=>(!q||(c.name+c.code+c.class_name).toLowerCase().includes(q))&&(!kind||c.kind===kind)&&(!month||recordMonth(c)===month)&&(!due||(()=>{const n=nextFollow(c,obs);return n&&n.date<=today();})()));document.querySelector('#record-list').innerHTML=list.length?list.map(recordRow).join(''):'<div class="empty">没有符合条件的档案。</div>';}
 function filterCollection(){const list=filteredCollection();document.querySelector('#collect-list').innerHTML=list.length?list.map(recordRow).join(''):'<div class="empty">没有符合条件的档案。</div>';document.querySelector('#collect-count').textContent=list.length+' 份记录';}
-document.addEventListener('change',async e=>{const t=e.target;try{if(t.matches('[data-birth-part]')){syncBirthDate(t.form);syncBirthSummary(t.form);}if(t.closest('#observation-form')){if(['nextDate','plan_startDate','plan_endDate'].includes(t.name))t.dataset.dateTouched='true';if(t.name==='actual_date')syncActualDateFields(t.form);}if(t.type==='file'){await selectPhotos(t);return;}if(t.name==='birth_date')syncBirthSummary(t.form);if(t.name==='kind'&&t.closest('#case-form')){
+document.addEventListener('change',async e=>{const t=e.target;try{if(t.matches('[data-birth-part]')){syncBirthDate(t.form);syncBirthSummary(t.form);}if(t.closest('#observation-form')){if(['actual_date','nextDate','plan_startDate','plan_endDate'].includes(t.name))t.dataset.dateTouched='true';if(t.name==='actual_date')syncActualDateFields(t.form);}if(t.type==='file'){await selectPhotos(t);return;}if(t.name==='birth_date')syncBirthSummary(t.form);if(t.name==='kind'&&t.closest('#case-form')){
  const form=t.form,showClass=t.value==='self';
  form.querySelector('[data-case-class]').hidden=!showClass;
  form.elements.class_name.disabled=!showClass;
@@ -825,6 +832,14 @@ function focusObservationArea(element){
   element.scrollIntoView({block:'start',behavior:'instant'});
  });
 }
+root.addEventListener('change',event=>{
+ const input=event.target,form=input.form;
+ if(form?.id!=='observation-form')return;
+ if(input.name==='entrySource'||input.name==='paper_sync_followup')syncPaperEntry(form,{sourceChanged:input.name==='entrySource'});
+ else if(input.name==='plan_custom_dates')updatePlanDateControls(form);
+ else return;
+ updateObservationProgress();
+});
 root.addEventListener('change',async event=>{
  const picker=event.target;
  if(!picker.matches('[name=week_compare_reference]')||!currentCase)return;
@@ -840,6 +855,15 @@ root.addEventListener('change',async event=>{
  if(picker.isConnected&&picker.value===reference&&currentCase?.id===c.id&&activeStage===stage)refreshWeekReview();
 });
 root.addEventListener('click',event=>{
+ const paper=event.target.closest('[data-open-paper-entry]');
+ const dates=event.target.closest('[data-recalculate-plan-dates]');
+ if(paper){
+  paper.form.elements.entrySource.value='paper';
+  syncPaperEntry(paper.form,{sourceChanged:true});
+  updateObservationProgress();
+  focusObservationArea(paper.form.elements.actual_date);
+ }
+ if(dates){recalculatePlanDates(dates.form);updateObservationProgress();}
  if(event.target.closest('[data-jump-week-review]'))focusObservationArea(root.querySelector('#week-review'));
  if(event.target.closest('[data-jump-week-plan]'))focusObservationArea(root.querySelector('#week-plan-form'));
  if(event.target.closest('[data-observation-save-jump]'))focusObservationArea(root.querySelector('#observation-save'));

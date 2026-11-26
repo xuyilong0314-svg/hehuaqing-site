@@ -1,7 +1,7 @@
-import {esc,stageName,validStage,validDate} from './core.js?v=20261126-actual-start-1';
-import {caseTimeline,visitPhotos} from './comparison.js?v=20261126-week-review-1';
-import {planEntries,planTitle,planUsageLabel} from './case-workspace.js?v=20261126-week-review-1';
-import {choiceGroup,TONGUE_COMPARE_FIELDS} from './workflow.js?v=20261126-week-review-1';
+import {esc,stageName,validStage,validDate} from './core.js?v=20261126-paper-entry-1';
+import {caseTimeline,visitPhotos} from './comparison.js?v=20261126-paper-entry-1';
+import {planEntries,planTitle,planUsageLabel,hasPlan} from './case-workspace.js?v=20261126-paper-entry-1';
+import {choiceGroup,TONGUE_COMPARE_FIELDS} from './workflow.js?v=20261126-paper-entry-1';
 
 const dayOf=stage=>Number(stage?.slice(1));
 const dateText=value=>validDate(value)?value.replaceAll('-','.'):'';
@@ -91,7 +91,7 @@ export function weekReviewContent(c,stage,reference,observations,photos,url){
   const previous=timeline.find(o=>o.stage===reference);
   const current=timeline.find(o=>o.stage===stage)||{stage,photos:photos.filter(p=>p.case_id===c.id&&p.stage===stage)};
   const plan=planEntries(c.id,observations,c).find(e=>e.latest&&e.stage===previousWeekStage(stage));
-  const planned=productRows(plan?.plan.products);
+  const planned=(plan?.plan.products||[]).filter(p=>hasPlan({products:[p]}));
   const actual=productRows(current.data?.products);
   const earlier=productRows(previous?.data?.products);
   return '<div class="week-review-photos">'+visitPhotos(previous,url,'所选记录')+visitPhotos(current,url,'本次')+'</div>'+
