@@ -15,9 +15,9 @@ import {browserSessionStorage,sessionPersistence,temporarySessionNotice} from '.
 import {mountEmailPanel,completeEmailVerification} from '../../account/email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from '../../account/verification.js?v=20261112-deferred-1';
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261121-gender-1';
-import {openPlanImage} from './plan-image.js?v=20261124-fire-label-1';
-import {choosePlanShare} from './plan-share.js?v=20261121-plan-sharing-1';
-import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261126-actual-start-1';
+import {openPlanImage} from './plan-image.js?v=20261126-plan-share-dates-1';
+import {choosePlanShare} from './plan-share.js?v=20261126-plan-share-dates-1';
+import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261126-plan-share-dates-1';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
 import {duplicateNames,memberCard,deletionDialog,deletionRequest,matchingEmail,memberError} from './member-admin.js?v=20261121-gender-1';
 import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-gender-1';

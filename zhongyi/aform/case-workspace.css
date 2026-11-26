@@ -58,9 +58,10 @@
 .plan-share-entries li{padding:10px 12px}
 .plan-share-entries li+li{border-top:1px solid var(--line)}
 .plan-share-entries strong{display:block;font-size:15px;line-height:1.5}
+.plan-share-period{display:block;margin-top:4px;font-size:14px;font-weight:600;line-height:1.5}
 .plan-share-entries small{display:block;margin-top:3px;font-size:13px;color:var(--muted)}
 .plan-share-check{display:flex;align-items:center;gap:9px;min-height:36px;cursor:pointer}
-.plan-share-check+small,.plan-share-check+select{margin-left:25px}
+.plan-share-check~.plan-share-period,.plan-share-check~small,.plan-share-check~select{margin-left:25px}
 .plan-share-entries select{
   display:block;max-width:calc(100% - 25px);min-height:40px;padding:6px;
   border:1px solid var(--line);border-radius:6px;

@@ -1,8 +1,9 @@
 import {esc} from './core.js?v=20261121-save-compat-1';
-import {planEdition,planStamp,planTitle} from './case-workspace.js?v=20261121-plan-sharing-1';
+import {planEdition,planStamp,planTitle,planUsageLabel} from './case-workspace.js?v=20261126-plan-share-dates-1';
 
-const optionLabel = entry => esc(planEdition(entry)) + (entry.savedAt ? ' · ' + planStamp(entry.savedAt) : '');
-const summary = entry => '<li><strong>' + esc(planTitle(entry)) + '</strong><small>' + optionLabel(entry) + '</small></li>';
+const optionLabel = entry => esc(planEdition(entry)) + (entry.savedAt ? ' · 保存于 ' + planStamp(entry.savedAt) : '');
+const usageRow = entry => '<span class="plan-share-period">' + esc(planUsageLabel(entry)) + '</span>';
+const summary = entry => '<li><strong>' + esc(planTitle(entry)) + '</strong>' + usageRow(entry) + '<small>' + optionLabel(entry) + '</small></li>';
 
 export function choosePlanShare(entries, current) {
   const stages = new Map();
@@ -21,7 +22,7 @@ export function choosePlanShare(entries, current) {
       '<option value="' + entry.number + '"' + (entry === initial ? ' selected' : '') + '>' + optionLabel(entry) + '</option>').join('');
     return '<li><label class="plan-share-check"><input type="checkbox"' + (checked ? ' checked' : '') +
       '><strong>' + esc(planTitle(recent)) + '</strong></label>' +
-      (group.length === 1 ? '<small>' + optionLabel(recent) + '</small>' :
+      usageRow(initial) + (group.length === 1 ? '<small>' + optionLabel(recent) + '</small>' :
       '<select aria-label="' + esc(planTitle(recent) + '的版本') + '">' + versions + '</select>') + '</li>';
   }).join('');
   const opener = document.activeElement;
@@ -58,15 +59,18 @@ export function choosePlanShare(entries, current) {
   const compareRowsInOrder = [...comparePanel.querySelectorAll('li')].map((row, index) => ({
     checkbox: row.querySelector('input'),
     version: row.querySelector('select'),
+    period: row.querySelector('.plan-share-period'),
     group: groups[index]
   }));
   function selection() {
     const mode = form.elements.scope.value;
     const comparing = mode === 'compare';
     const chosen = [];
-    for (const {checkbox,version,group} of compareRowsInOrder) {
+    for (const {checkbox,version,period,group} of compareRowsInOrder) {
+      const entry = version ? group[Number(version.value) - 1] : group[0];
       if (version) version.disabled = !comparing || !checkbox.checked;
-      if (checkbox.checked) chosen.push(version ? group[Number(version.value) - 1] : group[0]);
+      period.textContent = planUsageLabel(entry);
+      if (checkbox.checked) chosen.push(entry);
     }
     for (const panel of form.querySelectorAll('[data-plan-share-scope]')) {
       panel.hidden = panel.dataset.planShareScope !== mode;

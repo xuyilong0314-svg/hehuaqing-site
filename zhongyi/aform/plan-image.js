@@ -1,11 +1,10 @@
 import {openImageSave} from '../../share/image-save.js?v=20261121-plan-sharing-1';
 import {productElementLabel} from './workflow.js?v=20261124-fire-label-1';
-import {planEdition,planSetLabel,planTitle} from './case-workspace.js?v=20261124-fire-label-1';
+import {planEdition,planSetLabel,planTitle,planUsageLabel} from './case-workspace.js?v=20261126-plan-share-dates-1';
 
 const INK='#203e34',MUTED='#728071',GOLD='#a48c57',LINE='#dce1d5',PAPER='#fffef8';
 const SERIF='"Songti SC","STSong","SimSun",serif';
 const SANS='"PingFang SC","Microsoft YaHei",sans-serif';
-const date=value=>value?String(value).slice(0,10).replaceAll('-','.'):'未填写';
 const COMPOUND_SURNAMES=['欧阳','司马','上官','诸葛','夏侯','东方','皇甫','尉迟','公孙','慕容','宇文','司徒','司空','南宫','令狐','长孙','独孤','轩辕','澹台','申屠','太史','端木','百里','呼延','东郭','西门','拓跋','公羊','公冶','宗政','濮阳','淳于','单于','太叔','仲孙','钟离','鲜于','公良','段干','巫马','公西','颛孙','子车','梁丘','左丘','东门','羊舌','微生','闾丘','谷梁'];
 export function practitionerTitle(registeredName){
   const name=String(registeredName??'').trim().replace(/\s+/g,'');
@@ -21,7 +20,6 @@ export function imageProduct(product){
 }
 const fileName=parts=>parts.join('_').replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-')+'.png';
 export const imageFilename=(c,entry)=>fileName([c.name,planTitle(entry),entry.plan?.startDate||'日期未填',planEdition(entry)]);
-const planRange=entry=>date(entry.plan.startDate)+' — '+date(entry.plan.endDate);
 const savedDate=entry=>entry.savedAt?new Date(entry.savedAt).toLocaleDateString('zh-CN',{
   timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'
 }).replaceAll('/','.'):'未填写';
@@ -92,8 +90,9 @@ export async function renderPlanImage(c,selection,{demo=false,practitionerName='
   }
   function editionHeader(y,entry,{compact=false}={}){
     y+=text(planTitle(entry),left,y,inner,compact?16:19,INK,600,false,27)+4;
-    y+=text(planEdition(entry)+' · '+planRange(entry),left,y,inner,14,MUTED,500,false,22);
-    if(!compact)y+=text('保存日期 '+savedDate(entry),left,y,inner,12,GOLD,500,false,19);
+    y+=text(planUsageLabel(entry),left,y,inner,16,INK,600,false,24);
+    const edition=planEdition(entry)+(!compact&&entry.savedAt?' · 保存于 '+savedDate(entry):'');
+    y+=text(edition,left,y,inner,12,MUTED,500,false,19);
     return y;
   }
   function planNote(y,note,context){
