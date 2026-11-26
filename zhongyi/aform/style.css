@@ -228,8 +228,11 @@
 .plan-product-buttons .btn{min-height:44px;padding:8px 12px;font-size:14px;line-height:1.45;transition:none}
 .plan-product-buttons .btn[aria-pressed="true"]{background:var(--deep);color:#fff;border-color:var(--deep)}
 #plan-product-editor>.plan-product-buttons{margin-bottom:10px}
-#plan-product-rows>.paper-product[hidden],
-#plan-product-editor:not([data-plan-product-view="all"])>.product-add{display:none}
+#plan-product-rows>.paper-product[hidden]{display:none}
+#plan-product-editor>.product-add{margin-top:12px}
+#plan-product-editor>.product-add .row{flex-wrap:wrap}
+#plan-product-select{min-width:0;max-width:100%}
+#tongue-observation{scroll-margin-top:92px}
 @media(max-width:540px){
  .plan-product-quick{padding:10px;margin-top:0}
  .plan-product-buttons .btn{padding:8px 9px}
