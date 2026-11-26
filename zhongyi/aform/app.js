@@ -6,7 +6,7 @@ const loginDestination=captureReturn();
 if(new URLSearchParams(location.search).has('return')){const entry=new URL(location.href);entry.searchParams.delete('return');history.replaceState(history.state,'',entry.pathname+entry.search+entry.hash);}
 import {beginLoading,singleFlight,withLoading} from '../../account/loading.js?v=20261119-ux-1';
 import {birthDateField,syncBirthDate,ageFromBirthDate} from './birth-date.js?v=20261121-member-age-1';
-import {stageRail,stageButtons,progressPanel,openProgress,openActualStart,demoProgress,stateLabel,syncSuggestion} from './progress.js?v=20261126-paper-entry-1';
+import {stageRail,stageButtons,progressPanel,openProgress,openActualStart,demoProgress,stateLabel,syncSuggestion} from './progress.js?v=20261126-cleanup-1';
 import {journeyEntry,openJourneyOwner} from './journey-owner.js?v=20261121-share-dates-1';
 import {normalizeIdentity,caseIdentity,syncCaseIdentity,normalizeGender,genderField,genderBadge,genderLabel,birthBadges,birthSummary,syncBirthSummary,birthDateLabel} from '../../account/identity.js?v=20261121-gender-1';
 import {latestSelf,projectedSelf,selfRatings,selfPanel,selfOverview,selfLink,loadSelf} from './client-self.js?v=20261126-paper-entry-1';
@@ -30,6 +30,7 @@ import {createPhotoTasks,runPhotoBatch,uploadCounts,renderUploadFeedback} from '
 import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards,savedPhotoPreview,photoPreviewBody} from './comparison.js?v=20261126-paper-entry-1';
 import {weekReviewMarkup,weekReviewContent,changeWeekReference,readWeekAssessment} from './week-review.js?v=20261126-paper-entry-1';
 import {syncPaperEntry,captureEntry,updatePlanDateControls,recalculatePlanDates} from './paper-entry.js?v=20261126-paper-entry-1';
+import {cleanupControls,cleanupPrompt,restoreCleanupPrompt,cleanupError} from './case-cleanup.js?v=20261126-cleanup-1';
 const config=window.AFORM_CONFIG||{};
 const root=document.querySelector('#app');
 // The public-site navigation remains outside the app's route-rendered content.
@@ -59,6 +60,7 @@ const photoBatches=new Map();
 let photoController=null;
 const stageMemory=new Map(),formBaselines=new WeakMap();
 let recordListRoute='';
+const collapsedStages=new Map();
 let selfResponses=[],selfLoadError='',selfBusy=false;
 function rememberForm(form=document.querySelector('#observation-form,#case-form,#review-form,#profile-form')){if(form)formBaselines.set(form,formFingerprint(form));}
 function syncFormDirty(){const form=document.querySelector('#observation-form,#case-form,#review-form,#profile-form');if(form&&formBaselines.has(form))dirty=formFingerprint(form)!==formBaselines.get(form);}
@@ -333,7 +335,7 @@ function caseHeading(c,items,owned){
  const actions=(!demo?'<a class="btn tiny secondary" href="./numbers/#case/'+encodeURIComponent(c.id)+'">数字性格</a>':'')+(owned?journeyEntry(c):'')+((owned||role==='admin')?'<details class="case-more"><summary aria-label="档案更多操作">更多 ···</summary><div class="case-more-menu"><button class="btn tiny danger-outline case-delete" data-action="archive-case">删除档案</button></div></details>':'');
  return '<div class="case-topbar"><a class="back case-back" href="#'+(recordListRoute||(owned?'/clients':'/records'))+'">← '+(recordListRoute.startsWith('/member/')?'返回学员后台':'返回档案')+'</a><div class="case-top-actions">'+actions+'</div></div><div class="page-heading case-details-heading"><div class="case-heading-main"><div class="case-title-row"><h1>'+esc(c.name)+'</h1><span class="badge outline">'+(c.kind==='self'?'本人记录':'服务对象')+'</span></div><div class="kicker">'+esc(c.code)+' · '+esc(c.class_name||'观察档案')+'</div><p class="record-activity" id="case-activity-status" role="status">'+esc(caseActivityText(caseStageActivity(c,items,photos)))+'</p><div class="case-record-meta"><span>建档 <time>'+dateText(c.created_on)+'</time></span><span>记录人 <span>'+esc(c.partner_name||'未填写')+'</span></span>'+ageMeta+genderMeta+'</div>'+(c.birth_date?'<details class="case-birth-preview case-identity-preview"><summary>出生日期与星座</summary><div class="case-identity-tags">'+birthSummary(c.birth_date,{compact:true})+'</div></details>':'')+'</div></div>';
 }
-function detailsPage(c,tab='record'){const items=obs.filter(o=>o.case_id===c.id),owned=demo||c.owner_id===user?.id;return shell(caseHeading(c,items,owned)+'<div class="tabs case-tabs" style="--case-tab-count:'+(isTeacher()?6:5)+'">'+[['record','观察记录'],['self','客户自评'],['plans','产品方案'],['compare','连续对照'],['info','基本信息'],...(isTeacher()?[['review','老师整理']]:[])].map(([k,l])=>'<button data-tab="'+k+'" class="'+(k===tab?'active':'')+'">'+l+'</button>').join('')+'</div>'+(tab==='record'?progressPanel(c,obs,{owner:owned})+stageRail(c,obs,selfResponses,activeStage,photos)+selfPanel(c,activeStage,selfResponses,obs,{owner:owned,error:selfLoadError,demo})+stageForm(c,activeStage):tab==='self'?progressPanel(c,obs,{owner:owned})+selfOverview(c,selfResponses,obs,{owner:owned,error:selfLoadError}):tab==='plans'?plansPage(c,obs,{selected:new URLSearchParams(cleanHash().split('?')[1]||'').get('version'),stage:new URLSearchParams(cleanHash().split('?')[1]||'').get('stage'),owned,demo}):tab==='compare'?progressPanel(c,obs,{owner:owned})+comparison(c):tab==='review'?reviewForm(c):'<div class="panel"><h2>档案与授权</h2><dl><dt class="small muted">建档类型</dt><dd>'+esc(c.kind==='self'?'本人记录':'服务对象')+'</dd><dt class="small muted">出生年月日</dt><dd>'+(c.birth_date?birthSummary(c.birth_date):'待补填')+'</dd><dt class="small muted">手机号</dt><dd>'+esc(caseIdentity(c).phone||'待补填')+'</dd><dt class="small muted">其他联系方式</dt><dd>'+esc(c.contact||'未填写')+'</dd><dt class="small muted">拍照保存</dt><dd>'+(c.consent_photo?'已同意':'未同意')+'</dd><dt class="small muted">匿名教学案例</dt><dd>'+(c.consent_teaching?'已同意，可撤回':'未同意')+'</dd></dl><div class="divider"></div><h3>首次需求</h3><p class="small">'+esc((c.baseline?.needs||[]).join('、')||'未填写')+'</p><p class="small">'+esc(c.baseline?.wish||'未填写')+'</p><dl class="baseline-details">'+[['当下体感',(c.baseline?.feelings||[]).join('、')],['目前具体怎样',c.baseline?.detail],['过敏情况',c.baseline?.allergy],['在用药 / 产品',c.baseline?.meds],['本人补充',c.baseline?.extra]].map(([label,value])=>'<dt>'+label+'</dt><dd>'+esc(value||'未填写')+'</dd>').join('')+'</dl><p class="small muted">学生只可查看自己负责的档案，老师可查看本人已同意采集的记录。</p>'+(owned?'<div class="stack mt"><a class="btn secondary" href="#/edit/'+esc(c.id)+'">编辑信息与授权</a>'+(c.consent_teaching?'<button class="text-btn" data-action="revoke">撤回教学案例授权</button>':'')+'<button class="btn tiny danger-outline case-delete" data-action="archive-case">删除档案</button></div>':'')+'</div>'),recordListRoute?.startsWith('/clients')||owned?'clients':'records');}
+function detailsPage(c,tab='record'){const items=obs.filter(o=>o.case_id===c.id),owned=demo||c.owner_id===user?.id;return shell(caseHeading(c,items,owned)+'<div class="tabs case-tabs" style="--case-tab-count:'+(isTeacher()?6:5)+'">'+[['record','观察记录'],['self','客户自评'],['plans','产品方案'],['compare','连续对照'],['info','基本信息'],...(isTeacher()?[['review','老师整理']]:[])].map(([k,l])=>'<button data-tab="'+k+'" class="'+(k===tab?'active':'')+'">'+l+'</button>').join('')+'</div>'+(tab==='record'?progressPanel(c,obs,{owner:owned})+cleanupControls(c,obs,activeStage,!demo&&canManageRecord(c))+stageRail(c,obs,selfResponses,activeStage,photos,{collapsed:collapsedStages.get(c.id)??c.progress?.history?.at(-1)?.action==='rollback'})+selfPanel(c,activeStage,selfResponses,obs,{owner:owned,error:selfLoadError,demo})+stageForm(c,activeStage):tab==='self'?progressPanel(c,obs,{owner:owned})+selfOverview(c,selfResponses,obs,{owner:owned,error:selfLoadError}):tab==='plans'?plansPage(c,obs,{selected:new URLSearchParams(cleanHash().split('?')[1]||'').get('version'),stage:new URLSearchParams(cleanHash().split('?')[1]||'').get('stage'),owned,demo}):tab==='compare'?progressPanel(c,obs,{owner:owned})+comparison(c):tab==='review'?reviewForm(c):'<div class="panel"><h2>档案与授权</h2><dl><dt class="small muted">建档类型</dt><dd>'+esc(c.kind==='self'?'本人记录':'服务对象')+'</dd><dt class="small muted">出生年月日</dt><dd>'+(c.birth_date?birthSummary(c.birth_date):'待补填')+'</dd><dt class="small muted">手机号</dt><dd>'+esc(caseIdentity(c).phone||'待补填')+'</dd><dt class="small muted">其他联系方式</dt><dd>'+esc(c.contact||'未填写')+'</dd><dt class="small muted">拍照保存</dt><dd>'+(c.consent_photo?'已同意':'未同意')+'</dd><dt class="small muted">匿名教学案例</dt><dd>'+(c.consent_teaching?'已同意，可撤回':'未同意')+'</dd></dl><div class="divider"></div><h3>首次需求</h3><p class="small">'+esc((c.baseline?.needs||[]).join('、')||'未填写')+'</p><p class="small">'+esc(c.baseline?.wish||'未填写')+'</p><dl class="baseline-details">'+[['当下体感',(c.baseline?.feelings||[]).join('、')],['目前具体怎样',c.baseline?.detail],['过敏情况',c.baseline?.allergy],['在用药 / 产品',c.baseline?.meds],['本人补充',c.baseline?.extra]].map(([label,value])=>'<dt>'+label+'</dt><dd>'+esc(value||'未填写')+'</dd>').join('')+'</dl><p class="small muted">学生只可查看自己负责的档案，老师可查看本人已同意采集的记录。</p>'+(owned?'<div class="stack mt"><a class="btn secondary" href="#/edit/'+esc(c.id)+'">编辑信息与授权</a>'+(c.consent_teaching?'<button class="text-btn" data-action="revoke">撤回教学案例授权</button>':'')+'<button class="btn tiny danger-outline case-delete" data-action="archive-case">删除档案</button></div>':'')+'</div>'),recordListRoute?.startsWith('/clients')||owned?'clients':'records');}
 function reviewForm(c){const r=reviews.find(x=>x.case_id===c.id)||{};return '<form id="review-form" class="panel"><div id="form-error"></div><h2>保留原记录，单独做整理</h2><p class="small muted">老师评语不会改写学生的观察原文。</p>'+select('整理状态','org_status',r.org_status||'pending',[['pending','待整理'],['organized','已整理']])+field('主题标签（以逗号分隔）','tags',(r.tags||[]).join('，'),'text','maxlength="200" placeholder="例如：作息记录、连续观察"')+area('老师评语','comment',r.comment)+'<button class="btn" type="submit">保存整理</button><div class="divider"></div>'+(canTeach(c)?'<h3>已获独立教学授权</h3><p class="small muted">导出的案例默认只含匿名编号、日期与五项评分，不含姓名、电话、原始自由文本或照片。</p><button class="btn secondary" type="button" data-action="case-export">生成匿名案例页</button>':'<div class="well"><p>本人尚未同意教学案例使用。本档案不会纳入教学案例库。</p></div>')+'</form>';}
 function collection(library=false){
  if(!isTeacher())return shell(errBox('此页面仅供管理账号使用。'));
@@ -818,6 +820,47 @@ function openServiceProgress(action,suggestedDate=null){
  if(action==='start')openActualStart(c,options);
  else openProgress(c,obs,action,options);
 }
+async function openFollowupCleanup(action){
+ const c=currentCase,stage=activeStage,viewer=user?.id;
+ if(busy||demo||!canManageRecord(c))return;
+ syncFormDirty();
+ if(dirty){notify('请先保存当前编辑，再清理后续节点。');return;}
+ const last=c.progress?.history?.at(-1);
+ const base={p_case_id:c.id,p_stage:stage};
+ const restore=action==='restore';
+ let preview;
+ if(!restore){
+  try{preview=await withLoading({readOnly:true,title:'正在核对后续节点'},async()=>checkResult(await db.rpc('case_followup_cleanup',{...base,p_action:'preview'})));}
+  catch(error){notify(cleanupError(error));return;}
+ }
+ if(currentCase?.id!==c.id||activeStage!==stage||user?.id!==viewer)return;
+ dialog(restore?restoreCleanupPrompt():cleanupPrompt(preview));
+ const form=document.querySelector('#followup-cleanup-form');
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  if(busy||user?.id!==viewer||currentCase?.id!==c.id)return;
+  const button=form.querySelector('[type=submit]');
+  if(!button)return;
+  const payload=restore?{...base,p_action:'restore',p_archive_id:last?.archive_id}:
+   {...base,p_action:'archive',p_guard:preview.guard,p_next_date:new FormData(form).get('date')||null};
+  busy=true;
+  button.disabled=true;
+  try{
+   const done=await withLoading({title:restore?'正在恢复撤回记录':'正在清理后续节点'},async()=>checkResult(await db.rpc('case_followup_cleanup',payload)));
+   dirty=false;
+   collapsedStages.set(c.id,!restore);
+   stageMemory.set(c.id,done.stage);
+   history.replaceState(null,'','#/case/'+c.id+'?stage='+done.stage);
+   await refresh();
+   document.querySelector('#dialog').close();
+   await render();
+   notify(restore?'已恢复上次撤回的内容':'已撤回误填节点，回访安排已更新');
+  }catch(error){form.querySelector('[role=alert]').textContent=cleanupError(error);}
+  finally{busy=false;button.disabled=false;}
+ });
+}
+
 function showPlanProductGroup(button){
  const editor=button.form?.querySelector('#plan-product-editor');
  if(!editor)return;
@@ -855,6 +898,18 @@ root.addEventListener('change',async event=>{
  if(picker.isConnected&&picker.value===reference&&currentCase?.id===c.id&&activeStage===stage)refreshWeekReview();
 });
 root.addEventListener('click',event=>{
+ const cleanup=event.target.closest('[data-followup-cleanup]');
+ if(cleanup){openFollowupCleanup(cleanup.dataset.followupCleanup);return;}
+ const toggle=event.target.closest('[data-toggle-empty-stages]');
+ if(toggle&&currentCase){
+  const rail=root.querySelector('#case-stage-rail');
+  const collapse=rail.dataset.collapseEmpty!=='true';
+  collapsedStages.set(currentCase.id,collapse);
+  rail.dataset.collapseEmpty=String(collapse);
+  toggle.setAttribute('aria-expanded',String(!collapse));
+  toggle.textContent=collapse?'展开待填写节点':'收起未填节点';
+  return;
+ }
  const paper=event.target.closest('[data-open-paper-entry]');
  const dates=event.target.closest('[data-recalculate-plan-dates]');
  if(paper){
