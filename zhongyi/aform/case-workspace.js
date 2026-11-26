@@ -1,6 +1,6 @@
-import {STAGES,esc,stageName,stageDays,cloneRecordData,validStage} from './core.js?v=20261121-save-compat-1';
+import {STAGES,esc,stageName,stageDays,cloneRecordData,validStage,firstPlanDates} from './core.js?v=20261126-actual-start-1';
 import {requestUUID} from './self/core.js?v=20261118-progress-2';
-import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261124-fire-label-1';
+import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261126-actual-start-1';
 
 export function personalCases(cases,userId,{kind='client'}={}){
   if(!userId)return [];
@@ -58,21 +58,26 @@ export function planHistory(observation){
   const plan=observation.data?.plan;
   return hasPlan(plan)?[{id:'existing-'+observation.id,plan:cloneRecordData(plan),savedAt:observation.updated_at||observation.created_at||observation.actual_date||'',status:observation.status,legacy:true}]:[];
 }
-export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISOString(),id=requestUUID}={}){
+export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISOString(),id=requestUUID,planDates=null}={}){
   const history=cloneRecordData(planHistory(existing));
   if(!stageFlow(stage)?.plan)return history;
   const last=history.at(-1),plan=data.plan;
   if(!hasPlan(plan)&&!last)return history;
-  if(last&&samePlan(last.plan,plan)){
+  if(last&&samePlan({...last.plan,...planDates},plan)){
     // Confirming an unchanged draft does not create a fictitious product adjustment.
     last.status=status;return history;
   }
   history.push({id:id(),savedAt:now,status,plan:cloneRecordData(plan||{})});return history;
 }
-export function planEntries(caseId,observations){
+export function planEntries(caseId,observations,caseRecord){
   return [...new Set(['d1','d7','d14',...observations.filter(o=>o.case_id===caseId&&Number(o.stage.slice(1))>21).map(o=>o.stage)])].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1))).flatMap(stage=>{
     const observation=observations.find(o=>o.case_id===caseId&&o.stage===stage);
-    return planHistory(observation).map((entry,index,history)=>({...entry,stage,number:index+1,latest:index===history.length-1,observationId:observation.id}));
+    const dates=firstPlanDates(caseRecord,stage);
+    return planHistory(observation).map((entry,index,history)=>{
+      const latest=index===history.length-1;
+      const plan=latest&&dates?{...entry.plan,...dates}:entry.plan;
+      return {...entry,plan,stage,number:index+1,latest,observationId:observation.id};
+    });
   });
 }
 const planTime=value=>/^\d{2}:\d{2}[-—–]\d{2}:\d{2}$/.test(value||'')?'<span class="plan-time-range"><span>'+esc(value.slice(0,5))+'</span><span>—'+esc(value.slice(-5))+'</span></span>':esc(value||'未填写');
@@ -107,7 +112,7 @@ export function planCard(c,entry,{demo=false}={}){
   return '<article class="plan-card" aria-label="'+esc(planTitle(entry))+'"><header class="plan-card-header"><div><span class="plan-brand">上医 · 健康服务档案</span><h2>'+esc(c.name)+'</h2></div><span class="plan-edition">'+esc(planEdition(entry))+'</span></header><div class="plan-card-title"><h3>'+esc(planTitle(entry))+'</h3><p>'+date(p.startDate)+' — '+date(p.endDate)+'</p></div>'+(p.decision&&p.decision!=='待填写'?'<p class="plan-decision">本次安排 · '+esc(p.decision)+'</p>':'')+'<table class="plan-product-table"><colgroup><col class="product-col"><col class="time-col"><col class="amount-col"><col class="frequency-col"></colgroup><thead><tr><th>产品</th><th>时间</th><th>每次量</th><th>每日</th></tr></thead><tbody>'+rows+'</tbody></table>'+(!products.length?'<p class="plan-empty">本版未安排产品。</p>':'')+(p.note?'<section class="plan-card-note"><h4>安排说明</h4><p>'+esc(p.note)+'</p></section>':'')+'<footer class="plan-card-footer"><span>记录人 '+esc(c.partner_name||'未填写')+'<br>保存 '+planStamp(entry.savedAt)+'</span><span>'+esc(c.code)+'<br>'+esc(planRevision(entry))+'</span></footer><p class="plan-card-footnote">'+(demo?'虚构示例 · ':'')+'按已保存内容整理；实际使用请按产品标签及个人情况核对。</p></article>';
 }
 export function plansPage(c,observations,{selected='',stage='',owned=false,demo=false}={}){
-  const entries=planEntries(c.id,observations);
+  const entries=planEntries(c.id,observations,c);
   const selectedEntry=selectedPlanEntry(entries,{selected,stage});
   const groups=[...new Set(['d1','d7','d14',...entries.map(e=>e.stage)])].map(stage=>{
     const list=entries.filter(e=>e.stage===stage);

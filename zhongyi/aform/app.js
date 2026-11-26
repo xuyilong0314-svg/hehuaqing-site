@@ -6,7 +6,7 @@ const loginDestination=captureReturn();
 if(new URLSearchParams(location.search).has('return')){const entry=new URL(location.href);entry.searchParams.delete('return');history.replaceState(history.state,'',entry.pathname+entry.search+entry.hash);}
 import {beginLoading,singleFlight,withLoading} from '../../account/loading.js?v=20261119-ux-1';
 import {birthDateField,syncBirthDate,ageFromBirthDate} from './birth-date.js?v=20261121-member-age-1';
-import {stageRail,stageButtons,progressPanel,openProgress,demoProgress,stateLabel,syncSuggestion} from './progress.js?v=20261121-photo-visibility-2';
+import {stageRail,stageButtons,progressPanel,openProgress,openActualStart,demoProgress,stateLabel,syncSuggestion} from './progress.js?v=20261126-actual-start-1';
 import {journeyEntry,openJourneyOwner} from './journey-owner.js?v=20261121-share-dates-1';
 import {normalizeIdentity,caseIdentity,syncCaseIdentity,normalizeGender,genderField,genderBadge,genderLabel,birthBadges,birthSummary,syncBirthSummary,birthDateLabel} from '../../account/identity.js?v=20261121-gender-1';
 import {latestSelf,projectedSelf,selfRatings,selfPanel,selfOverview,selfLink,loadSelf} from './client-self.js?v=20261118-progress-2';
@@ -17,15 +17,15 @@ import {rememberPendingEmail,verificationUrl} from '../../account/verification.j
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261121-gender-1';
 import {openPlanImage} from './plan-image.js?v=20261124-fire-label-1';
 import {choosePlanShare} from './plan-share.js?v=20261121-plan-sharing-1';
-import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261124-fire-label-1';
+import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261126-actual-start-1';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
 import {duplicateNames,memberCard,deletionDialog,deletionRequest,matchingEmail,memberError} from './member-admin.js?v=20261121-gender-1';
 import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-gender-1';
 import {registrationOutcome,registrationCopy} from './registration.js?v=20261112-deferred-1';
 import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261119-ux-1';
-import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType,caseStageActivity,caseActivityText} from './core.js?v=20261121-photo-visibility-2';
+import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType,caseStageActivity,caseActivityText,firstPlanDates} from './core.js?v=20261126-actual-start-1';
 import {accountRole,roleName,summarize,memberSummaries,archiveFilter,managementHome} from './management.js?v=20261118-progress-2';
-import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields,setPlanProductView} from './workflow.js?v=20261124-fire-label-1';
+import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields,setPlanProductView} from './workflow.js?v=20261126-actual-start-1';
 import {createPhotoTasks,runPhotoBatch,uploadCounts,renderUploadFeedback} from './photo-upload.js?v=20261121-photo-visibility-2';
 import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards,savedPhotoPreview,photoPreviewBody} from './comparison.js?v=20261121-photo-visibility-2';
 const config=window.AFORM_CONFIG||{};
@@ -430,7 +430,7 @@ async function saveObservation(form,intent,{quiet=false,formData=null,products=n
  ['usage','action','usageNote','quote','handling','handlingReason','nextDate','nextMethod','lifeChange','tongueChange','partnerReview','nextService','nextFocus'].forEach(k=>{if(f.has(k))data[k]=f.get(k)||'';});
  if(form.elements?.nextDate?.dataset.dateTouched==='true')data.nextDateSetAt=new Date().toISOString();
  if(form.dataset.clientSelfId){const source=selfResponses.find(r=>r.id===form.dataset.clientSelfId&&r.case_id===c.id&&r.stage===activeStage);if(!source)throw Error('请刷新客户自评后再保存。');data.ratings={...source.ratings};data.quote=source.quote;data.clientSelfId=source.id;data.clientSelfSubmittedAt=source.submitted_at;}
- data.planHistory=nextPlanHistory(existing,data,activeStage,intent||'draft');
+ data.planHistory=nextPlanHistory(existing,data,activeStage,intent||'draft',{planDates:firstPlanDates(c,activeStage)});
  const payload={case_id:c.id,stage:activeStage,actual_date:f.get('actual_date'),status:intent||'draft',data};let saved;
  if(demo){saved={...existing,...payload,id:existing?.id||requestUUID(),version:(existing?.version||0)+1};const adjusted=applyActualFollowup(c,obs,saved,existing);saved=adjusted.record;c.progress=adjusted.progress;}
  else if(existing)saved=checkResult(await db.from('observations').update({...payload,version:existing.version+1}).eq('id',existing.id).eq('version',existing.version).select().single());
@@ -454,7 +454,7 @@ async function generatePlanImage(saveFirst=false,button=null){
  if(!c)return;
  let selection;
  if(!saveFirst){
-  const query=new URLSearchParams(route.split('?')[1]||''),entries=planEntries(c.id,obs);
+  const query=new URLSearchParams(route.split('?')[1]||''),entries=planEntries(c.id,obs,c);
   const current=selectedPlanEntry(entries,{selected:query.get('version'),stage:query.get('stage')});
   if(!current)throw Error('请先保存产品方案，再生成图片。');
   selection=await choosePlanShare(entries,current);
@@ -469,7 +469,7 @@ async function generatePlanImage(saveFirst=false,button=null){
    const plan=readWorkflow(new FormData(form),stage,existing?.data).plan;
    if(!hasPlan(plan))throw Error('请先填写产品用量或本次安排，再生成图片。');
    await saveObservation(form,existing?.status==='submitted'?'submitted':'draft',{quiet:true});
-   const entry=planEntries(c.id,obs).find(e=>e.stage===stage&&e.latest);
+   const entry=planEntries(c.id,obs,c).find(e=>e.stage===stage&&e.latest);
    if(!entry)throw Error('请先保存产品方案，再生成图片。');
    selection={mode:'single',entries:[entry]};
   }
@@ -779,27 +779,30 @@ document.addEventListener('click',async e=>{
   const f=button.closest('form'),d=f.elements.actual_date.value;
   if(d){f.elements.nextDate.value=addDays(d,Number(button.dataset.gap));f.elements.nextDate.dataset.dateTouched='true';dirty=true;updateObservationProgress();}return;
  }
- if(!['service-reschedule','service-extend','service-sync'].includes(button.dataset.action)||!currentCase)return;
+ if(!['service-start','service-reschedule','service-extend','service-sync'].includes(button.dataset.action)||!currentCase)return;
  syncFormDirty();if(dirty){notify('请先保存当前观察记录，再调整服务进度。');return;}
- openServiceProgress(button.dataset.action==='service-extend'?'extend':'reschedule',button.dataset.action==='service-sync'?syncSuggestion(currentCase,obs)?.date:null);
+ const action=button.dataset.action;
+ openServiceProgress(action==='service-start'?'start':action==='service-extend'?'extend':'reschedule',button.dataset.action==='service-sync'?syncSuggestion(currentCase,obs)?.date:null);
 });
 function openServiceProgress(action,suggestedDate=null){
  const c=currentCase;if(!demo&&c.owner_id!==user?.id)return;
- openProgress(c,obs,action,{
+ const options={
   dialog,suggestedDate,
   save:async payload=>{busy=true;try{return await withLoading({theme:'save',title:'正在保存服务安排'},async()=>demo?demoProgress(c,obs,payload):checkResult(await db.rpc('manage_case_service',payload)));}finally{busy=false;}},
   onSaved:async(result,payload)=>{
-   c.progress=result;document.querySelector('#dialog').close();if(!demo)await refresh();dirty=false;
+   c.progress=result;if(!demo)await refresh();document.querySelector('#dialog').close();dirty=false;
    if(payload.p_action==='extend'){
     const stage=payload.p_stage;
     stageMemory.set(c.id,stage);history.replaceState(null,'','#/case/'+c.id+'?stage='+stage);
     await render();
     showStageArrival(c.id,stage,'已新增回访，已进入'+stageName(stage)+'。');
    }else{
-    await render();notify('服务进度已保存，待跟进日期同步更新');
+    await render();notify(payload.p_action==='start'?'实际开始日已保存，回访和第一套方案日期已更新':'服务进度已保存，待跟进日期同步更新');
    }
   }
- });
+ };
+ if(action==='start')openActualStart(c,options);
+ else openProgress(c,obs,action,options);
 }
 function showPlanProductGroup(button){
  const editor=button.form?.querySelector('#plan-product-editor');

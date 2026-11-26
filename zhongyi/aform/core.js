@@ -10,6 +10,10 @@ export const dayNumber=(date,now=today())=>Math.round((Date.parse(now+'T00:00:00
 export const stageName=s=>s==='extra'?'补充记录':s==='d1'?'首次观察':`第 ${s.slice(1)} 天`;
 export const validStage=s=>/^d[1-9]\d{0,4}$/.test(s||'')&&(STAGES.includes(Number(s.slice(1)))||(Number(s.slice(1))>21&&Number(s.slice(1))<=36500&&Number(s.slice(1))%7===0));
 export const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')&&Number.isFinite(Date.parse(s+'T00:00:00Z'))&&new Date(s+'T00:00:00Z').toISOString().slice(0,10)===s;
+export function firstPlanDates(c,stage){
+ const startDate=c?.progress?.actual_started_on;
+ return stage==='d1'&&validDate(startDate)?{startDate,endDate:addDays(startDate,6)}:null;
+}
 export function stageDays(c,observations=[]){
  const last=Math.max(21,Number(c?.progress?.last_day)||21,...observations.filter(o=>o.case_id===c?.id&&validStage(o.stage)).map(o=>Number(o.stage.slice(1))));
  return [...STAGES,...Array.from({length:Math.max(0,Math.floor((Math.min(last,36500)-21)/7))},(_,i)=>28+i*7)];
@@ -73,6 +77,7 @@ export function applyActualFollowup(c,observations,record,existing=null,stamp=ne
  const before=stageSchedule(c,observations),next=days.find(n=>n>day),anchor=existing?.status==='submitted'?existing.actual_date:before[record.stage];
  let delta=Math.round((Date.parse(record.actual_date)-Date.parse(anchor))/86400000);
  const explicit=record.data?.nextDateSetAt&&record.data.nextDateSetAt!==existing?.data?.nextDateSetAt;
+ if(!explicit&&firstPlanDates(c,record.stage))return {record,progress:c.progress};
  if(explicit&&next&&validDate(record.data.nextDate))delta=Math.round((Date.parse(record.data.nextDate)-Date.parse(before['d'+next]))/86400000);
  if(!delta||!Number.isFinite(delta))return {record,progress:c.progress};
  const progress=cloneRecordData(c.progress||{case_id:c.id,last_day:21,state:'active',dates:{},history:[],version:0}),saved=cloneRecordData(record);
