@@ -70,9 +70,27 @@
 .plan-share-entries select:disabled{color:var(--muted)}
 .plan-share-help{margin:12px 0 0;font-size:13px;line-height:1.6;color:var(--muted)}
 .plan-share-dialog .dialog-actions .btn{min-height:46px}
+.week-review{
+  margin-block:24px;padding:clamp(14px,3vw,24px);border:1px solid var(--line);
+  border-radius:10px;background:#f3f5ee;scroll-margin-top:92px;min-width:0;
+}
+#week-plan-form{scroll-margin-top:92px}
+.week-review h3{margin-top:0}
+.week-review>.field{max-width:480px}
+.week-review-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.week-review-photos .visit-photos img{width:100%;max-height:280px;object-fit:contain;background:#e9eee6}
+.week-review-products{margin-top:16px}
+.week-review-products h4{margin:0 0 6px}
+.week-review-table{overflow:auto}
+.week-review-table table{width:100%;border-collapse:collapse;font-size:13px;overflow-wrap:anywhere}
+.week-review-table th,.week-review-table td{padding:7px 6px;text-align:left;border-bottom:1px solid var(--line)}
+.week-review-table thead{color:var(--muted)}
+.week-review-assessment{border:0;border-top:1px solid var(--line);min-width:0;margin:20px 0 0;padding:12px 0 0}
+.week-review-assessment>legend{padding-right:6px;font-weight:600}
 @media(max-width:600px){
   .plan-share-dialog h2{font-size:21px}
   .plan-share-modes label{padding:6px;gap:5px;font-size:13px}
+  .week-review-table th,.week-review-table td{padding:6px 3px;font-size:12px}
 }
 @media(max-width:360px){
   .plan-share-dialog{padding-inline:14px}

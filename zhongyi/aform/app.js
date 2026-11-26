@@ -15,9 +15,9 @@ import {browserSessionStorage,sessionPersistence,temporarySessionNotice} from '.
 import {mountEmailPanel,completeEmailVerification} from '../../account/email-status.js?v=20261119-ux-1';
 import {rememberPendingEmail,verificationUrl} from '../../account/verification.js?v=20261112-deferred-1';
 import {profileFields,profileFromForm,signupFields,signupProfileFromForm,readPersonalProfile,savePersonalProfile,syncStudyField,ProfileError} from '../../account/profile.js?v=20261121-gender-1';
-import {openPlanImage} from './plan-image.js?v=20261126-plan-share-dates-1';
-import {choosePlanShare} from './plan-share.js?v=20261126-plan-share-dates-1';
-import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261126-plan-share-dates-1';
+import {openPlanImage} from './plan-image.js?v=20261126-week-review-1';
+import {choosePlanShare} from './plan-share.js?v=20261126-week-review-1';
+import {personalCases,preferredStage,formFingerprint,saveStateText,nextPlanHistory,planEntries,hasPlan,plansPage,selectedPlanEntry} from './case-workspace.js?v=20261126-week-review-1';
 import {authIssue} from '../../account/auth-support.js?v=20261119-ux-1';
 import {duplicateNames,memberCard,deletionDialog,deletionRequest,matchingEmail,memberError} from './member-admin.js?v=20261121-gender-1';
 import {memberDetailMarkup,memberDetailError} from './member-detail.js?v=20261121-gender-1';
@@ -25,9 +25,10 @@ import {registrationOutcome,registrationCopy} from './registration.js?v=20261112
 import {publicApiFetch,authReturnUrl,authCallback} from './auth.js?v=20261119-ux-1';
 import {STAGES,ITEMS,PRODUCTS,NEEDS,FEELINGS,esc,today,addDays,dayNumber,stageName,nextFollow,stageDays,stageSchedule,stageRecord,extensionReady,applyActualFollowup,csv,canTeach,cleanImageType,caseStageActivity,caseActivityText,firstPlanDates} from './core.js?v=20261126-actual-start-1';
 import {accountRole,roleName,summarize,memberSummaries,archiveFilter,managementHome} from './management.js?v=20261118-progress-2';
-import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields,setPlanProductView} from './workflow.js?v=20261126-actual-start-1';
+import {renderStageForm,readWorkflow,readProductRows,FOUR_ACTIONS,DETAIL_COLUMNS,detailValues,productWithPlanTime,productTemplate,paperPlanRows,choiceGroup,productElementLabel,readAxis,syncAxisChoices,syncActualDateFields,setPlanProductView} from './workflow.js?v=20261126-week-review-1';
 import {createPhotoTasks,runPhotoBatch,uploadCounts,renderUploadFeedback} from './photo-upload.js?v=20261121-photo-visibility-2';
-import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards,savedPhotoPreview,photoPreviewBody} from './comparison.js?v=20261121-photo-visibility-2';
+import {caseTimeline,comparisonAt,comparisonDetail,comparisonCards,savedPhotoPreview,photoPreviewBody} from './comparison.js?v=20261126-week-review-1';
+import {weekReviewMarkup,weekReviewContent,changeWeekReference,readWeekAssessment} from './week-review.js?v=20261126-week-review-1';
 const config=window.AFORM_CONFIG||{};
 const root=document.querySelector('#app');
 // The public-site navigation remains outside the app's route-rendered content.
@@ -257,7 +258,7 @@ function stageForm(c,stage){
  draftPlanProducts=paperPlanRows(o?.data?.plan?.products||[]);
  o={...o,data:{...o?.data,plan:{...o?.data?.plan,products:draftPlanProducts}}};
  const isOwner=demo||c.owner_id===user?.id;
- return renderStageForm(c,original?o:{...o,id:null},stage,{profile,demo,isOwner,observations:obs,photoNumbers:photos.filter(p=>p.case_id===c.id&&p.stage===stage).map(p=>p.file_no),uploadHTML:photoBatchMarkup(c,stage),photosHTML:photos.filter(p=>p.case_id===c.id&&p.stage===stage).map(photoThumb).join('')},{field,area,select,checkbox,ratingControls:self?()=>selfRatings(self.ratings):ratingControls,productsHTML,icon}).replace('<form id="observation-form"','<form data-client-self-id="'+esc(self?.id||'')+'" id="observation-form"');
+ return renderStageForm(c,original?o:{...o,id:null},stage,{profile,demo,isOwner,observations:obs,weekReviewHTML:weekReviewMarkup(c,stage,obs,photos,photoURL,{owner:isOwner}),photoNumbers:photos.filter(p=>p.case_id===c.id&&p.stage===stage).map(p=>p.file_no),uploadHTML:photoBatchMarkup(c,stage),photosHTML:photos.filter(p=>p.case_id===c.id&&p.stage===stage).map(photoThumb).join('')},{field,area,select,checkbox,ratingControls:self?()=>selfRatings(self.ratings):ratingControls,productsHTML,icon}).replace('<form id="observation-form"','<form data-client-self-id="'+esc(self?.id||'')+'" id="observation-form"');
 }
 function photoThumb(p){
  const alt=stageName(p.stage)+' '+p.taken_on;
@@ -426,7 +427,7 @@ async function saveObservation(form,intent,{quiet=false,formData=null,products=n
  const pending=uploadCounts(photoBatches.get(photoBatchKey())?.items||[]).pending;if(intent==='submitted'&&pending&&!preparingPhoto){document.querySelector('#upload-status')?.scrollIntoView({block:'center'});throw Error('还有'+pending+'张照片尚未上传成功，请先重试或移出待传列表，再提交本次观察。');}
  const c=currentCase,f=formData||new FormData(form),existing=obs.find(o=>o.id===form.dataset.id)||obs.find(o=>o.case_id===c.id&&o.stage===activeStage);
  if(existing&&!dirty&&(!form.dataset.clientSelfId||form.dataset.clientSelfId===existing.data?.clientSelfId)&&(intent!=='submitted'||existing.status==='submitted')){form.dataset.id=existing.id;rememberForm(form);updateSaveState();if(!quiet&&advance){await advanceService(c,existing);return existing;}if(!quiet&&intent==='submitted'){history.replaceState(null,'','#/case/'+c.id+'/compare?visit='+encodeURIComponent(existing.id));await render();}return existing;}
- const data={...existing?.data,ratings:Object.fromEntries(ITEMS.map(([k])=>[k,Number(f.get('rating_'+k))||null])),tongue:Object.fromEntries(['gloss','strength','source','coating','yinyang','form'].map(k=>[k,f.get(k)]).concat([['axis',readAxis(f)],['elements',f.getAll('shape_elements')]])),compare:Object.fromEntries([0,1,2,3].map(k=>[k,f.get('compare_'+k)||'未评'])),products:activeStage==='d1'?(existing?.data?.products||[]):products||readProducts(form,'actual',f),...readWorkflow(f,activeStage,existing?.data)};
+ const data={...existing?.data,ratings:Object.fromEntries(ITEMS.map(([k])=>[k,Number(f.get('rating_'+k))||null])),tongue:Object.fromEntries(['gloss','strength','source','coating','yinyang','form'].map(k=>[k,f.get(k)]).concat([['axis',readAxis(f)],['elements',f.getAll('shape_elements')]])),...readWeekAssessment(f,c,activeStage,obs,existing),products:activeStage==='d1'?(existing?.data?.products||[]):products||readProducts(form,'actual',f),...readWorkflow(f,activeStage,existing?.data)};
  ['usage','action','usageNote','quote','handling','handlingReason','nextDate','nextMethod','lifeChange','tongueChange','partnerReview','nextService','nextFocus'].forEach(k=>{if(f.has(k))data[k]=f.get(k)||'';});
  if(form.elements?.nextDate?.dataset.dateTouched==='true')data.nextDateSetAt=new Date().toISOString();
  if(form.dataset.clientSelfId){const source=selfResponses.find(r=>r.id===form.dataset.clientSelfId&&r.case_id===c.id&&r.stage===activeStage);if(!source)throw Error('请刷新客户自评后再保存。');data.ratings={...source.ratings};data.quote=source.quote;data.clientSelfId=source.id;data.clientSelfSubmittedAt=source.submitted_at;}
@@ -435,7 +436,7 @@ async function saveObservation(form,intent,{quiet=false,formData=null,products=n
  if(demo){saved={...existing,...payload,id:existing?.id||requestUUID(),version:(existing?.version||0)+1};const adjusted=applyActualFollowup(c,obs,saved,existing);saved=adjusted.record;c.progress=adjusted.progress;}
  else if(existing)saved=checkResult(await db.from('observations').update({...payload,version:existing.version+1}).eq('id',existing.id).eq('version',existing.version).select().single());
  else saved=checkResult(await db.from('observations').insert(payload).select().single());
- obs=obs.filter(o=>o.id!==saved.id);obs.push(saved);form.dataset.id=saved.id;dirty=false;rememberForm(form);stageMemory.set(c.id,activeStage);
+ obs=obs.filter(o=>o.id!==saved.id);obs.push(saved);form.dataset.id=saved.id;if(form.elements?.week_compare_drafts)form.elements.week_compare_drafts.value='';dirty=false;rememberForm(form);stageMemory.set(c.id,activeStage);
  if(quiet){updateSaveState();updateCaseActivity();return saved;}
  await refresh();
  if(advance){await advanceService(cases.find(x=>x.id===c.id)||c,saved);return saved;}
@@ -509,9 +510,15 @@ function updatePhotoFeedback(item){
  const el=document.querySelector('#upload-status');
  if(el&&currentCase)el.innerHTML=photoBatchMarkup(currentCase,activeStage);
 }
+function refreshWeekReview(){
+ const form=root.querySelector('#observation-form');
+ const content=form?.querySelector('[data-week-review-content]');
+ if(content&&currentCase)content.innerHTML=weekReviewContent(currentCase,activeStage,form.elements.week_compare_reference.value,obs,photos,photoURL);
+}
 function updatePhotoGrid(){
  const grid=document.querySelector('#observation-form .photo-grid');
  const currentPhotos=photos.filter(p=>p.case_id===currentCase.id&&p.stage===activeStage);if(grid)grid.innerHTML=currentPhotos.map(photoThumb).join('');const ref=document.querySelector('#photoReference');if(ref&&!ref.value&&currentPhotos.length)ref.value=currentPhotos.map(p=>p.file_no).join(' / ');
+ refreshWeekReview();
 }
 async function persistPhoto(item,phase,c,stage,{signal,viewerId}={}){
  const guard=()=>{if(signal?.aborted||(!demo&&user?.id!==viewerId)||currentCase?.id!==c.id||activeStage!==stage)throw Object.assign(Error('photo_account_changed'),{code:'photo_account_changed'});};guard();
@@ -818,7 +825,23 @@ function focusObservationArea(element){
   element.scrollIntoView({block:'start',behavior:'instant'});
  });
 }
+root.addEventListener('change',async event=>{
+ const picker=event.target;
+ if(!picker.matches('[name=week_compare_reference]')||!currentCase)return;
+ const c=currentCase,stage=activeStage,reference=picker.value,form=picker.form;
+ const observation=obs.find(o=>o.case_id===c.id&&o.stage===stage);
+ changeWeekReference(form,observation);
+ if(!demo&&c.owner_id!==user?.id)rememberForm(form);
+ refreshWeekReview();
+ updateObservationProgress();
+ try{
+  await signPhotos(photos.filter(p=>p.case_id===c.id&&(p.stage===stage||p.stage===reference)));
+ }catch{}
+ if(picker.isConnected&&picker.value===reference&&currentCase?.id===c.id&&activeStage===stage)refreshWeekReview();
+});
 root.addEventListener('click',event=>{
+ if(event.target.closest('[data-jump-week-review]'))focusObservationArea(root.querySelector('#week-review'));
+ if(event.target.closest('[data-jump-week-plan]'))focusObservationArea(root.querySelector('#week-plan-form'));
  if(event.target.closest('[data-observation-save-jump]'))focusObservationArea(root.querySelector('#observation-save'));
 });
 function showStageArrival(caseId,stage,message){

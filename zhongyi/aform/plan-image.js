@@ -1,6 +1,6 @@
 import {openImageSave} from '../../share/image-save.js?v=20261121-plan-sharing-1';
 import {productElementLabel} from './workflow.js?v=20261124-fire-label-1';
-import {planEdition,planSetLabel,planTitle,planUsageLabel} from './case-workspace.js?v=20261126-plan-share-dates-1';
+import {planEdition,planSetLabel,planTitle,planUsageLabel} from './case-workspace.js?v=20261126-week-review-1';
 
 const INK='#203e34',MUTED='#728071',GOLD='#a48c57',LINE='#dce1d5',PAPER='#fffef8';
 const SERIF='"Songti SC","STSong","SimSun",serif';

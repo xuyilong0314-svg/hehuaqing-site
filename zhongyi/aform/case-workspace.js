@@ -1,6 +1,6 @@
 import {STAGES,esc,stageName,stageDays,cloneRecordData,validStage,firstPlanDates} from './core.js?v=20261126-actual-start-1';
 import {requestUUID} from './self/core.js?v=20261118-progress-2';
-import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261126-actual-start-1';
+import {STAGE_FLOW,stageFlow,productElementLabel,productWithPlanTime} from './workflow.js?v=20261126-week-review-1';
 
 export function personalCases(cases,userId,{kind='client'}={}){
   if(!userId)return [];
@@ -70,7 +70,7 @@ export function nextPlanHistory(existing,data,stage,status,{now=new Date().toISO
   history.push({id:id(),savedAt:now,status,plan:cloneRecordData(plan||{})});return history;
 }
 export function planEntries(caseId,observations,caseRecord){
-  return [...new Set(['d1','d7','d14',...observations.filter(o=>o.case_id===caseId&&Number(o.stage.slice(1))>21).map(o=>o.stage)])].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1))).flatMap(stage=>{
+  return [...new Set(['d1','d7','d14','d21',...observations.filter(o=>o.case_id===caseId&&Number(o.stage.slice(1))>21).map(o=>o.stage)])].sort((a,b)=>Number(a.slice(1))-Number(b.slice(1))).flatMap(stage=>{
     const observation=observations.find(o=>o.case_id===caseId&&o.stage===stage);
     const dates=firstPlanDates(caseRecord,stage);
     return planHistory(observation).map((entry,index,history)=>{
@@ -88,10 +88,10 @@ export function planUsageLabel(entry){
   return '使用日期 '+planDate(startDate)+' — '+planDate(endDate);
 }
 export const planStamp=value=>value?esc(new Date(value).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})):'';
-const FIRST_PLAN_SETS={d1:'第一套',d7:'第二套',d14:'第三套'};
+const FIRST_PLAN_SETS={d1:'第一套',d7:'第二套',d14:'第三套',d21:'第四套'};
 export function planSetLabel(stage){
   const day=Number(stage?.slice(1));
-  return FIRST_PLAN_SETS[stage]||(day>21&&validStage(stage)?'第'+(day/7)+'套':'');
+  return FIRST_PLAN_SETS[stage]||(day>21&&validStage(stage)?'第'+(day/7+1)+'套':'');
 }
 export function planTitle(entry){
   const title=stageFlow(entry.stage)?.plan;
